@@ -1,6 +1,11 @@
+import {BrowserRouter as Router, Link, Route, Switch} from "react-router-dom";
+import "./App.css";
+import {About} from "./About";
+import {Storage} from "./Storage";
+import {Home} from "./Home";
 import logo from './logo.svg';
 import './App.css';
-import Header from "./Header";
+import {Header} from "./Header";
 
 function App() {
   return (

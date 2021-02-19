@@ -1,0 +1,14 @@
+.Header {
+  height: 15vh;
+  display: flex;
+  flex-wrap: nowrap;
+  background-color: DodgerBlue;
+}
+
+.Header > * {
+  margin: auto 0;
+}
+
+.Header-logo {
+  height: 80%;
+}

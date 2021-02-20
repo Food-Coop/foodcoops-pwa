@@ -1,3 +1,4 @@
+import React from "react";
 import "./App.css";
 import logo from './logo.svg';
 import './Header.css';
@@ -10,25 +11,19 @@ function App() {
         <Router>
             <div className="App">
                 <header className="Header">
+                    <img className="Header-logo" src={logo} alt="logo"/>
                     <Link to="/">
-                        <img className="Header-logo" src={logo} alt="logo"/>
-                    </Link>
-                    <h1>
                         Food Coops
-                    </h1>
+                    </Link>
                 </header>
-            </div>
-            <div>
                 <Switch>
-                    <Route path="/">
-                        <Home/>
-                    </Route>
                     <Route path="/about">
                         <About/>
                     </Route>
+                    <Route path="/">
+                        <Home/>
+                    </Route>
                 </Switch>
-            </div>
-            <div>
                 <footer>
                     <Link to="/about">
                         Impressum - Legal Disclaimer

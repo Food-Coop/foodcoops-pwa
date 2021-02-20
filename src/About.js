@@ -1,7 +1,9 @@
 export function About() {
     return (
-        <p>
-            About
-        </p>
-    )
+        <main>
+            <p>
+                About
+            </p>
+        </main>
+    );
 }

@@ -6,7 +6,7 @@ export function AuthButton() {
     let history = useHistory();
     let auth = useContext(authContext1);
 
-    return auth.user ? (
+    return auth?.user ? (
         <p>
             Welcome!{" "}
             <button

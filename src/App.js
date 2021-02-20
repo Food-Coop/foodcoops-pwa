@@ -13,13 +13,13 @@ export default function App() {
         <ProvideAuth>
             <Router>
                 <div className="App">
-                    <header className="Header">
+                    <nav className="Header">
                         <img className="Header-logo" src={logo} alt="logo"/>
                         <Link to="/">
                             Food Coops
                         </Link>
-                        <AuthButton />
-                    </header>
+                        <AuthButton/>
+                    </nav>
                     <Switch>
                         <Route path="/about">
                             <About/>

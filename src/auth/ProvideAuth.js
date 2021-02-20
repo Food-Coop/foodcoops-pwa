@@ -1,7 +1,7 @@
 import React, {useState,} from "react";
 import {authContext as authContext1, fakeAuth} from "./Constants";
 
-export default function ProvideAuth({children}) {
+export function ProvideAuth({children}) {
     const auth = useProvideAuth();
     return (
         <authContext1 value={auth}>

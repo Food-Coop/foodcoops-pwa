@@ -1,32 +1,42 @@
-import {BrowserRouter as Router, Link, Route, Switch} from "react-router-dom";
 import "./App.css";
-import {About} from "./About";
-import {Storage} from "./Storage";
-import {Home} from "./Home";
 import logo from './logo.svg';
-import './App.css';
-import {Header} from "./Header";
+import './Header.css';
+import {About} from "./About";
+import {Home} from "./Home";
+import {BrowserRouter as Router, Link, Route, Switch} from "react-router-dom";
 
 function App() {
-  return (
-    <div className="App">
-      <Header/>
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    return (
+        <Router>
+            <div className="App">
+                <header className="Header">
+                    <Link to="/">
+                        <img className="Header-logo" src={logo} alt="logo"/>
+                    </Link>
+                    <h1>
+                        Food Coops
+                    </h1>
+                </header>
+            </div>
+            <div>
+                <Switch>
+                    <Route path="/">
+                        <Home/>
+                    </Route>
+                    <Route path="/about">
+                        <About/>
+                    </Route>
+                </Switch>
+            </div>
+            <div>
+                <footer>
+                    <Link to="/about">
+                        Impressum - Legal Disclaimer
+                    </Link>
+                </footer>
+            </div>
+        </Router>
+    );
 }
 
 export default App;

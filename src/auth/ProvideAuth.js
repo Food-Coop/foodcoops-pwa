@@ -1,12 +1,12 @@
 import React, {useState,} from "react";
-import {authContext as authContext1, fakeAuth} from "./Constants";
+import {AuthContext, fakeAuth} from "./Constants";
 
 export function ProvideAuth({children}) {
     const auth = useProvideAuth();
     return (
-        <authContext1 value={auth}>
+        <AuthContext.Provider value={auth}>
             {children}
-        </authContext1>
+        </AuthContext.Provider>
     );
 }
 

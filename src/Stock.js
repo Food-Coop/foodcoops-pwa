@@ -1,8 +1,8 @@
 import React from "react";
-export function Storage() {
+export function Stock() {
     return (
         <p>
-            Storage
+            Stock.
         </p>
     );
 }

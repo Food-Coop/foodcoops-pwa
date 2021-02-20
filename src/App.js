@@ -7,6 +7,9 @@ import {Home} from "./Home";
 import {BrowserRouter as Router, Link, Route, Switch} from "react-router-dom";
 import {ProvideAuth} from "./auth/ProvideAuth";
 import {AuthButton} from "./auth/AuthButton";
+import {PrivateRoute} from "./auth/PrivateRoute";
+import {Stock} from "./Stock";
+import {LoginPage} from "./auth/LoginPage";
 
 export default function App() {
     return (
@@ -18,12 +21,21 @@ export default function App() {
                         <Link to="/">
                             Food Coops
                         </Link>
+                        <Link to={"/stock"}>
+                            Stock management
+                        </Link>
                         <AuthButton/>
                     </nav>
                     <Switch>
+                        <Route path="/login">
+                            <LoginPage/>
+                        </Route>
                         <Route path="/about">
                             <About/>
                         </Route>
+                        <PrivateRoute path="/stock">
+                            <Stock/>
+                        </PrivateRoute>
                         <Route path="/">
                             <Home/>
                         </Route>
@@ -38,3 +50,4 @@ export default function App() {
         </ProvideAuth>
     );
 }
+

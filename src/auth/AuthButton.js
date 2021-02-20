@@ -1,10 +1,10 @@
 import React, {useContext} from "react";
-import {authContext as authContext1} from "./Constants";
+import {AuthContext} from "./Constants";
 import {useHistory} from "react-router-dom";
 
 export function AuthButton() {
     let history = useHistory();
-    let auth = useContext(authContext1);
+    let auth = useContext(AuthContext);
 
     return auth?.user ? (
         <p>

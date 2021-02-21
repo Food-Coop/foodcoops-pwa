@@ -24,8 +24,12 @@
     "workbox-strategies": "^5.1.4",
     "workbox-streams": "^5.1.4"
   },
+  "devDependencies": {
+    "serve": "^11.3.2"
+  },
   "scripts": {
     "start": "react-scripts start",
+    "start-prod": "react-scripts build && serve -s build",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

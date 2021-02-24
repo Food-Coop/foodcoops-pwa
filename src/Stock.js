@@ -1,91 +1,139 @@
 import React from "react";
- import { useTable } from 'react-table'
+
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+import BTable from 'react-bootstrap/Table';
+
+import { useTable } from 'react-table'
+
+import namor from 'namor'
+
+const range = len => {
+  const arr = []
+  for (let i = 0; i < len; i++) {
+    arr.push(i)
+  }
+  return arr
+}
+
+const newPerson = () => {
+  const statusChance = Math.random()
+  return {
+    firstName: namor.generate({ words: 1, numbers: 0 }),
+    lastName: namor.generate({ words: 1, numbers: 0 }),
+    age: Math.floor(Math.random() * 30),
+    visits: Math.floor(Math.random() * 100),
+    progress: Math.floor(Math.random() * 100),
+    status:
+      statusChance > 0.66
+        ? 'relationship'
+        : statusChance > 0.33
+        ? 'complicated'
+        : 'single',
+  }
+}
+
+function makeData(...lens) {
+  const makeDataLevel = (depth = 0) => {
+    const len = lens[depth]
+    return range(len).map(d => {
+      return {
+        ...newPerson(),
+        subRows: lens[depth + 1] ? makeDataLevel(depth + 1) : undefined,
+      }
+    })
+  }
+
+  return makeDataLevel()
+}
+
+function Table({ columns, data }) {
+  // Use the state and functions returned from useTable to build your UI
+  const { getTableProps, headerGroups, rows, prepareRow } = useTable({
+    columns,
+    data,
+  })
+
+  // Render the UI for your table
+  return (
+    <BTable striped bordered hover size="sm" {...getTableProps()}>
+      <thead>
+        {headerGroups.map(headerGroup => (
+          <tr {...headerGroup.getHeaderGroupProps()}>
+            {headerGroup.headers.map(column => (
+              <th {...column.getHeaderProps()}>
+                {column.render('Header')}
+              </th>
+            ))}
+          </tr>
+        ))}
+      </thead>
+      <tbody>
+        {rows.map((row, i) => {
+          prepareRow(row)
+          return (
+            <tr {...row.getRowProps()}>
+              {row.cells.map(cell => {
+                return (
+                  <td {...cell.getCellProps()}>
+                    {cell.render('Cell')}
+                  </td>
+                )
+              })}
+            </tr>
+          )
+        })}
+      </tbody>
+    </BTable>
+  )
+}
 
 export function Stock() {
-   const data = React.useMemo(
-     () => [
-       {
-         col1: 'Hello',
-         col2: 'World',
-       },
-       {
-         col1: 'react-table',
-         col2: 'rocks',
-       },
-       {
-         col1: 'whatever',
-         col2: 'you want',
-       },
-     ],
-     []
-   )
- 
-   const columns = React.useMemo(
-     () => [
-       {
-         Header: 'Column 1',
-         accessor: 'col1', // accessor is the "key" in the data
-       },
-       {
-         Header: 'Column 2',
-         accessor: 'col2',
-       },
-     ],
-     []
-   )
- 
-   const {
-     getTableProps,
-     getTableBodyProps,
-     headerGroups,
-     rows,
-     prepareRow,
-   } = useTable({ columns, data })
- 
-   return (
-     <table {...getTableProps()} style={{ border: 'solid 1px blue' }}>
-       <thead>
-         {headerGroups.map(headerGroup => (
-           <tr {...headerGroup.getHeaderGroupProps()}>
-             {headerGroup.headers.map(column => (
-               <th
-                 {...column.getHeaderProps()}
-                 style={{
-                   borderBottom: 'solid 3px red',
-                   background: 'aliceblue',
-                   color: 'black',
-                   fontWeight: 'bold',
-                 }}
-               >
-                 {column.render('Header')}
-               </th>
-             ))}
-           </tr>
-         ))}
-       </thead>
-       <tbody {...getTableBodyProps()}>
-         {rows.map(row => {
-           prepareRow(row)
-           return (
-             <tr {...row.getRowProps()}>
-               {row.cells.map(cell => {
-                 return (
-                   <td
-                     {...cell.getCellProps()}
-                     style={{
-                       padding: '10px',
-                       border: 'solid 1px gray',
-                       background: 'papayawhip',
-                     }}
-                   >
-                     {cell.render('Cell')}
-                   </td>
-                 )
-               })}
-             </tr>
-           )
-         })}
-       </tbody>
-     </table>
-   )
+  const columns = React.useMemo(
+    () => [
+      {
+        Header: 'Name',
+        columns: [
+          {
+            Header: 'First Name',
+            accessor: 'firstName',
+          },
+          {
+            Header: 'Last Name',
+            accessor: 'lastName',
+          },
+        ],
+      },
+      {
+        Header: 'Info',
+        columns: [
+          {
+            Header: 'Age',
+            accessor: 'age',
+          },
+          {
+            Header: 'Visits',
+            accessor: 'visits',
+          },
+          {
+            Header: 'Status',
+            accessor: 'status',
+          },
+          {
+            Header: 'Profile Progress',
+            accessor: 'progress',
+          },
+        ],
+      },
+    ],
+    []
+  )
+
+  const data = React.useMemo(() => makeData(20), [])
+
+  return (
+    <div>
+      <Table columns={columns} data={data} />
+    </div>
+  )
 }

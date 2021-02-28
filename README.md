@@ -13,7 +13,7 @@ largely foodstuff. Each *Produkt* is of a specific **Kategorie** (literally
 category), e.g. meat or vegetable. The current stock (**istLagerbestand**) of
 each *Produkt* and the current target stock (**sollLagerbestand**) can be set by
 the buyer (**Einkäufer**). The *Einkäufer* can also define new amounts (**Menge**,
-e.g. kg, liters), new kinds of *Produkt* and newkinds of  *Kategorie* of goods.
+e.g. kg, liters), new kinds of *Produkt* and new kinds of  *Kategorie* of goods.
 ---
 
 ### Ubiquitous language glossary
@@ -22,7 +22,7 @@ e.g. kg, liters), new kinds of *Produkt* and newkinds of  *Kategorie* of goods.
 Product: Individual products of wares in the warehouse.
 
 **Menge**<br>
-Amount: The specific count, weight or volume (depending on the Produkt in
+Amount: The specific count, weight or volume (depending on the product in
 question), that the *Produkt* is measured in.
 
 **Kategorie**<br>
@@ -37,26 +37,38 @@ The **sollLagerbestand** amount of a *Produkt* in the warehouse.
 ###Roles
 
 **Rollen**<br>
-Roles of food coop members.
+Roles of food-coop members. Includes *Mitglied* and *Einkäufer*. Roles currently outside 
+project-scope include *Ladendienst*.
+
+**Mitglied**<br>
+Food-coop members. Members or *Mitglieder* get products through the food-coop store. Stock
+is bought collectively from farmers and wholesalers.
 
 **Einkäufer**<br>
-Buyer: keeps the warehouse stocked by buying from farmers and wholesaler.
+Buyer: Food-coop member that keeps the warehouse stocked by buying from 
+farmers and wholesaler.
+
 ---
 
 ###Use cases
 
 **Ansicht Lagerbestand**<br>
-A complete view of the all stock for the convenice of the buyer (**Einkäufer**).
-This REST-API provides the current stock (**istLagerbestand**) and target stock
-(**sollLagerbestand**) of each product (**Produkt**) sorted by category
-(**Kategorie**) and product via JSON. This PWA populates the table with this information
-. Categories can be collapsed to provide simplified browsing. 
+A complete view of the all stock for the convenience of the buyer (*Einkäufer*).
+This REST-API provides the current stock (*istLagerbestand*) and target stock
+(*sollLagerbestand*) of each product (*Produkt*) sorted by categories
+(*Kategorie*) and product via JSON. This PWA populates the table with this information. 
+Categories can be collapsed to provide simplified browsing. 
 
 **Externe Bestellungsliste**<br>
-The **Einkäufer** gets a list of all products(**Produkte**) with current stock
-levels(**istLagerbestand**) below target stock levels (**sollLagerbestand**),
-and the amount(**Menge**) that is missing. The backend provides the information via 
-JSON. This pwa turns it into a pdf.
+Buyer (*Einkäufer*) gets a list of all products(*Produkte*) with current stock
+levels (*istLagerbestand*) below target stock levels (*sollLagerbestand*),
+and the amount (*Menge*) that is missing. The backend provides the information via 
+JSON. This PWA turns it into a pdf.
+
+**Neues Mitglied**<br>
+Nordstadt food-coop is built on trust. Any member (*Mitglied*) can invite a new member. 
+All it takes is for the current member to log into the site with his user account and sent 
+an invitation email.
  ---
 
 ## Available Scripts

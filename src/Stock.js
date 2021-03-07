@@ -4,9 +4,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 import BTable from 'react-bootstrap/Table';
 
-import { useTable } from 'react-table'
+import { useTable } from 'react-table';
 
-import namor from 'namor'
+import namor from 'namor';
 
 const range = len => {
   const arr = []
@@ -92,44 +92,44 @@ export function Stock() {
   const columns = React.useMemo(
     () => [
       {
-        Header: 'Name',
-        columns: [
-          {
-            Header: 'First Name',
-            accessor: 'firstName',
-          },
-          {
-            Header: 'Last Name',
-            accessor: 'lastName',
-          },
-        ],
+        Header: 'Icon',
+        accessor: 'icon',
       },
       {
-        Header: 'Info',
-        columns: [
-          {
-            Header: 'Age',
-            accessor: 'age',
-          },
-          {
-            Header: 'Visits',
-            accessor: 'visits',
-          },
-          {
-            Header: 'Status',
-            accessor: 'status',
-          },
-          {
-            Header: 'Profile Progress',
-            accessor: 'progress',
-          },
-        ],
+        Header: 'Name',
+        accessor: 'name',
       },
+        {
+        Header: 'Quantity',
+        accessor: 'quantity',
+        },
+        {
+        Header: 'Price',
+        accessor: 'price',
+        },
+        {
+        Header: 'Unit',
+        accessor: 'unit',
+        },
+        {
+        Header: 'Supplier',
+        accessor: 'supplier',
+        },
     ],
     []
-  )
+  );
 
-  const data = React.useMemo(() => makeData(20), [])
+    const [stockData, setStockData] = React.useState([]);
+
+    React.useEffect(
+()=>
+    fetch("stock.json")
+        .then((r) => r.json())
+        .then((r) => setStockData(r)
+        ),[]
+)
+
+  const data = React.useMemo(() => stockData, [stockData]);
 
   return (
     <div>

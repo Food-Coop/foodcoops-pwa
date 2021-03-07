@@ -70,3 +70,40 @@ self.addEventListener('message', (event) => {
 });
 
 // Any other custom service worker logic can go here.
+
+const cacheName = '0.0.0';
+const contentToCache = [
+    '/stock.json'
+];
+
+// Installing Service Worker
+self.addEventListener('install', (e) => {
+  console.log('[Service Worker] Install');
+  e.waitUntil((async () => {
+    const cache = await caches.open(cacheName);
+    console.log('[Service Worker] Caching all: app shell and content');
+    await cache.addAll(contentToCache);
+  })());
+});
+
+// Fetching content using Service Worker
+// Implemented cache policy: https://web.dev/offline-cookbook/#network-falling-back-to-cache
+self.addEventListener('fetch', (e) => {
+  e.respondWith((async () => {
+    console.log(`[Service Worker] Fetching resource: ${e.request.url}`);
+    return fetch(e.request).catch(function () {
+        console.log(`[Service Worker] Fetching resource failed, falling back to cache: ${e.request.url}`);
+        return caches.match(e.request);
+    }).then(async function (response) {
+        if(!response || response.status !== 200 || response.type !== 'basic') {
+            return response;
+        }
+
+        const cache = await caches.open(cacheName);
+        console.log(`[Service Worker] Caching new resource: ${e.request.url}`);
+        cache.put(e.request, response.clone());
+
+        return response;
+    })
+  })());
+});

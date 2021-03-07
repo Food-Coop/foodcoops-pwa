@@ -1,0 +1,20 @@
+[
+    {
+        "name": "carrot",
+        "quantity": 1,
+        "unit": "kg",
+        "price": 0,
+        "type": "vegetable",
+        "supplier": "Carrot Co.",
+        "icon": "🥕"
+    },
+    {
+        "name": "potato",
+        "quantity": 2,
+        "unit": "kg",
+        "price": 0,
+        "type": "vegetable",
+        "supplier": "Carrot Co.",
+        "icon": "🥔"
+    }
+]

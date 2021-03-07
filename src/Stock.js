@@ -104,10 +104,6 @@ export function Stock() {
         accessor: 'quantity',
         },
         {
-        Header: 'Price',
-        accessor: 'price',
-        },
-        {
         Header: 'Unit',
         accessor: 'unit',
         },

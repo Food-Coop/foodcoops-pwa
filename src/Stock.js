@@ -40,28 +40,6 @@ function reshape(data) {
         kategorie.subRows = kategorie.produktResources;
     }
 
-    const d = [
-        {
-            "firstName": "finding",
-            "lastName": "suggestion",
-            "age": 4,
-            "visits": 77,
-            "progress": 16,
-            "status": "complicated",
-            "subRows": [
-                {
-                    "firstName": "design",
-                    "lastName": "afterthought",
-                    "age": 19,
-                    "visits": 73,
-                    "progress": 17,
-                    "status": "complicated"
-                }
-            ]
-        }
-    ];
-
-
     return data;
 }
 
@@ -78,10 +56,9 @@ function Table({columns, data}) {
             columns: columns,
             data,
         },
-        useExpanded // Use the useExpanded plugin hook
+        useExpanded
     )
 
-    // Render the UI for your table
     return (<>
             <BTable striped bordered hover size="sm" {...getTableProps()}>
                 <thead>
@@ -134,35 +111,8 @@ function Table({columns, data}) {
 export function Stock() {
     const columns = React.useMemo(
         () => [
-            //   { // https://github.com/tannerlinsley/react-table/blob/master/examples/expanding/src/App.js
-            //     // https://react-table.tanstack.com/docs/examples/expanding
-            // // Build our expander column
-            //       id: 'expander', // Make sure it has an ID
-            // Header: ({ getToggleAllRowsExpandedProps, isAllRowsExpanded }) => (
-            //     <span {...getToggleAllRowsExpandedProps()}>
-            //       {isAllRowsExpanded ? '👇' : '👉'}
-            //     </span>
-            // ),
-            // Cell: ({ row }) =>
-            //     // Use the row.canExpand and row.getToggleRowExpandedProps prop getter
-            //     // to build the toggle for expanding a row
-            //     row.canExpand ? (
-            //         <span
-            //             {...row.getToggleRowExpandedProps({
-            //               style: {
-            //                 // We can even use the row.depth property
-            //                 // and paddingLeft to indicate the depth
-            //                 // of the row
-            //                 paddingLeft: `${row.depth * 2}rem`,
-            //               },
-            //             })}
-            //         >
-            //         {row.isExpanded ? '👇' : '👉'}
-            //       </span>
-            //     ) : null,
-            //   },
             {
-                id: 'expander', // Make sure it has an ID
+                id: 'expander',
                 Header: ({getToggleAllRowsExpandedProps, isAllRowsExpanded}) => (
                     <span {...getToggleAllRowsExpandedProps()}>
                 {isAllRowsExpanded ? 'Icon' : 'Icon'}
@@ -170,15 +120,10 @@ export function Stock() {
                 ),
                 accessor: 'icon',
                 Cell: ({cell, row}) => {
-                    // Use the row.canExpand and row.getToggleRowExpandedProps prop getter
-                    // to build the toggle for expanding a row
                     return row.canExpand ? (
                         <span
                             {...row.getToggleRowExpandedProps({
                                 style: {
-                                    // We can even use the row.depth property
-                                    // and paddingLeft to indicate the depth
-                                    // of the row
                                     paddingLeft: `${row.depth * 2}rem`,
                                 }
                             })}

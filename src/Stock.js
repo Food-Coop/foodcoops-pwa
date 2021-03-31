@@ -59,7 +59,7 @@ function Table({columns, data}) {
         useExpanded
     )
 
-    return (<>
+    return (
             <BTable striped bordered hover size="sm" {...getTableProps()}>
                 <thead>
                 {headerGroups.map(headerGroup => (
@@ -98,13 +98,6 @@ function Table({columns, data}) {
                 })}
                 </tbody>
             </BTable>
-            <pre>
-      <code>{JSON.stringify({expanded: expanded}, null, 2)}</code>
-    </pre>
-            <pre>
-      <code>{JSON.stringify(data, null, 2)}</code>
-    </pre>
-        </>
     )
 }
 

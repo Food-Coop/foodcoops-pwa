@@ -48,6 +48,43 @@ const Styles = styled.div`
   }
 `
 
+const CustomCell = (cellData) => {
+    const {value, cell: {column: {id: columnId}}} = cellData;
+    let cell = ({value}) => String(value);
+    if (columnId === "lagerbestandResource.istLagerbestand") {
+        cell = EditableCell;
+    }
+
+    if (columnId === "lagerbestandResource.einheit") {
+        cell = DropDownCell;
+    }
+
+    return cell(cellData);
+}
+
+// Create an editable cell renderer
+const DropDownCell = ({cell: {column: {id: columnId}}, row: {id: rowId}, updateMyData, value: initialValue}) => {
+    // We need to keep and update the state of the cell normally
+    const [value, setValue] = React.useState([initialValue]);
+
+    React.useEffect(() => {
+        setValue([initialValue])
+    }, [initialValue]);
+
+    const change = (e) => {
+        const value = e.target.value;
+        updateMyData(rowId, columnId, value)
+    }
+
+    return (
+        <div>
+            <select onChange={change}>
+                {value.map((item, i) => <option key={i} value={item}>{item}</option>)}
+            </select>
+        </div>
+    );
+}
+
 // Create an editable cell renderer
 const EditableCell = ({cell: {column: {id: columnId}}, row: {id: rowId}, updateMyData, value: initialValue}) => {
     // We need to keep and update the state of the cell normally
@@ -91,9 +128,6 @@ function Table({columns, data, updateMyData, skipPageReset}) {
         {
             columns,
             data,
-            defaultColumn: {
-                Cell: EditableCell,
-            },
             // use the skipPageReset option to disable page resetting temporarily
             autoResetPage: !skipPageReset,
             // updateMyData isn't part of the API, but
@@ -187,18 +221,22 @@ export function Stock() {
             {
                 Header: 'Name',
                 accessor: 'name',
+                Cell: CustomCell,
             },
             {
                 Header: 'Ist Lagerbestand',
                 accessor: 'lagerbestandResource.istLagerbestand',
+                Cell: CustomCell,
             },
             {
                 Header: 'Soll Lagerbestand',
                 accessor: 'lagerbestandResource.sollLagerbestand',
+                Cell: CustomCell,
             },
             {
                 Header: 'Einheit',
                 accessor: 'lagerbestandResource.einheit',
+                Cell: CustomCell,
             },
         ],
         []

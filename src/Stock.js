@@ -6,6 +6,8 @@ import BTable from 'react-bootstrap/Table';
 
 import {useExpanded, useTable} from 'react-table'
 
+const deepClone = o => JSON.parse(JSON.stringify(o));
+
 const Styles = styled.div`
   padding: 1rem;
 
@@ -31,9 +33,43 @@ const Styles = styled.div`
       :last-child {
         border-right: 0;
       }
+
+      input {
+        font-size: 1rem;
+        padding: 0;
+        margin: 0;
+        border: 0;
+      }
     }
   }
+
+  .pagination {
+    padding: 0.5rem;
+  }
 `
+
+// Create an editable cell renderer
+const EditableCell = ({cell: {column: {id: columnId}}, row: {id: rowId}, updateMyData, value: initialValue}) => {
+    // We need to keep and update the state of the cell normally
+    const [value, setValue] = React.useState(initialValue)
+
+    const onChange = e => {
+        setValue(e.target.value)
+    }
+
+    // We'll only update the external data when the input is blurred
+    const onBlur = () => {
+        console.log("onBlur", rowId, columnId);
+        updateMyData(rowId, columnId, value)
+    }
+
+    // If the initialValue is changed external, sync it up with our state
+    React.useEffect(() => {
+        setValue(initialValue)
+    }, [initialValue])
+
+    return <input value={value} onChange={onChange} onBlur={onBlur} />
+}
 
 function reshape(data) {
     for (const kategorie of data) {
@@ -43,7 +79,7 @@ function reshape(data) {
     return data;
 }
 
-function Table({columns, data}) {
+function Table({columns, data, updateMyData, skipPageReset}) {
     const {
         getTableProps,
         getTableBodyProps,
@@ -53,8 +89,19 @@ function Table({columns, data}) {
         state: {expanded},
     } = useTable(
         {
-            columns: columns,
+            columns,
             data,
+            defaultColumn: {
+                Cell: EditableCell,
+            },
+            // use the skipPageReset option to disable page resetting temporarily
+            autoResetPage: !skipPageReset,
+            // updateMyData isn't part of the API, but
+            // anything we put into these options will
+            // automatically be available on the instance.
+            // That way we can call this function from our
+            // cell renderer!
+            updateMyData,
         },
         useExpanded
     )
@@ -157,22 +204,90 @@ export function Stock() {
         []
     );
 
-    const [stockData, setStockData] = React.useState([]);
+    const [data, setData] = React.useState([]);
+    const [originalData, setOriginalData] = React.useState(data)
+    const [skipPageReset, setSkipPageReset] = React.useState(false)
 
     // TODO: use something like https://github.com/rally25rs/react-use-timeout#useinterval or https://react-table.tanstack.com/docs/faq#how-can-i-use-the-table-state-to-fetch-new-data to update the data
     React.useEffect(
         () =>
             fetch("stock.json")
                 .then((r) => r.json())
-                .then((r) => setStockData(reshape(r))
+                .then((r) => {
+                        setOriginalData(reshape(deepClone(r)));
+                        setData(reshape(r));
+                    }
                 ), []
     )
 
-    const data = React.useMemo(() => stockData, [stockData]);
+    // We need to keep the table from resetting the pageIndex when we
+    // Update data. So we can keep track of that flag with a ref.
+
+    // When our cell renderer calls updateMyData, we'll use
+    // the rowIndex, columnId and new value to update the
+    // original data
+    const updateMyData = (rowId, columnId, value) => {
+        // We also turn on the flag to not reset the page
+        setSkipPageReset(true)
+        setData(old => {
+            const [kategorieId, _, produktId] = rowId.split('').map(parseInt);
+            if (produktId === undefined) {
+                return old;
+            }
+
+            // walk the old data object using the accessor of the table columns
+            const accessors = columnId.split('.');
+            const accessor = accessors.pop();
+            let obj = old[kategorieId].subRows[produktId];
+            for (const accessor of accessors) {
+                obj = obj[accessor];
+            }
+
+            obj[accessor] = value;
+
+            return old;
+                // return old.map((row, index) => {
+                //     if (index === kategorieId) {
+                //         console.log(kategorieId, produktId, row[kategorieId], old[kategorieId]);
+                //         return {
+                //             ...old[rowId],
+                //             [columnId]: value,
+                //         }
+                //     }
+                //     return row
+                // });
+            }
+        )
+    }
+
+    // After data chagnes, we turn the flag back off
+    // so that if data actually changes when we're not
+    // editing it, the page is reset
+    React.useEffect(() => {
+        setSkipPageReset(false)
+    }, [data]);
+
+    // Let's add a data resetter/randomizer to help
+    // illustrate that flow...
+    const resetData = () => setData(originalData);
+
+    try {
+        console.table({original:originalData[0].subRows, data:data[0].subRows});
+    } catch (e) {
+        console.log("error", originalData, data);
+    }
+
+    const save = () => {
+        console.table(data);
+    };
 
     return (
         <div>
-            <Table columns={columns} data={data}/>
+            <Table columns={columns}
+                   data={data}
+                   updateMyData={updateMyData}
+                   skipPageReset={skipPageReset}/>
+                   <button onClick={save}>save</button>
         </div>
     )
 }

@@ -73,7 +73,7 @@ self.addEventListener('message', (event) => {
 
 const cacheName = '0.0.0';
 const contentToCache = [
-    '/stock.json'
+    'https://foodcoops-backend.herokuapp.com/kategorie'
 ];
 
 // Installing Service Worker

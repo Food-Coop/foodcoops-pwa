@@ -252,7 +252,7 @@ export function Stock() {
     // TODO: use something like https://github.com/rally25rs/react-use-timeout#useinterval or https://react-table.tanstack.com/docs/faq#how-can-i-use-the-table-state-to-fetch-new-data to update the data
     React.useEffect(
         () =>
-            fetch("stock.json")
+            fetch("https://foodcoops-backend.herokuapp.com/kategorie")
                 .then((r) => r.json())
                 .then((r) => {
                         console.table(reshape(r));

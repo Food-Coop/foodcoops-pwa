@@ -3,6 +3,8 @@ import styled from 'styled-components'
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import BTable from 'react-bootstrap/Table';
+import Button from 'react-bootstrap/Button';
+import Row from 'react-bootstrap/Row'
 
 import {useExpanded, useTable} from 'react-table'
 
@@ -321,11 +323,13 @@ export function Stock() {
 
     return (
         <div>
+            <Row style={{margin:0, padding:"0.5em", paddingTop: "1em", paddingBottom: "1em"}}>
+                <Button onClick={save}>save</Button>
+            </Row>
             <Table columns={columns}
                    data={data}
                    updateMyData={updateMyData}
                    skipPageReset={skipPageReset}/>
-                   <button onClick={save}>save</button>
         </div>
     )
 }

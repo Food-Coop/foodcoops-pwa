@@ -53,11 +53,11 @@ const Styles = styled.div`
 const CustomCell = (cellData) => {
     const {value, cell: {column: {id: columnId}}} = cellData;
     let cell = ({value}) => String(value);
-    if (columnId === "lagerbestandResource.istLagerbestand") {
+    if (columnId === "lagerbestand.istLagerbestand" || columnId === "lagerbestand.sollLagerbestand") {
         cell = EditableCell;
     }
 
-    if (columnId === "lagerbestandResource.einheit") {
+    if (columnId === "lagerbestand.einheit.name") {
         cell = DropDownCell;
     }
 
@@ -111,8 +111,9 @@ const EditableCell = ({cell: {column: {id: columnId}}, row: {id: rowId}, updateM
 }
 
 function reshape(data) {
-    for (const kategorie of data) {
-        kategorie.subRows = kategorie.produktResources;
+    for (const kategorie of data._embedded.kategorieRepresentationList) {
+        console.log(kategorie);
+        kategorie.subRows = kategorie.produkte;
     }
 
     return data;
@@ -227,17 +228,17 @@ export function Stock() {
             },
             {
                 Header: 'Ist Lagerbestand',
-                accessor: 'lagerbestandResource.istLagerbestand',
+                accessor: 'lagerbestand.istLagerbestand',
                 Cell: CustomCell,
             },
             {
                 Header: 'Soll Lagerbestand',
-                accessor: 'lagerbestandResource.sollLagerbestand',
+                accessor: 'lagerbestand.sollLagerbestand',
                 Cell: CustomCell,
             },
             {
                 Header: 'Einheit',
-                accessor: 'lagerbestandResource.einheit',
+                accessor: 'lagerbestand.einheit.name',
                 Cell: CustomCell,
             },
         ],
@@ -254,8 +255,9 @@ export function Stock() {
             fetch("stock.json")
                 .then((r) => r.json())
                 .then((r) => {
+                        console.table(reshape(r));
                         setOriginalData(reshape(deepClone(r)));
-                        setData(reshape(r));
+                        setData(reshape(r)._embedded.kategorieRepresentationList);
                     }
                 ), []
     )

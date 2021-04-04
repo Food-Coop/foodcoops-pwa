@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import styled from 'styled-components'
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -53,13 +53,6 @@ const Styles = styled.div`
 const CustomCell = (cellData) => {
     const {value, cell: {column: {id: columnId}}} = cellData;
     let cell = ({value}) => String(value);
-    if (columnId === "lagerbestand.istLagerbestand" || columnId === "lagerbestand.sollLagerbestand") {
-        cell = EditableCell;
-    }
-
-    if (columnId === "lagerbestand.einheit.name") {
-        cell = DropDownCell;
-    }
 
     return cell(cellData);
 }
@@ -245,7 +238,7 @@ export function Stock() {
         []
     );
 
-    const [data, setData] = React.useState([]);
+    const [data, setData] = React.useState(null);
     const [originalData, setOriginalData] = React.useState(data)
     const [skipPageReset, setSkipPageReset] = React.useState(false)
 
@@ -322,6 +315,14 @@ export function Stock() {
     const save = () => {
         console.table(data);
     };
+
+    if (data === null) {
+        return (
+            <div className="spinner-border" role="status" style={{margin: "5rem"}}>
+                <span className="sr-only">Loading...</span>
+            </div>
+        );
+    }
 
     return (
         <div>

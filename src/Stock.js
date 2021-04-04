@@ -329,10 +329,12 @@ export function Stock() {
             <Row style={{margin:0, padding:"0.5em", paddingTop: "1em", paddingBottom: "1em"}}>
                 <Button onClick={save}>save</Button>
             </Row>
-            <Table columns={columns}
-                   data={data}
-                   updateMyData={updateMyData}
-                   skipPageReset={skipPageReset}/>
+            <div style={{overflowX: "auto", width: "100%"}}>
+                <Table columns={columns}
+                       data={data}
+                       updateMyData={updateMyData}
+                       skipPageReset={skipPageReset}/>
+            </div>
         </div>
     )
 }

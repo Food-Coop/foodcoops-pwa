@@ -5,7 +5,8 @@ import BTable from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row'
 
-import {useExpanded, useTable} from 'react-table'
+import {useExpanded, useTable} from 'react-table';
+import Modal from 'react-bootstrap/Modal'
 
 const deepClone = o => JSON.parse(JSON.stringify(o));
 
@@ -14,6 +15,50 @@ const CustomCell = (cellData) => {
     let cell = ({value}) => String(value);
 
     return cell(cellData);
+}
+
+function MyVerticallyCenteredModal(props) {
+    const { show, rowData } = props;
+    const [showModal, setShowModal] = React.useState(false);
+    const [newData, setNewData] = React.useState({});
+
+    React.useEffect(() => {
+        setShowModal(show);
+    }, [show])
+
+    const handleClose = () => {
+        setShowModal(false);
+        props.close();
+    }
+
+    return (
+        <Modal
+            show={showModal}
+            onHide={handleClose}
+            backdrop="static"
+            keyboard={false}
+            size="lg"
+            aria-labelledby="contained-modal-title-vcenter"
+            centered
+        >
+            {/*<Modal.Header closeButton>*/}
+            {/*    <Modal.Title id="contained-modal-title-vcenter">*/}
+            {/*        {title}*/}
+            {/*    </Modal.Title>*/}
+            {/*</Modal.Header>*/}
+            {/*<Modal.Body>*/}
+            {/*    {body(setNewData)}*/}
+            {/*</Modal.Body>*/}
+            {props.children}
+            <Modal.Footer>
+                <Button onClick={props.close}>Änderungen verwerfen</Button>
+                <Button onClick={() => {
+                    props.close();
+                    Object.assign(rowData, newData);
+                }}>Änderungen übernehmen</Button>
+            </Modal.Footer>
+        </Modal>
+    );
 }
 
 // Create an editable cell renderer
@@ -71,7 +116,7 @@ function reshape(data) {
     return data;
 }
 
-function Table({columns, data, updateMyData, skipPageReset}) {
+function Table({columns, data, updateMyData, skipPageReset, dispatchModal}) {
     const {
         getTableProps,
         getTableBodyProps,
@@ -121,7 +166,10 @@ function Table({columns, data, updateMyData, skipPageReset}) {
                                         const props = cell.getCellProps();
                                         if (i === 1 && row.canExpand) {
                                             props.colSpan = row.cells.length - 1;
-                                            props.style = props.style || {fontWeight: "bold"};
+                                            props.style = {...props.style, fontWeight: "bold"};
+                                        } else if (i !== 0) {
+                                            props.onClick = () => dispatchModal("OPEN", cell, row);
+                                            props.style = {...props.style, cursor: "pointer"};
                                         }
                                         return (
                                             <td {...props}>
@@ -275,6 +323,51 @@ export function Stock() {
         console.table(data);
     };
 
+
+
+    const modalReducer = (state, action) => {
+        const {
+            type,
+            extra: [columnId, rowId],
+            values: rowData
+        } = action;
+        switch (action.type) {
+            case "OPEN":
+                return {
+                    rowData,
+                    show: true
+                }
+            case "CLOSE":
+                return {
+                    show: false
+                }
+
+        }
+    }
+
+    const [modalState, modalDispatch] = React.useReducer(modalReducer, {
+        show: false
+    });
+
+
+    const dispatchModal = (type, cell, row) => {
+        console.log({type, cell, row});
+        let extra = [undefined, undefined];
+        let values = undefined;
+        try {
+            extra = [cell.column.id, row.id];
+            values = row.values;
+        } catch (e) {
+
+        }
+
+        modalDispatch({
+            type,
+            extra,
+            values
+        })
+    }
+
     if (data === null) {
         return (
             <div className="spinner-border" role="status" style={{margin: "5rem"}}>
@@ -292,8 +385,16 @@ export function Stock() {
                 <Table columns={columns}
                        data={data}
                        updateMyData={updateMyData}
-                       skipPageReset={skipPageReset}/>
+                       skipPageReset={skipPageReset}
+                       dispatchModal={dispatchModal}/>
             </div>
+
+            // TODO: Render form https://react-bootstrap.github.io/components/forms/
+            <MyVerticallyCenteredModal
+                show={modalState.show}
+                close={() => dispatchModal("CLOSE")}
+                rowData={modalState.rowData}
+            />
         </div>
     )
 }

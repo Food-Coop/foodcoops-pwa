@@ -18,44 +18,78 @@ const CustomCell = (cellData) => {
 }
 
 function MyVerticallyCenteredModal(props) {
-    const { show, rowData } = props;
+    const rowData = props.rowData || [];
     const [showModal, setShowModal] = React.useState(false);
     const [newData, setNewData] = React.useState({});
 
     React.useEffect(() => {
-        setShowModal(show);
-    }, [show])
+        setShowModal(props.show);
+    }, [props.show])
 
-    const handleClose = () => {
+    const close = () => {
         setShowModal(false);
         props.close();
-    }
+        setNewData({});
+    };
+
+    const save = () => {
+        for (const [accessor, {value}] of Object.entries(newData)) {
+            props.updateMyData(props.rowId, accessor, value);
+        }
+
+        close();
+    };
+
+    const merged = {
+        ...Object.fromEntries(rowData
+            .filter(({value}) => value)
+            .map(({column: {Header: name, id: accessor}, value})=> [accessor, {name, value}])),
+        ...newData
+    };
 
     return (
         <Modal
             show={showModal}
-            onHide={handleClose}
+            onHide={close}
             backdrop="static"
             keyboard={false}
             size="lg"
             aria-labelledby="contained-modal-title-vcenter"
             centered
         >
-            {/*<Modal.Header closeButton>*/}
-            {/*    <Modal.Title id="contained-modal-title-vcenter">*/}
-            {/*        {title}*/}
-            {/*    </Modal.Title>*/}
-            {/*</Modal.Header>*/}
-            {/*<Modal.Body>*/}
-            {/*    {body(setNewData)}*/}
-            {/*</Modal.Body>*/}
+            <Modal.Header closeButton>
+                <Modal.Title id="contained-modal-title-vcenter">
+                    Produkt bearbeiten
+                </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <form>
+                    <table>
+                        <tbody>
+                            {Object.entries(merged)
+                                .map(([accessor, {name, value}]) => <tr key={accessor}>
+                                    <td>
+                                        <label>{name}:</label>
+                                    </td>
+                                    <td>
+                                        <input
+                                            name={name}
+                                            value={value}
+                                            onChange={function ({target: {value}}) {
+                                                const changed = {};
+                                                changed[accessor] = {name, value};
+                                                return setNewData(prev => ({...prev, ...changed}));
+                                            }}/>
+                                    </td>
+                                </tr>)}
+                        </tbody>
+                    </table>
+                </form>
+            </Modal.Body>
             {props.children}
             <Modal.Footer>
-                <Button onClick={props.close}>Änderungen verwerfen</Button>
-                <Button onClick={() => {
-                    props.close();
-                    Object.assign(rowData, newData);
-                }}>Änderungen übernehmen</Button>
+                <Button onClick={close}>Änderungen verwerfen</Button>
+                <Button onClick={save}>Änderungen übernehmen</Button>
             </Modal.Footer>
         </Modal>
     );
@@ -109,7 +143,6 @@ const EditableCell = ({cell: {column: {id: columnId}}, row: {id: rowId}, updateM
 
 function reshape(data) {
     for (const kategorie of data._embedded.kategorieRepresentationList) {
-        console.log(kategorie);
         kategorie.subRows = kategorie.produkte;
     }
 
@@ -130,6 +163,8 @@ function Table({columns, data, updateMyData, skipPageReset, dispatchModal}) {
             data,
             // use the skipPageReset option to disable page resetting temporarily
             autoResetPage: !skipPageReset,
+            // useExpanded resets the expanded state of all rows when data changes
+            autoResetExpanded: !skipPageReset,
             // updateMyData isn't part of the API, but
             // anything we put into these options will
             // automatically be available on the instance.
@@ -255,7 +290,6 @@ export function Stock() {
             fetch("https://foodcoops-backend.herokuapp.com/kategorie")
                 .then((r) => r.json())
                 .then((r) => {
-                        console.table(reshape(r));
                         setOriginalData(reshape(deepClone(r)));
                         setData(reshape(r)._embedded.kategorieRepresentationList);
                     }
@@ -287,7 +321,7 @@ export function Stock() {
 
             obj[accessor] = value;
 
-            return old;
+            return deepClone(old);
                 // return old.map((row, index) => {
                 //     if (index === kategorieId) {
                 //         console.log(kategorieId, produktId, row[kategorieId], old[kategorieId]);
@@ -309,16 +343,6 @@ export function Stock() {
         setSkipPageReset(false)
     }, [data]);
 
-    // Let's add a data resetter/randomizer to help
-    // illustrate that flow...
-    const resetData = () => setData(originalData);
-
-    try {
-        console.table({original:originalData[0].subRows, data:data[0].subRows});
-    } catch (e) {
-        console.log("error", originalData, data);
-    }
-
     const save = () => {
         console.table(data);
     };
@@ -335,6 +359,7 @@ export function Stock() {
             case "OPEN":
                 return {
                     rowData,
+                    rowId,
                     show: true
                 }
             case "CLOSE":
@@ -351,12 +376,11 @@ export function Stock() {
 
 
     const dispatchModal = (type, cell, row) => {
-        console.log({type, cell, row});
         let extra = [undefined, undefined];
         let values = undefined;
         try {
             extra = [cell.column.id, row.id];
-            values = row.values;
+            values = row.cells;
         } catch (e) {
 
         }
@@ -389,12 +413,13 @@ export function Stock() {
                        dispatchModal={dispatchModal}/>
             </div>
 
-            // TODO: Render form https://react-bootstrap.github.io/components/forms/
             <MyVerticallyCenteredModal
                 show={modalState.show}
                 close={() => dispatchModal("CLOSE")}
-                rowData={modalState.rowData}
-            />
+                updateMyData={updateMyData}
+                rowId={modalState.rowId}
+                rowData={modalState.rowData}>
+            </MyVerticallyCenteredModal>
         </div>
     )
 }

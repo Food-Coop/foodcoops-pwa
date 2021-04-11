@@ -36,7 +36,7 @@ function MyVerticallyCenteredModal(props) {
     const merged = {
         ...Object.fromEntries(rowData
             .filter(({value}) => value)
-            .map(({column: {Header: name, id: accessor}, value})=> [accessor, {name, value}])),
+            .map(({column: {Header: name, id: accessor}, value}) => [accessor, {name, value}])),
         ...newData
     };
 
@@ -59,22 +59,22 @@ function MyVerticallyCenteredModal(props) {
                 <form>
                     <table>
                         <tbody>
-                            {Object.entries(merged)
-                                .map(([accessor, {name, value}]) => <tr key={accessor}>
-                                    <td>
-                                        <label>{name}:</label>
-                                    </td>
-                                    <td>
-                                        <input
-                                            name={name}
-                                            value={value}
-                                            onChange={function ({target: {value}}) {
-                                                const changed = {};
-                                                changed[accessor] = {name, value};
-                                                return setNewData(prev => ({...prev, ...changed}));
-                                            }}/>
-                                    </td>
-                                </tr>)}
+                        {Object.entries(merged)
+                            .map(([accessor, {name, value}]) => <tr key={accessor}>
+                                <td>
+                                    <label>{name}:</label>
+                                </td>
+                                <td>
+                                    <input
+                                        name={name}
+                                        value={value}
+                                        onChange={function ({target: {value}}) {
+                                            const changed = {};
+                                            changed[accessor] = {name, value};
+                                            return setNewData(prev => ({...prev, ...changed}));
+                                        }}/>
+                                </td>
+                            </tr>)}
                         </tbody>
                     </table>
                 </form>
@@ -117,47 +117,47 @@ function Table({columns, data, updateMyData, skipPageReset, dispatchModal}) {
     )
 
     return (
-            <BTable striped bordered hover size="sm" {...getTableProps()}>
-                <thead>
-                {headerGroups.map(headerGroup => (
-                    <tr {...headerGroup.getHeaderGroupProps()}>
-                        {headerGroup.headers.map(column => (
-                            <th {...column.getHeaderProps()}>
-                                {column.render('Header')}
-                            </th>
-                        ))}
+        <BTable striped bordered hover size="sm" {...getTableProps()}>
+            <thead>
+            {headerGroups.map(headerGroup => (
+                <tr {...headerGroup.getHeaderGroupProps()}>
+                    {headerGroup.headers.map(column => (
+                        <th {...column.getHeaderProps()}>
+                            {column.render('Header')}
+                        </th>
+                    ))}
+                </tr>
+            ))}
+            </thead>
+            <tbody  {...getTableBodyProps()}>
+            {rows.map(row => {
+                prepareRow(row)
+                return (
+                    <tr {...row.getRowProps()}>
+                        {
+                            // canExpand is true for the kategorie header row
+                            // make the kategorie name span multiple columns for these rows
+                            (row.canExpand ? row.cells.slice(0, 2) : row.cells)
+                                .map((cell, i) => {
+                                    const props = cell.getCellProps();
+                                    if (i === 1 && row.canExpand) {
+                                        props.colSpan = row.cells.length - 1;
+                                        props.style = {...props.style, fontWeight: "bold"};
+                                    } else if (i !== 0) {
+                                        props.onClick = () => dispatchModal("OPEN", cell, row);
+                                        props.style = {...props.style, cursor: "pointer"};
+                                    }
+                                    return (
+                                        <td {...props}>
+                                            {cell.render('Cell')}
+                                        </td>
+                                    )
+                                })}
                     </tr>
-                ))}
-                </thead>
-                <tbody  {...getTableBodyProps()}>
-                {rows.map((row, i) => {
-                    prepareRow(row)
-                    return (
-                        <tr {...row.getRowProps()}>
-                            {
-                                // canExpand is true for the kategorie header row
-                                // make the kategorie name span multiple columns for these rows
-                                (row.canExpand ? row.cells.slice(0, 2) : row.cells)
-                                    .map((cell, i) => {
-                                        const props = cell.getCellProps();
-                                        if (i === 1 && row.canExpand) {
-                                            props.colSpan = row.cells.length - 1;
-                                            props.style = {...props.style, fontWeight: "bold"};
-                                        } else if (i !== 0) {
-                                            props.onClick = () => dispatchModal("OPEN", cell, row);
-                                            props.style = {...props.style, cursor: "pointer"};
-                                        }
-                                        return (
-                                            <td {...props}>
-                                                {cell.render('Cell')}
-                                            </td>
-                                        )
-                                    })}
-                        </tr>
-                    )
-                })}
-                </tbody>
-            </BTable>
+                )
+            })}
+            </tbody>
+        </BTable>
     )
 }
 
@@ -240,22 +240,22 @@ export function Stock() {
         // We also turn on the flag to not reset the page
         setSkipPageReset(true)
         setData(old => {
-            const [kategorieId, _, produktId] = rowId.split('').map(parseInt);
-            if (produktId === undefined) {
-                return old;
-            }
+                const [kategorieId, _, produktId] = rowId.split('').map(parseInt);
+                if (produktId === undefined) {
+                    return old;
+                }
 
-            // walk the old data object using the accessor of the table columns
-            const accessors = columnId.split('.');
-            const accessor = accessors.pop();
-            let obj = old[kategorieId].subRows[produktId];
-            for (const accessor of accessors) {
-                obj = obj[accessor];
-            }
+                // walk the old data object using the accessor of the table columns
+                const accessors = columnId.split('.');
+                const accessor = accessors.pop();
+                let obj = old[kategorieId].subRows[produktId];
+                for (const accessor of accessors) {
+                    obj = obj[accessor];
+                }
 
-            obj[accessor] = value;
+                obj[accessor] = value;
 
-            return deepClone(old);
+                return deepClone(old);
             }
         )
     }
@@ -270,8 +270,6 @@ export function Stock() {
     const save = () => {
         console.table(data);
     };
-
-
 
     const modalReducer = (state, action) => {
         const {
@@ -297,7 +295,6 @@ export function Stock() {
     const [modalState, modalDispatch] = React.useReducer(modalReducer, {
         show: false
     });
-
 
     const dispatchModal = (type, cell, row) => {
         let extra = [undefined, undefined];
@@ -326,7 +323,7 @@ export function Stock() {
 
     return (
         <div>
-            <Row style={{margin:0, padding:"0.5em", paddingTop: "1em", paddingBottom: "1em"}}>
+            <Row style={{margin: 0, padding: "0.5em", paddingTop: "1em", paddingBottom: "1em"}}>
                 <Button onClick={save}>save</Button>
             </Row>
             <div style={{overflowX: "auto", width: "100%"}}>

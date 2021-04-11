@@ -248,7 +248,7 @@ export function Stock() {
                 // walk the old data object using the accessor of the table columns
                 const accessors = columnId.split('.');
                 const accessor = accessors.pop();
-                let obj = old[kategorieId].subRows[produktId];
+                let obj = old[kategorieId].produkte[produktId];
                 for (const accessor of accessors) {
                     obj = obj[accessor];
                 }

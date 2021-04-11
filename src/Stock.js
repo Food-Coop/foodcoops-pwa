@@ -10,13 +10,6 @@ import Modal from 'react-bootstrap/Modal'
 
 const deepClone = o => JSON.parse(JSON.stringify(o));
 
-const CustomCell = (cellData) => {
-    const {value, cell: {column: {id: columnId}}} = cellData;
-    let cell = ({value}) => String(value);
-
-    return cell(cellData);
-}
-
 function MyVerticallyCenteredModal(props) {
     const rowData = props.rowData || [];
     const [showModal, setShowModal] = React.useState(false);
@@ -95,60 +88,6 @@ function MyVerticallyCenteredModal(props) {
     );
 }
 
-// Create an editable cell renderer
-const DropDownCell = ({cell: {column: {id: columnId}}, row: {id: rowId}, updateMyData, value: initialValue}) => {
-    // We need to keep and update the state of the cell normally
-    const [value, setValue] = React.useState([initialValue]);
-
-    React.useEffect(() => {
-        setValue([initialValue])
-    }, [initialValue]);
-
-    const change = (e) => {
-        const value = e.target.value;
-        updateMyData(rowId, columnId, value)
-    }
-
-    return (
-        <div>
-            <select onChange={change}>
-                {value.map((item, i) => <option key={i} value={item}>{item}</option>)}
-            </select>
-        </div>
-    );
-}
-
-// Create an editable cell renderer
-const EditableCell = ({cell: {column: {id: columnId}}, row: {id: rowId}, updateMyData, value: initialValue}) => {
-    // We need to keep and update the state of the cell normally
-    const [value, setValue] = React.useState(initialValue)
-
-    const onChange = e => {
-        setValue(e.target.value)
-    }
-
-    // We'll only update the external data when the input is blurred
-    const onBlur = () => {
-        console.log("onBlur", rowId, columnId);
-        updateMyData(rowId, columnId, value)
-    }
-
-    // If the initialValue is changed external, sync it up with our state
-    React.useEffect(() => {
-        setValue(initialValue)
-    }, [initialValue])
-
-    return <input value={value} onChange={onChange} onBlur={onBlur} />
-}
-
-function reshape(data) {
-    for (const kategorie of data._embedded.kategorieRepresentationList) {
-        kategorie.subRows = kategorie.produkte;
-    }
-
-    return data;
-}
-
 function Table({columns, data, updateMyData, skipPageReset, dispatchModal}) {
     const {
         getTableProps,
@@ -161,6 +100,8 @@ function Table({columns, data, updateMyData, skipPageReset, dispatchModal}) {
         {
             columns,
             data,
+            // show produkte as sub rows
+            getSubRows: row => row.produkte,
             // use the skipPageReset option to disable page resetting temporarily
             autoResetPage: !skipPageReset,
             // useExpanded resets the expanded state of all rows when data changes
@@ -259,22 +200,18 @@ export function Stock() {
             {
                 Header: 'Name',
                 accessor: 'name',
-                Cell: CustomCell,
             },
             {
                 Header: 'Ist Lagerbestand',
                 accessor: 'lagerbestand.istLagerbestand',
-                Cell: CustomCell,
             },
             {
                 Header: 'Soll Lagerbestand',
                 accessor: 'lagerbestand.sollLagerbestand',
-                Cell: CustomCell,
             },
             {
                 Header: 'Einheit',
                 accessor: 'lagerbestand.einheit.name',
-                Cell: CustomCell,
             },
         ],
         []
@@ -290,14 +227,11 @@ export function Stock() {
             fetch("https://foodcoops-backend.herokuapp.com/kategorie")
                 .then((r) => r.json())
                 .then((r) => {
-                        setOriginalData(reshape(deepClone(r)));
-                        setData(reshape(r)._embedded.kategorieRepresentationList);
+                        setOriginalData(deepClone(r));
+                        setData(r._embedded.kategorieRepresentationList);
                     }
                 ), []
     )
-
-    // We need to keep the table from resetting the pageIndex when we
-    // Update data. So we can keep track of that flag with a ref.
 
     // When our cell renderer calls updateMyData, we'll use
     // the rowIndex, columnId and new value to update the
@@ -322,16 +256,6 @@ export function Stock() {
             obj[accessor] = value;
 
             return deepClone(old);
-                // return old.map((row, index) => {
-                //     if (index === kategorieId) {
-                //         console.log(kategorieId, produktId, row[kategorieId], old[kategorieId]);
-                //         return {
-                //             ...old[rowId],
-                //             [columnId]: value,
-                //         }
-                //     }
-                //     return row
-                // });
             }
         )
     }

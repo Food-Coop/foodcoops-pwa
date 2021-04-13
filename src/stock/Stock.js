@@ -1,11 +1,7 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
-import BTable from 'react-bootstrap/Table';
-import Button from 'react-bootstrap/Button';
-
-import {useExpanded, useTable} from 'react-table';
-import Modal from 'react-bootstrap/Modal'
+import {StockModal} from "./StockModal";
+import {StockTable} from "./StockTable";
 
 /**
  * Clone an object recursively. Subsequent changes to the original will not be changed in the clone and vice versa.
@@ -37,159 +33,6 @@ function deepAssign(key, obj, value) {
     obj[accessor] = value;
 
     return obj;
-}
-
-function MyVerticallyCenteredModal(props) {
-    const rowData = props.rowData || [];
-    const [showModal, setShowModal] = React.useState(false);
-    const [newData, setNewData] = React.useState({});
-
-    React.useEffect(() => {
-        setShowModal(props.show);
-    }, [props.show])
-
-    const close = () => {
-        setShowModal(false);
-        props.close();
-        setNewData({});
-    };
-
-    const save = () => {
-        for (const [accessor, {value}] of Object.entries(newData)) {
-            props.updateMyData(props.rowId, accessor, value);
-        }
-
-        props.persist(props.rowId, newData);
-
-        close();
-    };
-
-    const merged = {
-        ...Object.fromEntries(rowData
-            .filter(({value}) => value)
-            .map(({column: {Header: name, id: accessor}, value}) => [accessor, {name, value}])),
-        ...newData
-    };
-
-    return (
-        <Modal
-            show={showModal}
-            onHide={close}
-            backdrop="static"
-            keyboard={false}
-            size="lg"
-            aria-labelledby="contained-modal-title-vcenter"
-            centered
-        >
-            <Modal.Header closeButton>
-                <Modal.Title id="contained-modal-title-vcenter">
-                    Produkt bearbeiten
-                </Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-                <form>
-                    <table>
-                        <tbody>
-                        {Object.entries(merged)
-                            .map(([accessor, {name, value}]) => <tr key={accessor}>
-                                <td>
-                                    <label>{name}:</label>
-                                </td>
-                                <td>
-                                    <input
-                                        name={name}
-                                        value={value}
-                                        onChange={function ({target: {value}}) {
-                                            const changed = {};
-                                            changed[accessor] = {name, value};
-                                            return setNewData(prev => ({...prev, ...changed}));
-                                        }}/>
-                                </td>
-                            </tr>)}
-                        </tbody>
-                    </table>
-                </form>
-            </Modal.Body>
-            {props.children}
-            <Modal.Footer>
-                <Button onClick={close}>Änderungen verwerfen</Button>
-                <Button onClick={save}>Änderungen übernehmen</Button>
-            </Modal.Footer>
-        </Modal>
-    );
-}
-
-function Table({columns, data, updateMyData, skipPageReset, dispatchModal}) {
-    const {
-        getTableProps,
-        getTableBodyProps,
-        headerGroups,
-        rows,
-        prepareRow,
-        state: {expanded},
-    } = useTable(
-        {
-            columns,
-            data,
-            // show produkte as sub rows
-            getSubRows: row => row.produkte,
-            // use the skipPageReset option to disable page resetting temporarily
-            autoResetPage: !skipPageReset,
-            // useExpanded resets the expanded state of all rows when data changes
-            autoResetExpanded: !skipPageReset,
-            // updateMyData isn't part of the API, but
-            // anything we put into these options will
-            // automatically be available on the instance.
-            // That way we can call this function from our
-            // cell renderer!
-            updateMyData,
-        },
-        useExpanded
-    )
-
-    return (
-        <BTable striped bordered hover size="sm" {...getTableProps()}>
-            <thead>
-            {headerGroups.map(headerGroup => (
-                <tr {...headerGroup.getHeaderGroupProps()}>
-                    {headerGroup.headers.map(column => (
-                        <th {...column.getHeaderProps()}>
-                            {column.render('Header')}
-                        </th>
-                    ))}
-                </tr>
-            ))}
-            </thead>
-            <tbody  {...getTableBodyProps()}>
-            {rows.map(row => {
-                prepareRow(row)
-                return (
-                    <tr {...row.getRowProps()}>
-                        {
-                            // canExpand is true for the kategorie header row
-                            // make the kategorie name span multiple columns for these rows
-                            (row.canExpand ? row.cells.slice(0, 2) : row.cells)
-                                .map((cell, i) => {
-                                    const props = cell.getCellProps();
-                                    if (i === 1 && row.canExpand) {
-                                        props.colSpan = row.cells.length - 1;
-                                        props.style = {...props.style, fontWeight: "bold"};
-                                    } else if (i !== 0) {
-                                        props.onClick = () => dispatchModal("OPEN", cell, row);
-                                        props.style = {...props.style, cursor: "pointer"};
-                                    }
-                                    return (
-                                        <td {...props}>
-                                            {cell.render('Cell')}
-                                        </td>
-                                    )
-                                })}
-                    </tr>
-                )
-            })}
-            </tbody>
-        </BTable>
-    )
 }
 
 export function Stock() {
@@ -362,21 +205,21 @@ export function Stock() {
     return (
         <div>
             <div style={{overflowX: "auto", width: "100%"}}>
-                <Table columns={columns}
-                       data={data}
-                       updateMyData={updateMyData}
-                       skipPageReset={skipPageReset}
-                       dispatchModal={dispatchModal}/>
+                <StockTable
+                    columns={columns}
+                    data={data}
+                    updateMyData={updateMyData}
+                    skipPageReset={skipPageReset}
+                    dispatchModal={dispatchModal}/>
             </div>
 
-            <MyVerticallyCenteredModal
+            <StockModal
                 show={modalState.show}
                 close={() => dispatchModal("CLOSE")}
                 updateMyData={updateMyData}
                 persist={persistProdukt}
                 rowId={modalState.rowId}
-                rowData={modalState.rowData}>
-            </MyVerticallyCenteredModal>
+                rowData={modalState.rowData}/>
         </div>
     )
 }

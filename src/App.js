@@ -8,7 +8,7 @@ import {BrowserRouter as Router, Link, Route, Switch} from "react-router-dom";
 import {ProvideAuth} from "./auth/ProvideAuth";
 import {AuthButton} from "./auth/AuthButton";
 import {PrivateRoute} from "./auth/PrivateRoute";
-import {Stock} from "./Stock";
+import {Stock} from "./stock/Stock";
 import {LoginPage} from "./auth/LoginPage";
 
 export default function App() {

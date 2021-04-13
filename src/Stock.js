@@ -3,12 +3,41 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 import BTable from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
-import Row from 'react-bootstrap/Row'
 
 import {useExpanded, useTable} from 'react-table';
 import Modal from 'react-bootstrap/Modal'
 
+/**
+ * Clone an object recursively. Subsequent changes to the original will not be changed in the clone and vice versa.
+ * Does not support functions and object cycles (among other things) because it relies on JSON (de)-serialization.
+ *
+ * @param o original object
+ * @returns {any} cloned object
+ */
 const deepClone = o => JSON.parse(JSON.stringify(o));
+
+/**
+ * Assign a value to a key in the target object.
+ * Key can be a combination of multiple object keys separated by dots.
+ *
+ * For example: `merge("a.b.c", {a:{b:{c:false}}}, true)` returns `{a:{b:{c:true}}}`.
+ *
+ * @param {string} key
+ * @param {{}} obj
+ * @param {*} value
+ * @returns {{}} obj
+ */
+function deepAssign(key, obj, value) {
+    const accessors = key.split('.');
+    const accessor = accessors.pop();
+    for (const accessor of accessors) {
+        obj = obj[accessor];
+    }
+
+    obj[accessor] = value;
+
+    return obj;
+}
 
 function MyVerticallyCenteredModal(props) {
     const rowData = props.rowData || [];
@@ -29,6 +58,8 @@ function MyVerticallyCenteredModal(props) {
         for (const [accessor, {value}] of Object.entries(newData)) {
             props.updateMyData(props.rowId, accessor, value);
         }
+
+        props.persist(props.rowId, newData);
 
         close();
     };
@@ -246,19 +277,30 @@ export function Stock() {
                 }
 
                 // walk the old data object using the accessor of the table columns
-                const accessors = columnId.split('.');
-                const accessor = accessors.pop();
-                let obj = old[kategorieId].produkte[produktId];
-                for (const accessor of accessors) {
-                    obj = obj[accessor];
-                }
-
-                obj[accessor] = value;
+                deepAssign(columnId, old[kategorieId].produkte[produktId], value);
 
                 return deepClone(old);
             }
         )
     }
+
+    const persistProdukt = (rowId, patch) => {
+        const [kategorieId, _, produktId] = rowId.split('').map(parseInt);
+        const {produkte, id: kategorie} = data[kategorieId];
+        const produkt = produkte[produktId];
+        const changedData = {...deepClone(produkt), kategorie};
+        for (const [accessor, {value}] of Object.entries(patch)) {
+            deepAssign(accessor, changedData, value);
+        }
+
+        fetch("https://foodcoops-backend.herokuapp.com/produkt/" + produkt.id,{
+            method:"PUT",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(changedData),
+        })
+    };
 
     // After data chagnes, we turn the flag back off
     // so that if data actually changes when we're not
@@ -266,10 +308,6 @@ export function Stock() {
     React.useEffect(() => {
         setSkipPageReset(false)
     }, [data]);
-
-    const save = () => {
-        console.table(data);
-    };
 
     const modalReducer = (state, action) => {
         const {
@@ -323,9 +361,6 @@ export function Stock() {
 
     return (
         <div>
-            <Row style={{margin: 0, padding: "0.5em", paddingTop: "1em", paddingBottom: "1em"}}>
-                <Button onClick={save}>save</Button>
-            </Row>
             <div style={{overflowX: "auto", width: "100%"}}>
                 <Table columns={columns}
                        data={data}
@@ -338,6 +373,7 @@ export function Stock() {
                 show={modalState.show}
                 close={() => dispatchModal("CLOSE")}
                 updateMyData={updateMyData}
+                persist={persistProdukt}
                 rowId={modalState.rowId}
                 rowData={modalState.rowData}>
             </MyVerticallyCenteredModal>

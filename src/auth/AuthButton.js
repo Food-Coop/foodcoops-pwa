@@ -2,7 +2,7 @@ import React from 'react';
 import {useKeycloak} from "@react-keycloak/web";
 
 export const AuthButton = () => {
-    const [keycloak] = useKeycloak();
+    const {keycloak} = useKeycloak();
 
     return (
         <ul>

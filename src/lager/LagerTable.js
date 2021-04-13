@@ -2,7 +2,7 @@ import {useExpanded, useTable} from "react-table";
 import BTable from "react-bootstrap/Table";
 import React from "react";
 
-export function StockTable({columns, data, updateMyData, skipPageReset, dispatchModal}) {
+export function LagerTable({columns, data, updateMyData, skipPageReset, dispatchModal}) {
     const {
         getTableProps,
         getTableBodyProps,

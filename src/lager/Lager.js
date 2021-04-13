@@ -1,7 +1,7 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {StockModal} from "./StockModal";
-import {StockTable} from "./StockTable";
+import {LagerModal} from "./LagerModal";
+import {LagerTable} from "./LagerTable";
 
 /**
  * Clone an object recursively. Subsequent changes to the original will not be changed in the clone and vice versa.
@@ -35,7 +35,7 @@ function deepAssign(key, obj, value) {
     return obj;
 }
 
-export function Stock() {
+export function Lager() {
     const columns = React.useMemo(
         () => [
             {
@@ -205,7 +205,7 @@ export function Stock() {
     return (
         <div>
             <div style={{overflowX: "auto", width: "100%"}}>
-                <StockTable
+                <LagerTable
                     columns={columns}
                     data={data}
                     updateMyData={updateMyData}
@@ -213,7 +213,7 @@ export function Stock() {
                     dispatchModal={dispatchModal}/>
             </div>
 
-            <StockModal
+            <LagerModal
                 show={modalState.show}
                 close={() => dispatchModal("CLOSE")}
                 updateMyData={updateMyData}

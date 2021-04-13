@@ -2,7 +2,7 @@ import React from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 
-export function StockModal(props) {
+export function LagerModal(props) {
     const rowData = props.rowData || [];
     const [showModal, setShowModal] = React.useState(false);
     const [newData, setNewData] = React.useState({});

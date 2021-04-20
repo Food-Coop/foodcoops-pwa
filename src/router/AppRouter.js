@@ -4,8 +4,8 @@ import logo from "../logo.svg";
 import {BrowserRouter as Router, Link, Route, Switch} from "react-router-dom";
 import {AuthButton} from "../auth/AuthButton";
 import {About} from "../About";
+import {Lager} from "../lager/Lager";
 import {PrivateRoute} from "../auth/PrivateRoute";
-import {Stock} from "../Stock";
 import {Home} from "../Home";
 
 export const AppRouter = () => {
@@ -17,15 +17,15 @@ export const AppRouter = () => {
                 <Link to="/">
                     Food Coops
                 </Link>
-                <Link to={"/stock"}>
-                    Stock management
+                <Link to={"/lager"}>
+                    Lager management
                 </Link>
                 <AuthButton/>
             </nav>
             <Switch>
                 <Route exact path="/login" component={AuthButton}/>
                 <Route exact path="/about" component={About}/>
-                <PrivateRoute roles={["Einkäufer"]} path="/stock" component={Stock}/>
+                <PrivateRoute roles={["Einkäufer"]} path="/lager" component={Lager}/>
                 <Route path="/" component={Home}/>
             </Switch>
             <footer>

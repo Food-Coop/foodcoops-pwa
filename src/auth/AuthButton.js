@@ -1,23 +1,25 @@
-import React, {useContext} from "react";
-import {AuthContext} from "./Constants";
-import {useHistory} from "react-router-dom";
+import React from 'react';
+import {useKeycloak} from "@react-keycloak/web";
 
-export function AuthButton() {
-    let history = useHistory();
-    let auth = useContext(AuthContext);
+export const AuthButton = () => {
+    const {keycloak} = useKeycloak();
 
-    return auth?.user ? (
-        <p>
-            Welcome!{" "}
-            <button
-                onClick={() => {
-                    auth.signout(() => history.push("/"));
-                }}
-            >
-                Sign out
-            </button>
-        </p>
-    ) : (
-        <p>You are not logged in.</p>
-    );
+    return (
+        <ul>
+            <li><a href="/">Home Page </a></li>
+
+            {keycloak && !keycloak.authenticated &&
+            <li><a className="btn-link" onClick={() => keycloak.login()}>Login</a></li>
+            }
+
+            {keycloak && keycloak.authenticated &&
+            <li>
+                <a className="btn-link" onClick={() => keycloak.logout()}>Logout ({
+                    keycloak.tokenParsed.preferred_username
+                })</a>
+            </li>
+            }
+
+        </ul>
+    )
 }

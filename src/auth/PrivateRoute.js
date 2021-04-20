@@ -1,24 +1,29 @@
-import React, {useContext} from "react";
+import React from "react";
 import {Redirect, Route} from "react-router-dom";
-import {AuthContext} from "./Constants";
+import {useKeycloak} from "@react-keycloak/web";
 
-export function PrivateRoute({children, ...rest}) {
-    let auth = useContext(AuthContext);
+export function PrivateRoute({component: Component, roles, ...rest}) {
+    const {keycloak} = useKeycloak();
+
+    const isAutherized = (roles) => {
+        if (keycloak && roles) {
+            return roles.some(r => {
+                const realm = keycloak.hasRealmRole(r);
+                const resource = keycloak.hasResourceRole(r);
+                return realm || resource;
+            });
+        }
+        return false;
+    }
+
     return (
         <Route
             {...rest}
-            render={({location}) =>
-                auth?.user ? (
-                    children
-                ) : (
-                    <Redirect
-                        to={{
-                            pathname: "/login",
-                            state: {from: location}
-                        }}
-                    />
-                )
-            }
+            render={props => {
+                return isAutherized(roles)
+                    ? <Component {...props} />
+                    : <Redirect to={{pathname: '/',}}/>
+            }}
         />
-    );
+    )
 }

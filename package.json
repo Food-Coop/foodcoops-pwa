@@ -3,11 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@react-keycloak/web": "^3.4.0",
     "@testing-library/jest-dom": "^5.11.9",
     "@testing-library/react": "^11.2.5",
     "@testing-library/user-event": "^12.6.3",
     "bootstrap": "^4.6.0",
     "chokidar": "^3.5.1",
+    "keycloak-js": "^12.0.4",
     "namor": "^2.0.2",
     "react": "^17.0.1",
     "react-bootstrap": "^1.5.0",

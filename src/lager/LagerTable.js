@@ -49,8 +49,8 @@ export function LagerTable({columns, data, updateMyData, skipPageReset, dispatch
                 return (
                     <tr {...row.getRowProps()}>
                         {
-                            // canExpand is true for the kategorie header row
-                            // make the kategorie name span multiple columns for these rows
+                            // canExpand is true for the kategorien header row
+                            // make the kategorien name span multiple columns for these rows
                             (row.canExpand ? row.cells.slice(0, 2) : row.cells)
                                 .map((cell, i) => {
                                     const props = cell.getCellProps();

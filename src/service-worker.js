@@ -71,9 +71,9 @@ self.addEventListener('message', (event) => {
 
 // Any other custom service worker logic can go here.
 
-const cacheName = '0.0.0';
+const cacheName = process.env.REACT_APP_VERSION;
 const contentToCache = [
-    'https://foodcoops-backend.herokuapp.com/kategorie'
+    'https://foodcoops-backend.herokuapp.com/kategorien'
 ];
 
 // Installing Service Worker

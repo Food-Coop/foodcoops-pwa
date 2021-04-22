@@ -59,9 +59,9 @@ export function LagerTable({columns, data, updateMyData, skipPageReset, dispatch
                                     if (i === 1 && row.canExpand) {
                                         props.colSpan = row.cells.length - 1;
                                         props.style = {...props.style, fontWeight: "bold", cursor: "pointer"};
-                                        props.onClick = () => dispatchModal(EditKategorieModal, cell, row);
+                                        props.onClick = () => dispatchModal("EditKategorieModal", cell, row);
                                     } else if (i !== 0) {
-                                        props.onClick = () => dispatchModal(EditProduktModal, cell, row);
+                                        props.onClick = () => dispatchModal("EditProduktModal", cell, row);
                                         props.style = {...props.style, cursor: "pointer"};
                                     }
                                     return (

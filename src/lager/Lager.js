@@ -204,13 +204,13 @@ export function Lager() {
 
         let state = {};
         switch (type) {
-            case EditProduktModal:
+            case "EditProduktModal":
                 state = {
                     rowData: values,
                     rowId
                 }
                 break;
-            case EditKategorieModal:
+            case "EditKategorieModal":
                 let [rowData] = values.filter(({column}) => column.id === "name");
                 state = {
                     value: rowData.value,
@@ -244,7 +244,7 @@ export function Lager() {
             </div>
 
             <EditProduktModal
-                show={modal.type === EditProduktModal}
+                show={modal.type === "EditProduktModal"}
                 close={() => dispatchModal(null)}
                 updateMyData={updateMyData}
                 persist={persistProdukt}
@@ -252,7 +252,7 @@ export function Lager() {
                 rowData={modal.state.rowData}/>
 
             <EditKategorieModal
-                show={modal.type === EditKategorieModal}
+                show={modal.type === "EditKategorieModal"}
                 close={() => dispatchModal(null)}
                 updateMyData={updateMyData}
                 persist={persistKategorie}

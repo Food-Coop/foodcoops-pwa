@@ -166,7 +166,7 @@ export function Lager() {
 
         }
 
-        let state = null;
+        let state = {};
         switch (type) {
             case EditProduktModal:
                 state = {
@@ -188,22 +188,6 @@ export function Lager() {
         );
     }
 
-    function switchModal({type, state}) {
-        switch (type) {
-            case EditProduktModal:
-                return (
-                    <EditProduktModal
-                        close={() => dispatchModal(null)}
-                        updateMyData={updateMyData}
-                        persist={persistProdukt}
-                        rowId={state.rowId}
-                        rowData={state.rowData}/>
-                )
-            default:
-                return
-        }
-    }
-
     return (
         <div>
             <div style={{overflowX: "auto", width: "100%"}}>
@@ -215,7 +199,13 @@ export function Lager() {
                     dispatchModal={dispatchModal}/>
             </div>
 
-            {switchModal(modal)}
+            <EditProduktModal
+                show={modal.type === EditProduktModal}
+                close={() => dispatchModal(null)}
+                updateMyData={updateMyData}
+                persist={persistProdukt}
+                rowId={modal.state.rowId}
+                rowData={modal.state.rowData}/>
         </div>
     )
 }

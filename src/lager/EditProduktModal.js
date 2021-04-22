@@ -4,7 +4,6 @@ import Button from "react-bootstrap/Button";
 import {LagerModal} from "./LagerModal";
 
 export function EditProduktModal(props) {
-    console.log(props);
     const rowData = props.rowData || [];
     const [newData, setNewData] = React.useState({});
 
@@ -59,7 +58,7 @@ export function EditProduktModal(props) {
             title={title}
             body={body}
             footer={footer}
-            show={true}
+            show={props.show}
             hide={close}
             parentProps={props}
         />

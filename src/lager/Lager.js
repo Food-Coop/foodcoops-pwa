@@ -170,6 +170,12 @@ export function Lager() {
             const kategorie = old[kategorieId];
             const length = kategorie.produkte.length;
             if (length === 0) {
+                    fetch("https://foodcoops-backend.herokuapp.com/kategorien/" + kategorie.id,{
+                        method:"DELETE",
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    }).then(console.log, console.log);
                     old.splice(kategorieId, 1);
                     return deepClone(old);
                 }

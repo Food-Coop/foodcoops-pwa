@@ -136,7 +136,7 @@ export function Lager() {
             deepAssign(accessor, changedData, value);
         }
 
-        fetch("https://foodcoops-backend.herokuapp.com/produkt/" + produkt.id,{
+        fetch("https://foodcoops-backend.herokuapp.com/produkte/" + produkt.id,{
             method:"PUT",
             headers: {
                 'Content-Type': 'application/json',

@@ -1,6 +1,7 @@
 import {useExpanded, useTable} from "react-table";
 import BTable from "react-bootstrap/Table";
 import React from "react";
+import {EditProduktModal} from "./EditProduktModal";
 
 export function LagerTable({columns, data, updateMyData, skipPageReset, dispatchModal}) {
     const {
@@ -58,7 +59,7 @@ export function LagerTable({columns, data, updateMyData, skipPageReset, dispatch
                                         props.colSpan = row.cells.length - 1;
                                         props.style = {...props.style, fontWeight: "bold"};
                                     } else if (i !== 0) {
-                                        props.onClick = () => dispatchModal("OPEN", cell, row);
+                                        props.onClick = () => dispatchModal(EditProduktModal, cell, row);
                                         props.style = {...props.style, cursor: "pointer"};
                                     }
                                     return (

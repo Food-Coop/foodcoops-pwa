@@ -1,7 +1,7 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {LagerModal} from "./LagerModal";
 import {LagerTable} from "./LagerTable";
+import {EditProduktModal} from "./EditProduktModal";
 
 /**
  * Clone an object recursively. Subsequent changes to the original will not be changed in the clone and vice versa.
@@ -152,30 +152,37 @@ export function Lager() {
         setSkipPageReset(false)
     }, [data]);
 
+    const [modal, setModal] = React.useState({type:null, state:{}});
+
     const modalReducer = (state, action) => {
         const {
             type,
             extra: [columnId, rowId],
             values: rowData
         } = action;
-        switch (action.type) {
-            case "OPEN":
+        switch (type) {
+            case EditProduktModal:
                 return {
                     rowData,
-                    rowId,
-                    show: true
+                    rowId
                 }
-            case "CLOSE":
-                return {
-                    show: false
-                }
-
+            // case EditKategorieModal:
+            //     return {
+            //         rowData,
+            //         rowId,
+            //         show: EditProduktModal
+            //     }
+            default:
+                return {}
         }
     }
 
-    const [modalState, modalDispatch] = React.useReducer(modalReducer, {
-        show: false
-    });
+
+
+    const modalDispatch = (obj)=> {
+        const state = modalReducer({}, obj);
+        setModal({type: obj.type,state: state})
+    };
 
     const dispatchModal = (type, cell, row) => {
         let extra = [undefined, undefined];
@@ -202,6 +209,22 @@ export function Lager() {
         );
     }
 
+    function switchModal({type, state}) {
+        switch (type) {
+            case EditProduktModal:
+                return (
+                    <EditProduktModal
+                        close={() => dispatchModal(null)}
+                        updateMyData={updateMyData}
+                        persist={persistProdukt}
+                        rowId={state.rowId}
+                        rowData={state.rowData}/>
+                )
+            default:
+                return
+        }
+    }
+
     return (
         <div>
             <div style={{overflowX: "auto", width: "100%"}}>
@@ -213,13 +236,7 @@ export function Lager() {
                     dispatchModal={dispatchModal}/>
             </div>
 
-            <LagerModal
-                show={modalState.show}
-                close={() => dispatchModal("CLOSE")}
-                updateMyData={updateMyData}
-                persist={persistProdukt}
-                rowId={modalState.rowId}
-                rowData={modalState.rowData}/>
+            {switchModal(modal)}
         </div>
     )
 }

@@ -2,6 +2,7 @@ import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {LagerTable} from "./LagerTable";
 import {EditProduktModal} from "./EditProduktModal";
+import {EditKategorieModal} from "./EditKategorieModal";
 
 /**
  * Clone an object recursively. Subsequent changes to the original will not be changed in the clone and vice versa.
@@ -116,7 +117,8 @@ export function Lager() {
         setData(old => {
                 const [kategorieId, _, produktId] = rowId.split('').map(parseInt);
                 if (produktId === undefined) {
-                    return old;
+                    deepAssign(columnId, old[kategorieId], value);
+                    return deepClone(old);
                 }
 
                 // walk the old data object using the accessor of the table columns
@@ -143,6 +145,40 @@ export function Lager() {
             },
             body: JSON.stringify(changedData),
         })
+    };
+
+    const persistKategorie = (rowId, patch) => {
+        const [kategorieId, _, produktId] = rowId.split('').map(parseInt);
+        const kategorie = data[kategorieId];
+
+        const {name} = patch;
+        if (name) {
+            fetch("https://foodcoops-backend.herokuapp.com/kategorien/" + kategorie.id,{
+                method:"PUT",
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({name}),
+            })
+        }
+    };
+
+    const deleteKategorie = (rowId) => {
+        // setSkipPageReset(true)
+        setData(old => {
+                const [kategorieId, _, produktId] = rowId.split('').map(parseInt);
+            const kategorie = old[kategorieId];
+            const length = kategorie.produkte.length;
+            if (length === 0) {
+                    old.splice(kategorieId, 1);
+                    return deepClone(old);
+                }
+
+                console.log(`unable to delete: kategorie ${kategorieId} (${kategorie.name}) has ${length} produkte`);
+
+                return old;
+            }
+        )
     };
 
     // After data chagnes, we turn the flag back off
@@ -173,6 +209,14 @@ export function Lager() {
                     rowData: values,
                     rowId
                 }
+                break;
+            case EditKategorieModal:
+                let [rowData] = values.filter(({column}) => column.id === "name");
+                state = {
+                    value: rowData.value,
+                    rowId
+                }
+                break;
         }
 
         setModal({
@@ -206,6 +250,14 @@ export function Lager() {
                 persist={persistProdukt}
                 rowId={modal.state.rowId}
                 rowData={modal.state.rowData}/>
+
+            <EditKategorieModal
+                show={modal.type === EditKategorieModal}
+                close={() => dispatchModal(null)}
+                updateMyData={updateMyData}
+                persist={persistKategorie}
+                deleteKategorie={deleteKategorie}
+                {...modal.state} />
         </div>
     )
 }

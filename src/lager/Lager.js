@@ -152,52 +152,31 @@ export function Lager() {
         setSkipPageReset(false)
     }, [data]);
 
-    const [modal, setModal] = React.useState({type:null, state:{}});
-
-    const modalReducer = (state, action) => {
-        const {
-            type,
-            extra: [columnId, rowId],
-            values: rowData
-        } = action;
-        switch (type) {
-            case EditProduktModal:
-                return {
-                    rowData,
-                    rowId
-                }
-            // case EditKategorieModal:
-            //     return {
-            //         rowData,
-            //         rowId,
-            //         show: EditProduktModal
-            //     }
-            default:
-                return {}
-        }
-    }
-
-
-
-    const modalDispatch = (obj)=> {
-        const state = modalReducer({}, obj);
-        setModal({type: obj.type,state: state})
-    };
+    const [modal, setModal] = React.useState({type: null, state: {}});
 
     const dispatchModal = (type, cell, row) => {
-        let extra = [undefined, undefined];
+        let columnId = undefined;
+        let rowId = undefined;
         let values = undefined;
         try {
-            extra = [cell.column.id, row.id];
+            columnId = cell.column.id
+            rowId = row.id;
             values = row.cells;
         } catch (e) {
 
         }
 
-        modalDispatch({
-            type,
-            extra,
-            values
+        let state = null;
+        switch (type) {
+            case EditProduktModal:
+                state = {
+                    rowData: values,
+                    rowId
+                }
+        }
+
+        setModal({
+            type, state
         })
     }
 

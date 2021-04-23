@@ -22,6 +22,11 @@ export function EditProduktModal(props) {
         close();
     };
 
+    const remove = () => {
+        props.deleteProdukt(props.rowId);
+        close();
+    };
+
     const merged = {
         ...Object.fromEntries(rowData
             .filter(({value}) => value)
@@ -49,6 +54,7 @@ export function EditProduktModal(props) {
         </tr>);
 
     const footer = <>
+        <Button variant="danger" onClick={remove}>Produkt löschen</Button>
         <Button onClick={close}>Änderungen verwerfen</Button>
         <Button onClick={save}>Änderungen übernehmen</Button>
     </>;

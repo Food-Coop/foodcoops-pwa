@@ -154,25 +154,38 @@ export function Lager() {
         }
     };
 
-    const deleteKategorie = (rowId) => {
-        // setSkipPageReset(true)
+    /**
+     * Deletes the item on a given row
+     */
+    const deleteKategorieOrProdukt = (rowId) => {
         setData(old => {
                 const [kategorieId, _, produktId] = rowId.split('').map(parseInt);
-            const kategorie = old[kategorieId];
-            const length = kategorie.produkte.length;
-            if (length === 0) {
-                    api.deleteKategorie(kategorie.id)
-                        .then(console.log, console.log);
-                    old.splice(kategorieId, 1);
-                    return deepClone(old);
+                const kategorie = old[kategorieId];
+
+                // no produkt id: row identifies a kategorie => delete the kategorie
+                if (produktId === undefined) {
+                    const length = kategorie.produkte.length;
+                    if (length === 0) {
+                        api.deleteKategorie(kategorie.id)
+                            .then(console.log, console.log);
+                        old.splice(kategorieId, 1);
+                        return deepClone(old);
+                    }
+
+                    console.log(`unable to delete: kategorie ${kategorieId} (${kategorie.name}) has ${length} produkte`);
                 }
 
-                console.log(`unable to delete: kategorie ${kategorieId} (${kategorie.name}) has ${length} produkte`);
+
+                // otherwise delete the produkt
+                const [produkt] = kategorie.produkte.splice(produktId, 1);
+                console.log(produkt);
+                api.deleteProdukt(produkt.id)
+                    .then(console.log, console.log);
 
                 return old;
             }
         )
-    };
+    }
 
     // After data chagnes, we turn the flag back off
     // so that if data actually changes when we're not
@@ -241,6 +254,7 @@ export function Lager() {
                 close={() => dispatchModal(null)}
                 updateMyData={updateMyData}
                 persist={persistProdukt}
+                deleteProdukt={deleteKategorieOrProdukt}
                 rowId={modal.state.rowId}
                 rowData={modal.state.rowData}/>
 
@@ -249,7 +263,7 @@ export function Lager() {
                 close={() => dispatchModal(null)}
                 updateMyData={updateMyData}
                 persist={persistKategorie}
-                deleteKategorie={deleteKategorie}
+                deleteKategorie={deleteKategorieOrProdukt}
                 {...modal.state} />
         </div>
     )

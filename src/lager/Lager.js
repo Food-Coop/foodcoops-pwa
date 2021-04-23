@@ -3,6 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import {LagerTable} from "./LagerTable";
 import {EditProduktModal} from "./EditProduktModal";
 import {EditKategorieModal} from "./EditKategorieModal";
+import { useApi } from './ApiService';
 
 /**
  * Clone an object recursively. Subsequent changes to the original will not be changed in the clone and vice versa.
@@ -96,10 +97,12 @@ export function Lager() {
     const [originalData, setOriginalData] = React.useState(data)
     const [skipPageReset, setSkipPageReset] = React.useState(false)
 
+    const api = useApi();
+
     // TODO: use something like https://github.com/rally25rs/react-use-timeout#useinterval or https://react-table.tanstack.com/docs/faq#how-can-i-use-the-table-state-to-fetch-new-data to update the data
     React.useEffect(
         () =>
-            fetch("https://foodcoops-backend.herokuapp.com/kategorien")
+            api.readKategorie()
                 .then((r) => r.json())
                 .then((r) => {
                         setOriginalData(deepClone(r));
@@ -138,13 +141,7 @@ export function Lager() {
             deepAssign(accessor, changedData, value);
         }
 
-        fetch("https://foodcoops-backend.herokuapp.com/produkte/" + produkt.id,{
-            method:"PUT",
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(changedData),
-        })
+        api.updateProdukt(produkt.id, changedData);
     };
 
     const persistKategorie = (rowId, patch) => {
@@ -153,13 +150,7 @@ export function Lager() {
 
         const {name} = patch;
         if (name) {
-            fetch("https://foodcoops-backend.herokuapp.com/kategorien/" + kategorie.id,{
-                method:"PUT",
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({name}),
-            })
+            api.updateKategorie(kategorie.id, name);
         }
     };
 
@@ -170,12 +161,8 @@ export function Lager() {
             const kategorie = old[kategorieId];
             const length = kategorie.produkte.length;
             if (length === 0) {
-                    fetch("https://foodcoops-backend.herokuapp.com/kategorien/" + kategorie.id,{
-                        method:"DELETE",
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                    }).then(console.log, console.log);
+                    api.deleteKategorie(kategorie.id)
+                        .then(console.log, console.log);
                     old.splice(kategorieId, 1);
                     return deepClone(old);
                 }

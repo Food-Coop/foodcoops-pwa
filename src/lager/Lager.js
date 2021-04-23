@@ -1,5 +1,7 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Button from 'react-bootstrap/Button';
+import Row from 'react-bootstrap/Row'
 import {LagerTable} from "./LagerTable";
 import {EditProduktModal} from "./EditProduktModal";
 import {EditKategorieModal} from "./EditKategorieModal";
@@ -178,7 +180,6 @@ export function Lager() {
 
                 // otherwise delete the produkt
                 const [produkt] = kategorie.produkte.splice(produktId, 1);
-                console.log(produkt);
                 api.deleteProdukt(produkt.id)
                     .then(console.log, console.log);
 
@@ -186,6 +187,9 @@ export function Lager() {
             }
         )
     }
+
+    const newKategorie = () => { console.log("new kategorie") };
+    const newProdukt = () => { console.log("new produkt") };
 
     // After data chagnes, we turn the flag back off
     // so that if data actually changes when we're not
@@ -240,6 +244,10 @@ export function Lager() {
 
     return (
         <div>
+            <Row style={{margin: "1rem"}}>
+                <Button style={{margin:"0.25rem"}} variant="success" onClick={newKategorie}>neue Kategorie erstellen</Button>
+                <Button style={{margin:"0.25rem"}} variant="success" onClick={newProdukt}>neues Produkt erstellen</Button>
+            </Row>
             <div style={{overflowX: "auto", width: "100%"}}>
                 <LagerTable
                     columns={columns}

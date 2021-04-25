@@ -29,7 +29,7 @@ export function EditProduktModal(props) {
 
     const merged = {
         ...Object.fromEntries(rowData
-            .filter(({value}) => value)
+            .slice(1)
             .map(({column: {Header: name, id: accessor}, value}) => [accessor, {name, value}])),
         ...newData
     };

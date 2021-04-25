@@ -168,6 +168,7 @@ export function Lager() {
         (async function () {
             const response = await api.createKategorie(name, icon);
             if(response.ok) {
+                setSkipPageReset(true);
                 const newKategorie = await response.json();
                 setData(old => deepClone([...old, newKategorie]));
             }
@@ -184,6 +185,7 @@ export function Lager() {
             if(response.ok) {
                 const newProdukt = await response.json();
                 setData(old => {
+                    setSkipPageReset(true);
                     const kategorie = old.find(k => data1.kategorie === k.id);
                     kategorie.produkte.push(newProdukt);
                     return deepClone(old);

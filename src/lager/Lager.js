@@ -5,7 +5,7 @@ import Row from 'react-bootstrap/Row'
 import {LagerTable} from "./LagerTable";
 import {EditProduktModal} from "./EditProduktModal";
 import {EditKategorieModal} from "./EditKategorieModal";
-import { useApi } from './ApiService';
+import {useApi} from './ApiService';
 
 /**
  * Clone an object recursively. Subsequent changes to the original will not be changed in the clone and vice versa.
@@ -160,32 +160,37 @@ export function Lager() {
      * Deletes the item on a given row
      */
     const deleteKategorieOrProdukt = (rowId) => {
-        setData(old => {
-                const [kategorieId, _, produktId] = rowId.split('').map(parseInt);
-                const kategorie = old[kategorieId];
+        const old = data;
+        const [kategorieId, _, produktId] = rowId.split('').map(parseInt);
+        const kategorie = old[kategorieId];
 
-                // no produkt id: row identifies a kategorie => delete the kategorie
-                if (produktId === undefined) {
-                    const length = kategorie.produkte.length;
-                    if (length === 0) {
-                        api.deleteKategorie(kategorie.id)
-                            .then(console.log, console.log);
+        // no produkt id: row identifies a kategorie => delete the kategorie
+        if (produktId === undefined) {
+            api.deleteKategorie(kategorie.id)
+                .then(r => {
+                    if (r.ok) {
                         old.splice(kategorieId, 1);
-                        return deepClone(old);
+                        setSkipPageReset(true);
+                        setData(deepClone(old));
+                    } else {
+                        r.text().then(text => console.log(`unable to delete: ${text}`));
                     }
+                }, console.log);
 
-                    console.log(`unable to delete: kategorie ${kategorieId} (${kategorie.name}) has ${length} produkte`);
+            return;
+        }
+
+        // otherwise delete the produkt
+        api.deleteProdukt(kategorie.produkte[produktId].id)
+            .then(r => {
+                if (r.ok) {
+                    const [produkt] = kategorie.produkte.splice(produktId, 1);
+                    setSkipPageReset(true);
+                    setData(deepClone(old));
+                } else {
+                    r.text().then(text => console.log(`unable to delete: ${text}`));
                 }
-
-
-                // otherwise delete the produkt
-                const [produkt] = kategorie.produkte.splice(produktId, 1);
-                api.deleteProdukt(produkt.id)
-                    .then(console.log, console.log);
-
-                return old;
-            }
-        )
+            }, console.log);
     }
 
     const newKategorie = () => { console.log("new kategorie") };

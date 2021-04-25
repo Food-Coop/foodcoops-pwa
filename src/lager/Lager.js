@@ -176,10 +176,6 @@ export function Lager() {
     };
     const newProdukt = (data1) => {
         (async function () {
-            // FIXME: default to the first kategorie until selecting a kategorie is possible
-            const firstKategorie = data[0] || {};
-            data1.kategorie = firstKategorie.id;
-
             const response = await api.createProdukt(data1);
             if(response.ok) {
                 const newProdukt = await response.json();
@@ -291,6 +287,7 @@ export function Lager() {
                 close={() => dispatchModal(null)}
                 create={newProdukt}
                 columns={columns}
+                kategorien={data.map(k => ({id: k.id, name: k.name}))}
                 {...modal.state} />
         </div>
     )

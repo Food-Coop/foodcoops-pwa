@@ -37,7 +37,7 @@ export function NewProduktModal(props) {
         }
 
         // FIXME: support setting icon and kategorie (see added TODO items)
-        const {icon, kategorie, ...supported} = result;
+        const {icon, ...supported} = result;
         props.create(supported);
         close();
     };
@@ -45,19 +45,26 @@ export function NewProduktModal(props) {
     const title = "Produkt erstellen";
 
     const mapper = ([accessor, {name, value}]) => {
+        const onChange = function ({target: {value}}) {
+            const changed = {};
+            changed[accessor] = {name, value};
+            return setNewData(prev => ({...prev, ...changed}));
+        };
         let edit = <input
                 name={name}
                 value={value}
-                onChange={function ({target: {value}}) {
-                    const changed = {};
-                    changed[accessor] = {name, value};
-                    return setNewData(prev => ({...prev, ...changed}));
-                }}/>;
+                onChange={onChange}/>;
 
         if (accessor === "icon") {
             edit = <p>TODO: https://github.com/UnderNotic/react-file-load</p>;
         } else if (accessor === "kategorie") {
-            edit = <p>TODO: https://github.com/Food-Coop/foodcoops-pwa/commit/0fabfd9953ffd08d4256c70a4a18856d60ae7dee</p>;
+            edit = (
+                <div>
+                    <select onChange={onChange}>
+                        {props.kategorien.map(({name, id}, i) => <option key={i} value={id}>{name}</option>)}
+                    </select>
+                </div>
+            );
         }
 
         return <tr key={accessor}>

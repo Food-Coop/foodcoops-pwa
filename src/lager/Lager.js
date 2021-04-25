@@ -187,7 +187,11 @@ export function Lager() {
                 setData(old => {
                     setSkipPageReset(true);
                     const kategorie = old.find(k => data1.kategorie === k.id);
-                    kategorie.produkte.push(newProdukt);
+
+                    // for some reason produkte are added twice, do not added it if it already exists
+                    if (kategorie.produkte.find(p => newProdukt.id === p.id) === undefined) {
+                        kategorie.produkte.push(newProdukt);
+                    }
                     return deepClone(old);
                 });
             }

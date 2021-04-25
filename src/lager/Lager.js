@@ -6,6 +6,8 @@ import {LagerTable} from "./LagerTable";
 import {EditProduktModal} from "./EditProduktModal";
 import {EditKategorieModal} from "./EditKategorieModal";
 import {useApi} from './ApiService';
+import {NewKategorieModal} from './NewKategorieModal';
+import {NewProduktModal} from './NewProduktModal';
 import {deepAssign, deepClone} from './util';
 
 export function Lager() {
@@ -162,8 +164,33 @@ export function Lager() {
             }, console.log);
     }
 
-    const newKategorie = () => { console.log("new kategorie") };
-    const newProdukt = () => { console.log("new produkt") };
+    const newKategorie = ({icon, name}) => {
+        (async function () {
+            const response = await api.createKategorie(name, icon);
+            if(response.ok) {
+                const newKategorie = await response.json();
+                setData(old => deepClone([...old, newKategorie]));
+            }
+        })();
+    };
+    const newProdukt = (data1) => {
+        (async function () {
+            // FIXME: default to the first kategorie until selecting a kategorie is possible
+            const firstKategorie = data[0] || {};
+            data1.kategorie = firstKategorie.id;
+            console.log(data1);
+
+            const response = await api.createProdukt(data1);
+            if(response.ok) {
+                const newProdukt = await response.json();
+                setData(old => {
+                    const kategorie = old.find(k => data1.kategorie === k.id);
+                    kategorie.produkte.push(newProdukt);
+                    return deepClone(old);
+                });
+            }
+        })();
+    };
 
     // After data chagnes, we turn the flag back off
     // so that if data actually changes when we're not
@@ -219,8 +246,8 @@ export function Lager() {
     return (
         <div>
             <Row style={{margin: "1rem"}}>
-                <Button style={{margin:"0.25rem"}} variant="success" onClick={newKategorie}>neue Kategorie erstellen</Button>
-                <Button style={{margin:"0.25rem"}} variant="success" onClick={newProdukt}>neues Produkt erstellen</Button>
+                <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("NewKategorieModal")}>neue Kategorie erstellen</Button>
+                <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("NewProduktModal")}>neues Produkt erstellen</Button>
             </Row>
             <div style={{overflowX: "auto", width: "100%"}}>
                 <LagerTable
@@ -246,6 +273,19 @@ export function Lager() {
                 updateMyData={updateMyData}
                 persist={persistKategorie}
                 deleteKategorie={deleteKategorieOrProdukt}
+                {...modal.state} />
+
+            <NewKategorieModal
+                show={modal.type === "NewKategorieModal"}
+                close={() => dispatchModal(null)}
+                create={newKategorie}
+                {...modal.state} />
+
+            <NewProduktModal
+                show={modal.type === "NewProduktModal"}
+                close={() => dispatchModal(null)}
+                create={newProdukt}
+                columns={columns}
                 {...modal.state} />
         </div>
     )

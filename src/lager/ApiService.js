@@ -52,7 +52,7 @@ const createProdukt = (data) =>
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify({...data, id: "undefined"}),
     });
 
 /**
@@ -95,7 +95,7 @@ const createKategorie = (name, icon) =>
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({name, icon}),
+        body: JSON.stringify({id: "", name, icon}),
     });
 
 /**

@@ -89,7 +89,7 @@ export function Lager() {
         // We also turn on the flag to not reset the page
         setSkipPageReset(true)
         setData(old => {
-                const [kategorieId, _, produktId] = rowId.split('').map(parseInt);
+                const [kategorieId, produktId] = rowId.split('.').map(e => parseInt(e));
                 if (produktId === undefined) {
                     deepAssign(columnId, old[kategorieId], value);
                     return deepClone(old);
@@ -104,7 +104,7 @@ export function Lager() {
     }
 
     const persistProdukt = (rowId, patch) => {
-        const [kategorieId, _, produktId] = rowId.split('').map(parseInt);
+        const [kategorieId, produktId] = rowId.split('.').map(e => parseInt(e));
         const {produkte, id: kategorie} = data[kategorieId];
         const produkt = produkte[produktId];
         const changedData = {...deepClone(produkt), kategorie};
@@ -116,7 +116,7 @@ export function Lager() {
     };
 
     const persistKategorie = (rowId, patch) => {
-        const [kategorieId, _, produktId] = rowId.split('').map(parseInt);
+        const [kategorieId, produktId] = rowId.split('.').map(e => parseInt(e));
         const kategorie = data[kategorieId];
 
         const {name} = patch;
@@ -130,7 +130,7 @@ export function Lager() {
      */
     const deleteKategorieOrProdukt = (rowId) => {
         const old = data;
-        const [kategorieId, _, produktId] = rowId.split('').map(parseInt);
+        const [kategorieId, produktId] = rowId.split('.').map(e => parseInt(e));
         const kategorie = old[kategorieId];
 
         // no produkt id: row identifies a kategorie => delete the kategorie

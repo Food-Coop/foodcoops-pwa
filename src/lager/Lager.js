@@ -179,7 +179,6 @@ export function Lager() {
             // FIXME: default to the first kategorie until selecting a kategorie is possible
             const firstKategorie = data[0] || {};
             data1.kategorie = firstKategorie.id;
-            console.log(data1);
 
             const response = await api.createProdukt(data1);
             if(response.ok) {

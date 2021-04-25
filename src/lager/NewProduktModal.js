@@ -6,8 +6,6 @@ import {deepAssign} from "./util";
 export function NewProduktModal(props) {
     const [newData, setNewData] = React.useState({});
 
-    console.log([...props.columns, {Header: "Kategorie", accessor: "kategorie"}]);
-
     const capitalize = word => word.replace(/^\w/, c => c.toUpperCase());
     const getName = (accessor, humanName) => typeof humanName === "string" ? humanName : capitalize(accessor);
 

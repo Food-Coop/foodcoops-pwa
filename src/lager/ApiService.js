@@ -13,7 +13,10 @@ export const ApiProvider = (props) => {
         createKategorie: props.createKategorie || createKategorie,
         readKategorie: props.readKategorie || readKategorie,
         deleteKategorie: props.deleteKategorie || deleteKategorie,
-        updateKategorie: props.updateKategorie || updateKategorie
+        updateKategorie: props.updateKategorie || updateKategorie,
+        createEinheit: props.createEinheit || createEinheit,
+        readEinheit: props.readEinheit || readEinheit,
+        deleteEinheit: props.deleteEinheit || deleteEinheit
     };
 
     return (
@@ -32,7 +35,10 @@ export const useApi = () => {
         createKategorie,
         readKategorie,
         deleteKategorie,
-        updateKategorie
+        updateKategorie,
+        createEinheit,
+        readEinheit,
+        deleteEinheit
     };
 
     // FIXME: Get services working correctly https://the-guild.dev/blog/injectable-services-in-react
@@ -42,6 +48,7 @@ export const useApi = () => {
 const BACKEND_URL = "https://foodcoops-backend.herokuapp.com/";
 const KATEGORIEN = "kategorien/";
 const PRODUKTE = "produkte/";
+const EINHEITEN = "einheiten/";
 
 /**
  * https://github.com/Food-Coop/foodcoops-backend#new-produkte
@@ -127,4 +134,36 @@ const updateKategorie = (id, name) =>
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({name}),
+    });
+
+/**
+ * https://github.com/Food-Coop/foodcoops-backend#get-all-einheiten
+ * https://github.com/Food-Coop/foodcoops-backend#get-one-einheiten
+ */
+const readEinheit = (id = undefined) => id ?
+    fetch(BACKEND_URL + EINHEITEN + id) :
+    fetch(BACKEND_URL + EINHEITEN);
+
+
+/**
+ * https://github.com/kingr89/Food-Coop-REST-Service#new-einheiten
+ */
+const createEinheit = (name) =>
+    fetch(BACKEND_URL + EINHEITEN, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({id: "", name}),
+    });
+
+/**
+ * https://github.com/kingr89/Food-Coop-REST-Service#delete-einheiten
+ */
+const deleteEinheit = (id) =>
+    fetch(BACKEND_URL + EINHEITEN + id, {
+        method: "DELETE",
+        headers: {
+            'Content-Type': 'application/json',
+        },
     });

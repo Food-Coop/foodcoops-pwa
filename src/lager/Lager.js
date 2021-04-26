@@ -67,6 +67,7 @@ export function Lager() {
     );
 
     const [data, setData] = React.useState(null);
+    const [einheiten, setEinheiten] = React.useState(null);
     const [originalData, setOriginalData] = React.useState(data)
     const [skipPageReset, setSkipPageReset] = React.useState(false)
 
@@ -74,14 +75,21 @@ export function Lager() {
 
     // TODO: use something like https://github.com/rally25rs/react-use-timeout#useinterval or https://react-table.tanstack.com/docs/faq#how-can-i-use-the-table-state-to-fetch-new-data to update the data
     React.useEffect(
-        () =>
+        () => {
             api.readKategorie()
                 .then((r) => r.json())
                 .then((r) => {
                         setOriginalData(deepClone(r));
                         setData(r._embedded.kategorieRepresentationList);
                     }
-                ), []
+                );
+            api.readEinheit()
+                .then(r => r.json())
+                .then(r => {
+                    console.log(r);
+                    setEinheiten(r._embedded.einheitList);
+                });
+        }, []
     )
 
     // When our cell renderer calls updateMyData, we'll use
@@ -288,6 +296,7 @@ export function Lager() {
                 create={newProdukt}
                 columns={columns}
                 kategorien={data.map(k => ({id: k.id, name: k.name}))}
+                einheiten={einheiten}
                 {...modal.state} />
         </div>
     )

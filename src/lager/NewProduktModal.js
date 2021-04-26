@@ -53,19 +53,30 @@ export function NewProduktModal(props) {
         let edit = <input
                 name={name}
                 value={value}
-                onChange={onChange}/>;
+                onChange={onChange}
+                style={{width: "100%"}}/>;
 
         if (accessor === "icon") {
             edit = <p>TODO: https://github.com/UnderNotic/react-file-load</p>;
         } else if (accessor === "kategorie") {
             edit = (
                 <div>
-                    <select onChange={onChange}>
+                    <select onChange={onChange} style={{width: "100%"}}>
                         {props.kategorien.map(({name, id}, i) => <option key={i} value={id}>{name}</option>)}
                     </select>
                 </div>
             );
+        } else if (accessor === "lagerbestand.einheit.name") {
+            edit = (
+                <div>
+                    <select onChange={onChange} style={{width: "100%"}}>
+                        {props.einheiten.map(({name, id}, i) => <option key={i} value={id}>{name}</option>)}
+                    </select>
+                </div>
+            );
         }
+
+        console.log(accessor);
 
         return <tr key={accessor}>
             <td>

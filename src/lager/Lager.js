@@ -294,6 +294,7 @@ export function Lager() {
                 updateMyData={updateMyData}
                 persist={persistProdukt}
                 deleteProdukt={deleteKategorieOrProdukt}
+                einheiten={einheiten}
                 rowId={modal.state.rowId}
                 rowData={modal.state.rowData}/>
 

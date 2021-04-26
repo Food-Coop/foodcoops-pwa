@@ -76,8 +76,6 @@ export function NewProduktModal(props) {
             );
         }
 
-        console.log(accessor);
-
         return <tr key={accessor}>
             <td>
                 <label style={{margin: 0}}>{name}:</label>

@@ -13,8 +13,21 @@ export function EditProduktModal(props) {
     };
 
     const save = () => {
+        let idVisited = false;
         for (const [accessor, {value}] of Object.entries(newData)) {
+            if (accessor === "lagerbestand.einheit.id") {
+                idVisited = true;
+                const find = props.einheiten.find(item => item.id === value);
+                props.updateMyData(props.rowId, "lagerbestand.einheit.name", find.name);
+                continue;
+            }
             props.updateMyData(props.rowId, accessor, value);
+        }
+
+        if (!idVisited) {
+            const find = props.einheiten[0];
+            props.updateMyData(props.rowId, "lagerbestand.einheit.name", find.name);
+            newData["lagerbestand.einheit.id"] = {name:"Id", value: find.id};
         }
 
         props.persist(props.rowId, newData);
@@ -36,8 +49,27 @@ export function EditProduktModal(props) {
 
     const title = "Produkt bearbeiten";
 
-    const body = Object.entries(merged)
-        .map(([accessor, {name, value}]) => <tr key={accessor}>
+    const mapper = ([accessor, {name, value}]) => {
+        if (accessor === "lagerbestand.einheit.name") {
+            const onChange = function ({target: {value}}) {
+                const changed = {};
+                changed["lagerbestand.einheit.id"] = {name, value};
+                return setNewData(prev => ({...prev, ...changed}));
+            };
+            return <tr key={accessor}>
+                <td>
+                    <label style={{margin: 0}}>{name}:</label>
+                </td>
+                <td>
+                    <div>
+                        <select onChange={onChange} style={{width: "100%"}}>
+                            {props.einheiten.map(({name, id}, i) => <option key={i} value={id}>{name}</option>)}
+                        </select>
+                    </div>
+                </td>
+            </tr>
+        }
+        return <tr key={accessor}>
             <td>
                 <label style={{margin: 0}}>{name}:</label>
             </td>
@@ -51,7 +83,11 @@ export function EditProduktModal(props) {
                         return setNewData(prev => ({...prev, ...changed}));
                     }}/>
             </td>
-        </tr>);
+        </tr>;
+    };
+    const body = Object.entries(merged)
+        .filter(([a, {}])=> a !== "lagerbestand.einheit.id")
+        .map(mapper);
 
     const footer = <>
         <Button variant="danger" onClick={remove}>Produkt löschen</Button>

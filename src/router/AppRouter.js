@@ -32,6 +32,10 @@ export const AppRouter = () => {
                 <Link to="/about">
                     Impressum - Legal Disclaimer
                 </Link>
+                &nbsp; - &nbsp;
+                <a href="https://icons8.com/">
+                    Icons provided by icons8
+                </a>
             </footer>
         </Router>
     )

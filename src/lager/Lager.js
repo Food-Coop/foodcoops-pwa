@@ -1,39 +1,15 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {LagerModal} from "./LagerModal";
+import Button from 'react-bootstrap/Button';
+import Row from 'react-bootstrap/Row'
 import {LagerTable} from "./LagerTable";
-
-/**
- * Clone an object recursively. Subsequent changes to the original will not be changed in the clone and vice versa.
- * Does not support functions and object cycles (among other things) because it relies on JSON (de)-serialization.
- *
- * @param o original object
- * @returns {any} cloned object
- */
-const deepClone = o => JSON.parse(JSON.stringify(o));
-
-/**
- * Assign a value to a key in the target object.
- * Key can be a combination of multiple object keys separated by dots.
- *
- * For example: `merge("a.b.c", {a:{b:{c:false}}}, true)` returns `{a:{b:{c:true}}}`.
- *
- * @param {string} key
- * @param {{}} obj
- * @param {*} value
- * @returns {{}} obj
- */
-function deepAssign(key, obj, value) {
-    const accessors = key.split('.');
-    const accessor = accessors.pop();
-    for (const accessor of accessors) {
-        obj = obj[accessor];
-    }
-
-    obj[accessor] = value;
-
-    return obj;
-}
+import {EditProduktModal} from "./EditProduktModal";
+import {EditKategorieModal} from "./EditKategorieModal";
+import {useApi} from './ApiService';
+import {NewKategorieModal} from './NewKategorieModal';
+import {NewProduktModal} from './NewProduktModal';
+import {deepAssign, deepClone} from './util';
+import {EinheitenModal} from "./EinheitenModal";
 
 export function Lager() {
     const columns = React.useMemo(
@@ -92,19 +68,28 @@ export function Lager() {
     );
 
     const [data, setData] = React.useState(null);
+    const [einheiten, setEinheiten] = React.useState(null);
     const [originalData, setOriginalData] = React.useState(data)
     const [skipPageReset, setSkipPageReset] = React.useState(false)
 
+    const api = useApi();
+
     // TODO: use something like https://github.com/rally25rs/react-use-timeout#useinterval or https://react-table.tanstack.com/docs/faq#how-can-i-use-the-table-state-to-fetch-new-data to update the data
     React.useEffect(
-        () =>
-            fetch("https://foodcoops-backend.herokuapp.com/kategorien")
+        () => {
+            api.readKategorie()
                 .then((r) => r.json())
                 .then((r) => {
                         setOriginalData(deepClone(r));
                         setData(r._embedded.kategorieRepresentationList);
                     }
-                ), []
+                );
+            api.readEinheit()
+                .then(r => r.json())
+                .then(r => {
+                    setEinheiten(r._embedded.einheitList);
+                });
+        }, []
     )
 
     // When our cell renderer calls updateMyData, we'll use
@@ -114,9 +99,10 @@ export function Lager() {
         // We also turn on the flag to not reset the page
         setSkipPageReset(true)
         setData(old => {
-                const [kategorieId, _, produktId] = rowId.split('').map(parseInt);
+                const [kategorieId, produktId] = rowId.split('.').map(e => parseInt(e));
                 if (produktId === undefined) {
-                    return old;
+                    deepAssign(columnId, old[kategorieId], value);
+                    return deepClone(old);
                 }
 
                 // walk the old data object using the accessor of the table columns
@@ -128,7 +114,7 @@ export function Lager() {
     }
 
     const persistProdukt = (rowId, patch) => {
-        const [kategorieId, _, produktId] = rowId.split('').map(parseInt);
+        const [kategorieId, produktId] = rowId.split('.').map(e => parseInt(e));
         const {produkte, id: kategorie} = data[kategorieId];
         const produkt = produkte[produktId];
         const changedData = {...deepClone(produkt), kategorie};
@@ -136,13 +122,102 @@ export function Lager() {
             deepAssign(accessor, changedData, value);
         }
 
-        fetch("https://foodcoops-backend.herokuapp.com/produkte/" + produkt.id,{
-            method:"PUT",
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(changedData),
-        })
+        api.updateProdukt(produkt.id, changedData);
+    };
+
+    const persistKategorie = (rowId, patch) => {
+        const [kategorieId, produktId] = rowId.split('.').map(e => parseInt(e));
+        const kategorie = data[kategorieId];
+
+        const {name} = patch;
+        if (name) {
+            api.updateKategorie(kategorie.id, name);
+        }
+    };
+
+    /**
+     * Deletes the item on a given row
+     */
+    const deleteKategorieOrProdukt = (rowId) => {
+        const old = data;
+        const [kategorieId, produktId] = rowId.split('.').map(e => parseInt(e));
+        const kategorie = old[kategorieId];
+
+        // no produkt id: row identifies a kategorie => delete the kategorie
+        if (produktId === undefined) {
+            api.deleteKategorie(kategorie.id)
+                .then(r => {
+                    if (r.ok) {
+                        old.splice(kategorieId, 1);
+                        setSkipPageReset(true);
+                        setData(deepClone(old));
+                    } else {
+                        r.text().then(text => console.log(`unable to delete: ${text}`));
+                    }
+                }, console.log);
+
+            return;
+        }
+
+        // otherwise delete the produkt
+        api.deleteProdukt(kategorie.produkte[produktId].id)
+            .then(r => {
+                if (r.ok) {
+                    const [produkt] = kategorie.produkte.splice(produktId, 1);
+                    setSkipPageReset(true);
+                    setData(deepClone(old));
+                } else {
+                    r.text().then(text => console.log(`unable to delete: ${text}`));
+                }
+            }, console.log);
+    }
+
+    const newKategorie = ({icon, name}) => {
+        (async function () {
+            const response = await api.createKategorie(name, icon);
+            if(response.ok) {
+                setSkipPageReset(true);
+                const newKategorie = await response.json();
+                setData(old => deepClone([...old, newKategorie]));
+            }
+        })();
+    };
+    const newProdukt = (data1) => {
+        (async function () {
+            const response = await api.createProdukt(data1);
+            if(response.ok) {
+                const newProdukt = await response.json();
+                setData(old => {
+                    setSkipPageReset(true);
+                    const kategorie = old.find(k => data1.kategorie === k.id);
+
+                    // for some reason produkte are added twice, do not added it if it already exists
+                    if (kategorie.produkte.find(p => newProdukt.id === p.id) === undefined) {
+                        kategorie.produkte.push(newProdukt);
+                    }
+                    return deepClone(old);
+                });
+            }
+        })();
+    };
+
+    const newEinheit = ({name}) => {
+        (async function () {
+            const response = await api.createEinheit(name);
+            if(response.ok) {
+                const newEinheit = await response.json();
+                setEinheiten(old => [newEinheit, ...old]);
+            }
+        })();
+    };
+
+    const deleteEinheit = ({id}) => {
+        (async function () {
+            const response = await api.deleteEinheit(id);
+            if(response.ok) {
+                setEinheiten(old => old.filter(e => e.id !== id));
+            }
+        })();
     };
 
     // After data chagnes, we turn the flag back off
@@ -152,45 +227,39 @@ export function Lager() {
         setSkipPageReset(false)
     }, [data]);
 
-    const modalReducer = (state, action) => {
-        const {
-            type,
-            extra: [columnId, rowId],
-            values: rowData
-        } = action;
-        switch (action.type) {
-            case "OPEN":
-                return {
-                    rowData,
-                    rowId,
-                    show: true
-                }
-            case "CLOSE":
-                return {
-                    show: false
-                }
-
-        }
-    }
-
-    const [modalState, modalDispatch] = React.useReducer(modalReducer, {
-        show: false
-    });
+    const [modal, setModal] = React.useState({type: null, state: {}});
 
     const dispatchModal = (type, cell, row) => {
-        let extra = [undefined, undefined];
+        let columnId = undefined;
+        let rowId = undefined;
         let values = undefined;
         try {
-            extra = [cell.column.id, row.id];
+            columnId = cell.column.id
+            rowId = row.id;
             values = row.cells;
         } catch (e) {
 
         }
 
-        modalDispatch({
-            type,
-            extra,
-            values
+        let state = {};
+        switch (type) {
+            case "EditProduktModal":
+                state = {
+                    rowData: values,
+                    rowId
+                }
+                break;
+            case "EditKategorieModal":
+                let [rowData] = values.filter(({column}) => column.id === "name");
+                state = {
+                    value: rowData.value,
+                    rowId
+                }
+                break;
+        }
+
+        setModal({
+            type, state
         })
     }
 
@@ -204,6 +273,11 @@ export function Lager() {
 
     return (
         <div>
+            <Row style={{margin: "1rem"}}>
+                <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("NewKategorieModal")}>neue Kategorie erstellen</Button>
+                <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("NewProduktModal")}>neues Produkt erstellen</Button>
+                <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("EinheitenModal")}>Einheiten bearbeiten</Button>
+            </Row>
             <div style={{overflowX: "auto", width: "100%"}}>
                 <LagerTable
                     columns={columns}
@@ -213,13 +287,46 @@ export function Lager() {
                     dispatchModal={dispatchModal}/>
             </div>
 
-            <LagerModal
-                show={modalState.show}
-                close={() => dispatchModal("CLOSE")}
+            <EditProduktModal
+                show={modal.type === "EditProduktModal"}
+                close={() => dispatchModal(null)}
                 updateMyData={updateMyData}
                 persist={persistProdukt}
-                rowId={modalState.rowId}
-                rowData={modalState.rowData}/>
+                deleteProdukt={deleteKategorieOrProdukt}
+                einheiten={einheiten}
+                rowId={modal.state.rowId}
+                rowData={modal.state.rowData}/>
+
+            <EditKategorieModal
+                show={modal.type === "EditKategorieModal"}
+                close={() => dispatchModal(null)}
+                updateMyData={updateMyData}
+                persist={persistKategorie}
+                deleteKategorie={deleteKategorieOrProdukt}
+                {...modal.state} />
+
+            <NewKategorieModal
+                show={modal.type === "NewKategorieModal"}
+                close={() => dispatchModal(null)}
+                create={newKategorie}
+                {...modal.state} />
+
+            <NewProduktModal
+                show={modal.type === "NewProduktModal"}
+                close={() => dispatchModal(null)}
+                create={newProdukt}
+                columns={columns}
+                kategorien={data.map(k => ({id: k.id, name: k.name}))}
+                einheiten={einheiten}
+                {...modal.state} />
+
+            <EinheitenModal
+                show={modal.type === "EinheitenModal"}
+                close={() => dispatchModal(null)}
+                create={newEinheit}
+                remove={deleteEinheit}
+                einheiten={einheiten}
+                {...modal.state} />
         </div>
     )
 }

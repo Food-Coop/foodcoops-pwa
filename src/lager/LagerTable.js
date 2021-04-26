@@ -1,6 +1,8 @@
 import {useExpanded, useTable} from "react-table";
 import BTable from "react-bootstrap/Table";
 import React from "react";
+import {EditProduktModal} from "./EditProduktModal";
+import {EditKategorieModal} from "./EditKategorieModal";
 
 export function LagerTable({columns, data, updateMyData, skipPageReset, dispatchModal}) {
     const {
@@ -51,14 +53,15 @@ export function LagerTable({columns, data, updateMyData, skipPageReset, dispatch
                         {
                             // canExpand is true for the kategorien header row
                             // make the kategorien name span multiple columns for these rows
-                            (row.canExpand ? row.cells.slice(0, 2) : row.cells)
+                            (row.original.hasOwnProperty("produkte") ? row.cells.slice(0, 2) : row.cells)
                                 .map((cell, i) => {
                                     const props = cell.getCellProps();
-                                    if (i === 1 && row.canExpand) {
+                                    if (i === 1 && row.original.hasOwnProperty("produkte")) {
                                         props.colSpan = row.cells.length - 1;
-                                        props.style = {...props.style, fontWeight: "bold"};
+                                        props.style = {...props.style, fontWeight: "bold", cursor: "pointer"};
+                                        props.onClick = () => dispatchModal("EditKategorieModal", cell, row);
                                     } else if (i !== 0) {
-                                        props.onClick = () => dispatchModal("OPEN", cell, row);
+                                        props.onClick = () => dispatchModal("EditProduktModal", cell, row);
                                         props.style = {...props.style, cursor: "pointer"};
                                     }
                                     return (

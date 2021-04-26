@@ -10,11 +10,19 @@ export function EinheitenModal(props) {
 
     const merged = [...props.einheiten];
     const title = "Einheiten bearbeiten";
+    const style = {
+        fontSize: "large",
+        float: "right",
+        margin: "0",
+        cursor: "pointer",
+        width: "1.5em",
+        textAlign: "right"
+    };
 
     const body = <ListGroup as="ul">
         <ListGroup.Item key="input" as="li">
-            <input type="text"/>
-            <button onClick={e => {
+            <input style={{border: "0", background: "lightgray", borderRadius: "5px"}} type="text"/>
+            <p style={style} onClick={e => {
                 e.preventDefault();
                 const inputElement = e.target.previousElementSibling;
                 const name = inputElement.value;
@@ -22,19 +30,20 @@ export function EinheitenModal(props) {
                     props.create({name});
                     inputElement.value = "";
                 }
-            }}>Einheit hinzufügen</button>
+            }}>✓</p>
         </ListGroup.Item>
 
         {
             merged
-                .map(({id, name}, i) =>
-                    <ListGroup.Item key={i} as="li">
-                        {name}
-                        <button style={{float: "right", marginLeft: "1em"}} onClick={e => {
-                            e.preventDefault();
-                            props.remove({id, name});
-                        }}>Einheit löschen</button>
-                    </ListGroup.Item>
+                .map(({id, name}, i) => {
+                    return <ListGroup.Item key={i} as="li">
+                            {name}
+                            <p style={style} onClick={e => {
+                                e.preventDefault();
+                                props.remove({id, name});
+                            }}>×</p>
+                        </ListGroup.Item>;
+                    }
                 )
         }
     </ListGroup>;

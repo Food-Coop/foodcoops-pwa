@@ -154,7 +154,7 @@ const createEinheit = (name) =>
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({id: "", name}),
+        body: JSON.stringify({name}),
     });
 
 /**

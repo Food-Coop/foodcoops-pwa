@@ -9,6 +9,7 @@ import {useApi} from './ApiService';
 import {NewKategorieModal} from './NewKategorieModal';
 import {NewProduktModal} from './NewProduktModal';
 import {deepAssign, deepClone} from './util';
+import {EinheitenModal} from "./EinheitenModal";
 
 export function Lager() {
     const columns = React.useMemo(
@@ -201,6 +202,25 @@ export function Lager() {
         })();
     };
 
+    const newEinheit = ({name}) => {
+        (async function () {
+            const response = await api.createEinheit(name);
+            if(response.ok) {
+                const newEinheit = await response.json();
+                setEinheiten(old => [newEinheit, ...old]);
+            }
+        })();
+    };
+
+    const deleteEinheit = ({id}) => {
+        (async function () {
+            const response = await api.deleteEinheit(id);
+            if(response.ok) {
+                setEinheiten(old => old.filter(e => e.id !== id));
+            }
+        })();
+    };
+
     // After data chagnes, we turn the flag back off
     // so that if data actually changes when we're not
     // editing it, the page is reset
@@ -257,6 +277,7 @@ export function Lager() {
             <Row style={{margin: "1rem"}}>
                 <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("NewKategorieModal")}>neue Kategorie erstellen</Button>
                 <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("NewProduktModal")}>neues Produkt erstellen</Button>
+                <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("EinheitenModal")}>Einheiten bearbeiten</Button>
             </Row>
             <div style={{overflowX: "auto", width: "100%"}}>
                 <LagerTable
@@ -296,6 +317,14 @@ export function Lager() {
                 create={newProdukt}
                 columns={columns}
                 kategorien={data.map(k => ({id: k.id, name: k.name}))}
+                einheiten={einheiten}
+                {...modal.state} />
+
+            <EinheitenModal
+                show={modal.type === "EinheitenModal"}
+                close={() => dispatchModal(null)}
+                create={newEinheit}
+                remove={deleteEinheit}
                 einheiten={einheiten}
                 {...modal.state} />
         </div>

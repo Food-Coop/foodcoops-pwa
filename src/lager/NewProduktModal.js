@@ -29,11 +29,13 @@ export function NewProduktModal(props) {
             deepAssign(accessor, result, value);
         }
 
-        const isAnyLagerbestandChanged = Object.entries(result.lagerbestand)
-            .filter(([name, value]) => name === "einheit" ? result.lagerbestand.einheit.name !== "" : value !== "")
-            .length > 0;
-        if (!isAnyLagerbestandChanged) {
-            result.lagerbestand = {};
+        if (!result.lagerbestand?.einheit?.id) {
+            const find = props.einheiten[0];
+            deepAssign("lagerbestand.einheit.id", result, find.id);
+        }
+        if (!result.kategorie) {
+            const find = props.kategorien[0];
+            result.kategorie = find.id;
         }
 
         // FIXME: support setting icon and kategorie (see added TODO items)

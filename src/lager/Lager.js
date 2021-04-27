@@ -23,7 +23,7 @@ export function Lager() {
                 ),
                 accessor: 'icon',
                 Cell: ({cell, row}) => {
-                    return row.canExpand ? (
+                    return row.original.hasOwnProperty("produkte") ? (
                         <span
                             {...row.getToggleRowExpandedProps({
                                 style: {

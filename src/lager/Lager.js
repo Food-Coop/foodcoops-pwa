@@ -87,7 +87,7 @@ export function Lager() {
             api.readEinheit()
                 .then(r => r.json())
                 .then(r => {
-                    setEinheiten(r._embedded.einheitList);
+                    setEinheiten(r._embedded.einheitRepresentationList);
                 });
         }, []
     )

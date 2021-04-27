@@ -11,9 +11,9 @@ function defaultData(columns) {
     const convert = ({Header: humanName, accessor}) => [accessor, {name: getName(accessor, humanName), value: ""}];
     const initial = Object.fromEntries(tableColumns.map(convert));
 
-    initial["name"].value = "neues produkt";
-    initial["lagerbestand.istLagerbestand"].value = 0;
-    initial["lagerbestand.sollLagerbestand"].value = 0;
+    initial["name"].value = "Produktname";
+    initial["lagerbestand.istLagerbestand"].value = 0.0;
+    initial["lagerbestand.sollLagerbestand"].value = 0.0;
 
     return initial;
 }

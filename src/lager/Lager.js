@@ -274,9 +274,9 @@ export function Lager() {
     return (
         <div>
             <Row style={{margin: "1rem"}}>
-                <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("NewKategorieModal")}>neue Kategorie erstellen</Button>
-                <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("NewProduktModal")}>neues Produkt erstellen</Button>
-                <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("EinheitenModal")}>Einheiten bearbeiten</Button>
+                <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("NewKategorieModal")}>Kategorie erstellen</Button>
+                <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("NewProduktModal")}>Produkt erstellen</Button>
+                <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("EinheitenModal")}>Einheiten erstellen</Button>
             </Row>
             <div style={{overflowX: "auto", width: "100%"}}>
                 <LagerTable

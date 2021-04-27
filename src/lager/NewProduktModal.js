@@ -3,15 +3,26 @@ import Button from "react-bootstrap/Button";
 import {LagerModal} from "./LagerModal";
 import {deepAssign} from "./util";
 
-export function NewProduktModal(props) {
-    const [newData, setNewData] = React.useState({});
-
+function defaultData(columns) {
     const capitalize = word => word.replace(/^\w/, c => c.toUpperCase());
     const getName = (accessor, humanName) => typeof humanName === "string" ? humanName : capitalize(accessor);
 
+    const tableColumns = [...columns, {Header: "Kategorie", accessor: "kategorie"}];
+    const convert = ({Header: humanName, accessor}) => [accessor, {name: getName(accessor, humanName), value: ""}];
+    const initial = Object.fromEntries(tableColumns.map(convert));
+
+    initial["name"].value = "neues produkt";
+    initial["lagerbestand.istLagerbestand"].value = 0;
+    initial["lagerbestand.sollLagerbestand"].value = 0;
+
+    return initial;
+}
+
+export function NewProduktModal(props) {
+    const [newData, setNewData] = React.useState({});
+
     const initial = {
-        ...Object.fromEntries([...props.columns, {Header: "Kategorie", accessor: "kategorie"}]
-            .map(({Header: humanName, accessor}) => [accessor, {name: getName(accessor, humanName), value: ""}])),
+        ...defaultData(props.columns),
         ...newData
     };
 

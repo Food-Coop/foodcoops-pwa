@@ -67,8 +67,9 @@ export function Lager() {
         []
     );
 
-    const [data, setData] = React.useState(null);
-    const [einheiten, setEinheiten] = React.useState(null);
+    const [isLoading, setIsLoading] = React.useState(true);
+    const [data, setData] = React.useState([]);
+    const [einheiten, setEinheiten] = React.useState([]);
     const [originalData, setOriginalData] = React.useState(data)
     const [skipPageReset, setSkipPageReset] = React.useState(false)
 
@@ -81,13 +82,20 @@ export function Lager() {
                 .then((r) => r.json())
                 .then((r) => {
                         setOriginalData(deepClone(r));
-                        setData(r._embedded.kategorieRepresentationList);
+                        setData(old => {
+                            const n = r?._embedded?.kategorieRepresentationList;
+                            return n === undefined ? old : n;
+                        });
+                        setIsLoading(false);
                     }
                 );
             api.readEinheit()
                 .then(r => r.json())
                 .then(r => {
-                    setEinheiten(r._embedded.einheitRepresentationList);
+                    setEinheiten(old => {
+                        const n = r?._embedded?.einheitRepresentationList;
+                        return n === undefined ? old : n;
+                    });
                 });
         }, []
     )
@@ -263,11 +271,22 @@ export function Lager() {
         })
     }
 
-    if (data === null) {
+    const content = () => {
+        if (isLoading) {
+            return (
+                <div className="spinner-border" role="status" style={{margin: "5rem"}}>
+                    <span className="sr-only">Loading...</span>
+                </div>
+            );
+        }
+
         return (
-            <div className="spinner-border" role="status" style={{margin: "5rem"}}>
-                <span className="sr-only">Loading...</span>
-            </div>
+            <LagerTable
+                columns={columns}
+                data={data}
+                updateMyData={updateMyData}
+                skipPageReset={skipPageReset}
+                dispatchModal={dispatchModal}/>
         );
     }
 
@@ -279,12 +298,7 @@ export function Lager() {
                 <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("EinheitenModal")}>Einheiten erstellen</Button>
             </Row>
             <div style={{overflowX: "auto", width: "100%"}}>
-                <LagerTable
-                    columns={columns}
-                    data={data}
-                    updateMyData={updateMyData}
-                    skipPageReset={skipPageReset}
-                    dispatchModal={dispatchModal}/>
+                {content()}
             </div>
 
             <EditProduktModal

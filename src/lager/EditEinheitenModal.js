@@ -3,7 +3,7 @@ import Button from "react-bootstrap/Button";
 import {LagerModal} from "./LagerModal";
 import ListGroup from 'react-bootstrap/ListGroup'
 
-export function EinheitenModal(props) {
+export function EditEinheitenModal(props) {
     const close = () => {
         props.close();
     };

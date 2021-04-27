@@ -9,7 +9,7 @@ import {useApi} from './ApiService';
 import {NewKategorieModal} from './NewKategorieModal';
 import {NewProduktModal} from './NewProduktModal';
 import {deepAssign, deepClone} from './util';
-import {EinheitenModal} from "./EinheitenModal";
+import {EditEinheitenModal} from "./EditEinheitenModal";
 
 export function Lager() {
     const columns = React.useMemo(
@@ -320,7 +320,7 @@ export function Lager() {
                 einheiten={einheiten}
                 {...modal.state} />
 
-            <EinheitenModal
+            <EditEinheitenModal
                 show={modal.type === "EinheitenModal"}
                 close={() => dispatchModal(null)}
                 create={newEinheit}

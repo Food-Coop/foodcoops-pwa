@@ -20,17 +20,30 @@ export function EditEinheitenModal(props) {
         marginLeft: "1em"
     };
 
+    const submit = inputElement => {
+        const name = inputElement.value;
+        if (name) {
+            props.create({name});
+            inputElement.value = "";
+        }
+    };
+
+    // bug: it was possible to reload the page when pressing the enter key
+    // solution: submit the einheit value when pressing enter
+    const ignoreEnter = e => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            submit(e.target);
+        }
+    };
+
     const body = <ListGroup as="ul">
         <ListGroup.Item key="input" as="li">
-            <input style={{border: "0", background: "lightgray", borderRadius: "5px"}} type="text"/>
-            <img alt="delete" src="icons/icons8-checkmark-50.png" style={style} onClick={e => {
+            <input style={{border: "0", background: "lightgray", borderRadius: "5px"}} type="text" onKeyDown={ignoreEnter}/>
+            <img alt="delete" src="icons/icons8-checkmark-50.png" style={style} onClick={e=> {
                 e.preventDefault();
                 const inputElement = e.target.previousElementSibling;
-                const name = inputElement.value;
-                if (name) {
-                    props.create({name});
-                    inputElement.value = "";
-                }
+                submit(inputElement);
             }}/>
         </ListGroup.Item>
 

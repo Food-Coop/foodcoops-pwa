@@ -49,7 +49,14 @@ export function NewProduktModal(props) {
     const mapper = ([accessor, {name, value}]) => {
         const onChange = function ({target: {value}}) {
             const changed = {};
-            changed[accessor] = {name, value};
+
+            // edge case: dropdown value is the id of the einheit but accessor is the name of the einheit
+            if (accessor === "lagerbestand.einheit.name") {
+                changed["lagerbestand.einheit.id"] = {name, value};
+            } else {
+                changed[accessor] = {name, value};
+            }
+
             return setNewData(prev => ({...prev, ...changed}));
         };
         let edit = <input
@@ -87,7 +94,9 @@ export function NewProduktModal(props) {
             </td>
         </tr>;
     };
-    const body = Object.entries(initial).map(mapper);
+    const body = Object.entries(initial)
+        .filter(([a, {}])=> a !== "lagerbestand.einheit.id")
+        .map(mapper);
 
     const footer = <>
         <Button onClick={close}>Änderungen verwerfen</Button>

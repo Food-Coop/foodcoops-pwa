@@ -13,10 +13,10 @@ export const AppRouter = () => {
         <Router>
             <nav className="Header">
                 <img className="Header-logo" src="manifest-icon-512.png" alt="logo"/>
-                <Link to="/">
+                <Link style={{paddingRight: "1em"}} to="/">
                     Food Coops
                 </Link>
-                <Link to={"/lager"}>
+                <Link style={{paddingRight: "1em"}} to={"/lager"}>
                     Lager management
                 </Link>
                 <AuthButton/>

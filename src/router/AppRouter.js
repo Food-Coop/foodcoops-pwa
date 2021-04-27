@@ -1,6 +1,5 @@
 import React from "react";
 import {useKeycloak} from '@react-keycloak/web';
-import logo from "../logo.svg";
 import {BrowserRouter as Router, Link, Route, Switch} from "react-router-dom";
 import {AuthButton} from "../auth/AuthButton";
 import {About} from "../About";
@@ -13,7 +12,7 @@ export const AppRouter = () => {
     return (
         <Router>
             <nav className="Header">
-                <img className="Header-logo" src={logo} alt="logo"/>
+                <img className="Header-logo" src="manifest-icon-512.png" alt="logo"/>
                 <Link to="/">
                     Food Coops
                 </Link>

@@ -4,7 +4,7 @@ import "./App.css";
 export function Home() {
     return (
         <main className="App-header">
-            <img src={logo} className="App-logo" alt="logo"/>
+            <img src="manifest-icon-512.png" className="App-logo" alt="logo"/>
             <p>
                 Edit <code>src/App.js</code> and save to reload.
             </p>

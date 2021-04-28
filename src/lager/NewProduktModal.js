@@ -2,6 +2,7 @@ import React from "react";
 import Button from "react-bootstrap/Button";
 import {LagerModal} from "./LagerModal";
 import {deepAssign} from "./util";
+import {IconInput} from "./IconInput";
 
 function defaultData(columns) {
     const capitalize = word => word.replace(/^\w/, c => c.toUpperCase());
@@ -77,7 +78,13 @@ export function NewProduktModal(props) {
                 style={{width: "100%"}}/>;
 
         if (accessor === "icon") {
-            edit = <p>TODO: https://github.com/UnderNotic/react-file-load</p>;
+            // FIXME: icons are not supported by the API yet
+            return;
+            // noinspection UnreachableCodeJS
+            const setIcon = icon => setNewData(prev => ({...prev, icon}));
+            edit = <div>
+                <IconInput setIcon={setIcon}/>
+            </div>;
         } else if (accessor === "kategorie") {
             edit = (
                 <div>

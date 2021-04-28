@@ -2,6 +2,7 @@ import React from "react";
 import Button from "react-bootstrap/Button";
 import {LagerModal} from "./LagerModal";
 import {deepAssign} from "./util";
+import {IconInput} from "./IconInput";
 
 export function NewKategorieModal(props) {
     const {create} = props;
@@ -11,7 +12,6 @@ export function NewKategorieModal(props) {
     const initial = {
         name: {name: "Name", value: "Kategoriename"},
         icon: {name: "Icon", value: icon},
-        ...newData
     };
 
     const close = () => {
@@ -34,20 +34,35 @@ export function NewKategorieModal(props) {
 
     const title = "Kategorie erstellen";
 
-    const body = Object.entries(initial)
+    function item([accessor, {name, value}]) {
+        if (accessor === "icon") {
+            const setIcon = newIcon => setNewData(prev => ({...prev, icon: {value: newIcon}}));
+            return <div>
+                <IconInput setIcon={setIcon}/>
+            </div>;
+        }
+
+        return (
+            <input
+                style={{width: "100%"}}
+                name={name}
+                value={value}
+                onChange={function ({target: {value}}) {
+                    const changed = {};
+                    changed[accessor] = {name, value};
+                    return setNewData(prev => ({...prev, ...changed}));
+                }}/>
+        );
+    }
+
+    const body = Object.entries({...initial, ...newData})
+        .sort(([a], [b]) => a.localeCompare(b))
         .map(([accessor, {name, value}]) => <tr key={accessor}>
             <td>
                 <label style={{margin: 0}}>{name}:</label>
             </td>
             <td>
-                <input
-                    name={name}
-                    value={value}
-                    onChange={function ({target: {value}}) {
-                        const changed = {};
-                        changed[accessor] = {name, value};
-                        return setNewData(prev => ({...prev, ...changed}));
-                    }}/>
+                {item([accessor, {name, value}])}
             </td>
         </tr>);
 

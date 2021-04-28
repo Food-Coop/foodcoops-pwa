@@ -36,7 +36,7 @@ export function NewKategorieModal(props) {
 
     function item([accessor, {name, value}]) {
         if (accessor === "icon") {
-            const setIcon = newIcon => setNewData(prev => ({...prev, icon: {value: newIcon}}));
+            const setIcon = newIcon => setNewData(prev => ({...prev, icon: {name: "Icon", value: newIcon}}));
             return <div>
                 <IconInput setIcon={setIcon}/>
             </div>;

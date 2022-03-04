@@ -45,7 +45,8 @@ export const useApi = () => {
     // return useContext(ApiContext);
 };
 
-const BACKEND_URL = "https://foodcoops-backend.herokuapp.com/";
+//const BACKEND_URL = "https://foodcoops-backend.herokuapp.com/";
+const BACKEND_URL = "http://localhost:8080/";
 const KATEGORIEN = "kategorien/";
 const PRODUKTE = "produkte/";
 const EINHEITEN = "einheiten/";
@@ -61,6 +62,7 @@ const createProdukt = (data) =>
         },
         body: JSON.stringify({...data, id: "undefined"}),
     });
+
 
 /**
  * https://github.com/Food-Coop/foodcoops-backend#get-all-produkte
@@ -105,6 +107,10 @@ const createKategorie = (name, icon) =>
         body: JSON.stringify({id: "", name, icon}),
     });
 
+
+
+
+
 /**
  * https://github.com/Food-Coop/foodcoops-backend#get-all-kategorien
  * https://github.com/Food-Coop/foodcoops-backend#get-one-kategorien
@@ -112,6 +118,7 @@ const createKategorie = (name, icon) =>
 const readKategorie = (id = undefined) => id ?
     fetch(BACKEND_URL + KATEGORIEN + id) :
     fetch(BACKEND_URL + KATEGORIEN);
+    alert ("readkat");
 
 /**
  * https://github.com/Food-Coop/foodcoops-backend#delete-kategorien

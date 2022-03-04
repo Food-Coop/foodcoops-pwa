@@ -212,6 +212,7 @@ export function Lager() {
     const newEinheit = ({name}) => {
         (async function () {
             const response = await api.createEinheit(name);
+            alert(response);
             if(response.ok) {
                 const newEinheit = await response.json();
                 setEinheiten(old => [newEinheit, ...old]);
@@ -279,7 +280,7 @@ export function Lager() {
                 </div>
             );
         }
-
+        console.log("data entries" + Object.values(data)[1]);
         return (
             <LagerTable
                 columns={columns}

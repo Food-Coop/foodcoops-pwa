@@ -118,7 +118,7 @@ const createKategorie = (name, icon) =>
 const readKategorie = (id = undefined) => id ?
     fetch(BACKEND_URL + KATEGORIEN + id) :
     fetch(BACKEND_URL + KATEGORIEN);
-    alert ("readkat");
+    //alert ("readkat");
 
 /**
  * https://github.com/Food-Coop/foodcoops-backend#delete-kategorien

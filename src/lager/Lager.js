@@ -12,6 +12,10 @@ import {deepAssign, deepClone} from './util';
 import {EditEinheitenModal} from "./EditEinheitenModal";
 
 export function Lager() {
+
+    /* Creates Columns,
+    first part selects image and displays it
+     */
     const columns = React.useMemo(
         () => [
             {
@@ -67,23 +71,24 @@ export function Lager() {
         []
     );
 
+    //states with their update function
     const [isLoading, setIsLoading] = React.useState(true);
     const [data, setData] = React.useState([]);
     const [einheiten, setEinheiten] = React.useState([]);
-    const [originalData, setOriginalData] = React.useState(data)
-    const [skipPageReset, setSkipPageReset] = React.useState(false)
+    const [kategorien, setKategorien] = React.useState([]);
+    const [skipPageReset, setSkipPageReset] = React.useState(false);
 
     const api = useApi();
 
     // TODO: use something like https://github.com/rally25rs/react-use-timeout#useinterval or https://react-table.tanstack.com/docs/faq#how-can-i-use-the-table-state-to-fetch-new-data to update the data
     React.useEffect(
         () => {
-            api.readKategorie()
+            api.readProdukt()
                 .then((r) => r.json())
                 .then((r) => {
-                        setOriginalData(deepClone(r));
                         setData(old => {
-                            const n = r?._embedded?.kategorieRepresentationList;
+                            const n = r?._embedded?.produktRepresentationList;
+                            console.log(JSON.stringify(n));
                             return n === undefined ? old : n;
                         });
                         setIsLoading(false);
@@ -97,9 +102,18 @@ export function Lager() {
                         return n === undefined ? old : n;
                     });
                 });
+            api.readKategorie()
+                .then(r => r.json())
+                .then(r => {
+                    setKategorien(old => {
+                        const n = r?._embedded?.kategorieRepresentationList;
+                        return n === undefined ? old : n;
+                    });
+                });
         }, []
     )
 
+    //alert(typeof(kategorien));
     // When our cell renderer calls updateMyData, we'll use
     // the rowIndex, columnId and new value to update the
     // original data
@@ -143,31 +157,34 @@ export function Lager() {
         }
     };
 
+    const newKategorie = ({icon, name}) => {
+        (async function () {
+            const response = await api.createKategorie(name, icon);
+            //alert(JSON.stringify(response));
+            if(response.ok) {
+                setSkipPageReset(true);
+                const newKategorie = await response.json();
+                setKategorien(old => [newKategorie, ...old]);
+            }
+        })();
+    };
+
+    const deleteKategorie = ({id}) => {
+        (async function () {
+            const response = await api.deleteKategorie(id);
+            if(response.ok) {
+                setKategorien(old => old.filter(e => e.id !== id));
+            }
+        })();
+    };
+
     /**
      * Deletes the item on a given row
      */
-    const deleteKategorieOrProdukt = (rowId) => {
+    const deleteProdukt = (rowId) => {
         const old = data;
         const [kategorieId, produktId] = rowId.split('.').map(e => parseInt(e));
         const kategorie = old[kategorieId];
-
-        // no produkt id: row identifies a kategorie => delete the kategorie
-        if (produktId === undefined) {
-            api.deleteKategorie(kategorie.id)
-                .then(r => {
-                    if (r.ok) {
-                        old.splice(kategorieId, 1);
-                        setSkipPageReset(true);
-                        setData(deepClone(old));
-                    } else {
-                        r.text().then(text => console.log(`unable to delete: ${text}`));
-                    }
-                }, console.log);
-
-            return;
-        }
-
-        // otherwise delete the produkt
         api.deleteProdukt(kategorie.produkte[produktId].id)
             .then(r => {
                 if (r.ok) {
@@ -180,16 +197,7 @@ export function Lager() {
             }, console.log);
     }
 
-    const newKategorie = ({icon, name}) => {
-        (async function () {
-            const response = await api.createKategorie(name, icon);
-            if(response.ok) {
-                setSkipPageReset(true);
-                const newKategorie = await response.json();
-                setData(old => deepClone([...old, newKategorie]));
-            }
-        })();
-    };
+
     const newProdukt = (data1) => {
         (async function () {
             const response = await api.createProdukt(data1);
@@ -197,13 +205,7 @@ export function Lager() {
                 const newProdukt = await response.json();
                 setData(old => {
                     setSkipPageReset(true);
-                    const kategorie = old.find(k => data1.kategorie === k.id);
-
-                    // for some reason produkte are added twice, do not added it if it already exists
-                    if (kategorie.produkte.find(p => newProdukt.id === p.id) === undefined) {
-                        kategorie.produkte.push(newProdukt);
-                    }
-                    return deepClone(old);
+                    setData(old => deepClone([...old, newProdukt]));
                 });
             }
         })();
@@ -212,7 +214,7 @@ export function Lager() {
     const newEinheit = ({name}) => {
         (async function () {
             const response = await api.createEinheit(name);
-            alert(response);
+            //alert(response);
             if(response.ok) {
                 const newEinheit = await response.json();
                 setEinheiten(old => [newEinheit, ...old]);
@@ -308,7 +310,7 @@ export function Lager() {
                 close={() => dispatchModal(null)}
                 updateMyData={updateMyData}
                 persist={persistProdukt}
-                deleteProdukt={deleteKategorieOrProdukt}
+                deleteProdukt={deleteProdukt}
                 einheiten={einheiten}
                 rowId={modal.state.rowId}
                 rowData={modal.state.rowData}/>
@@ -318,7 +320,7 @@ export function Lager() {
                 close={() => dispatchModal(null)}
                 updateMyData={updateMyData}
                 persist={persistKategorie}
-                deleteKategorie={deleteKategorieOrProdukt}
+                deleteKategorie={deleteKategorie}
                 {...modal.state} />
 
             <NewKategorieModal
@@ -332,7 +334,7 @@ export function Lager() {
                 close={() => dispatchModal(null)}
                 create={newProdukt}
                 columns={columns}
-                kategorien={data.map(k => ({id: k.id, name: k.name}))}
+                kategorien={kategorien}
                 einheiten={einheiten}
                 {...modal.state} />
 

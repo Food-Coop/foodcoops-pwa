@@ -1,9 +1,9 @@
 import Keycloak from "keycloak-js";
 
 const keycloakConfig = {
-    url: "https://foodcoops-keycloak.herokuapp.com/auth",
+    url: "http://localhost:9090/",
     realm: "foodcoop",
-    clientId: "foodcoop-pwa"
+    clientId: "foodcoop-test"
 }
 
 export const keycloak = new Keycloak(keycloakConfig);

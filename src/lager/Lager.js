@@ -201,12 +201,13 @@ export function Lager() {
     const newProdukt = (data1) => {
         (async function () {
             const response = await api.createProdukt(data1);
+            let ms = Date.now();
+            console.log("create new p: " + ms + "ms");
+            console.log("Response" + response);
             if(response.ok) {
                 const newProdukt = await response.json();
-                setData(old => {
                     setSkipPageReset(true);
                     setData(old => deepClone([...old, newProdukt]));
-                });
             }
         })();
     };
@@ -282,7 +283,7 @@ export function Lager() {
                 </div>
             );
         }
-        console.log("data entries" + Object.values(data)[1]);
+        //console.log("data entries" + Object.values(data)[1]);
         return (
             <LagerTable
                 columns={columns}

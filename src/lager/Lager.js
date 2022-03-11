@@ -88,7 +88,14 @@ export function Lager() {
                 .then((r) => {
                         setData(old => {
                             const n = r?._embedded?.produktRepresentationList;
-                            console.log(JSON.stringify(n));
+                            //sort representationlist alphabetically
+                            if (n !== undefined){
+                                n.sort((a, b) => {
+                                    if (a.name.toLowerCase() < b.name.toLowerCase()) return -1;
+                                    if (a.name.toLowerCase() > b.name.toLowerCase()) return 1;
+                                    return 0;
+                                });
+                            };
                             return n === undefined ? old : n;
                         });
                         setIsLoading(false);

@@ -4,6 +4,7 @@ import {BrowserRouter as Router, Link, Route, Switch} from "react-router-dom";
 import {AuthButton} from "../auth/AuthButton";
 import {About} from "../About";
 import {Lager} from "../lager/Lager";
+import {Bestellung} from "../bestellung/Bestellung";
 import {PrivateRoute} from "../auth/PrivateRoute";
 import {Home} from "../Home";
 
@@ -19,12 +20,16 @@ export const AppRouter = () => {
                 <Link style={{paddingRight: "1em"}} to={"/lager"}>
                     Lager management
                 </Link>
+                <Link style={{paddingRight: "1em"}} to={"/bestellung"}>
+                    Bestellung
+                </Link>
                 <AuthButton/>
             </nav>
             <Switch>
                 <Route exact path="/login" component={AuthButton}/>
                 <Route exact path="/about" component={About}/>
                 <PrivateRoute roles={["Einkäufer"]} path="/lager" component={Lager}/>
+                <PrivateRoute roles={["Mitglied"]} path="/bestellung" component={Bestellung}/>
                 <Route path="/" component={Home}/>
             </Switch>
             <footer>

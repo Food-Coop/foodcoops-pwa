@@ -1,5 +1,7 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Button from 'react-bootstrap/Button';
+import Row from 'react-bootstrap/Row'
 import {BestellungTable} from "./BestellungTable";
 import {deepAssign, deepClone} from '../lager/util'
 import {useApi} from './ApiService';
@@ -36,6 +38,7 @@ export function Bestellung(){
 
     const [isLoading, setIsLoading] = React.useState(true);
     const [data, setData] = React.useState([]);
+    const [einheiten, setEinheiten] = React.useState([]);
     const [modal, setModal] = React.useState({type: null, state: {}});
     const [skipPageReset, setSkipPageReset] = React.useState(false);
 
@@ -104,12 +107,17 @@ export function Bestellung(){
                     updateMyData={updateMyData}
                     skipPageReset={skipPageReset}
                     dispatchModal={dispatchModal}/>
+
+                
                 
             );
         }
 
     return(
         <div>
+            {/* <Row style={{margin: "1rem"}}>
+                <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("NewFrischBestellungModal")}>Neue Bestellung</Button>
+            </Row> */}
             <div style={{overflowX: "auto", width: "100%"}}>
                 {content()}
             </div>

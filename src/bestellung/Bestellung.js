@@ -32,13 +32,17 @@ export function Bestellung(){
             {
                 Header: 'Bestellmenge',
                 accessor: 'bestellmenge',
+                Cell: () => {
+                    return(
+                        <input type="text"></input>
+                    );
+                }
             },
         ]
     );
 
     const [isLoading, setIsLoading] = React.useState(true);
     const [data, setData] = React.useState([]);
-    const [einheiten, setEinheiten] = React.useState([]);
     const [modal, setModal] = React.useState({type: null, state: {}});
     const [skipPageReset, setSkipPageReset] = React.useState(false);
 
@@ -91,6 +95,12 @@ export function Bestellung(){
         )
     }
 
+    const submitBestellung = () => {
+        let values = {data}
+        let [rowData] = values.filter(({column}) => column.id === "bestellmenge ");
+        alert(rowData.value);
+    }
+
     const content = () => {
         if (isLoading) {
             return (
@@ -120,7 +130,9 @@ export function Bestellung(){
             </Row> */}
             <div style={{overflowX: "auto", width: "100%"}}>
                 {content()}
+                <Button style={{margin:"0.25rem"}} variant="success" onClick={() => submitBestellung()}>Submit Bestellung</Button>
             </div>
+
         </div>
     );
 }

@@ -5,6 +5,9 @@ import Row from 'react-bootstrap/Row'
 import {BestellungTable} from "./BestellungTable";
 import {deepAssign, deepClone} from '../lager/util'
 import {useApi} from './ApiService';
+import {useTable} from "react-table";
+
+
 
 export function Bestellung(){
     const columns = React.useMemo(
@@ -32,11 +35,6 @@ export function Bestellung(){
             {
                 Header: 'Bestellmenge',
                 accessor: 'bestellmenge',
-                Cell: () => {
-                    return(
-                        <input type="text"></input>
-                    );
-                }
             },
         ]
     );
@@ -45,6 +43,8 @@ export function Bestellung(){
     const [data, setData] = React.useState([]);
     const [modal, setModal] = React.useState({type: null, state: {}});
     const [skipPageReset, setSkipPageReset] = React.useState(false);
+
+
 
     const api = useApi();
 
@@ -96,10 +96,19 @@ export function Bestellung(){
     }
 
     const submitBestellung = () => {
-        let values = {data}
-        let [rowData] = values.filter(({column}) => column.id === "bestellmenge ");
-        alert(rowData.value);
+        // const result = {};
+        // for (const [accessor, {value}] of Object.entries(initial)) {
+        //     deepAssign(accessor, result, value);
+        // }
+        //console.log(getTableProps.rows);
+        console.log(document.getElementById("Inputfield0").value);
+        //Object.fromEntries(table)
+        // let values = {data}
+        // let [rowData] = values.filter(({column}) => column.id === "bestellmenge ");
+        // alert(rowData.value);
     }
+
+
 
     const content = () => {
         if (isLoading) {

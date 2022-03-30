@@ -30,6 +30,10 @@ export function BestellungTable({columns, data, updateMyData, skipPageReset, dis
         useExpanded
     )
 
+    const saveBestellung = () => {
+        console.log("saveBestellung");
+    }
+
     return (
         <BTable striped bordered hover size="sm" {...getTableProps()}>
             <thead>
@@ -54,11 +58,23 @@ export function BestellungTable({columns, data, updateMyData, skipPageReset, dis
                             (row.original.hasOwnProperty("produkte") ? row.cells.slice(0, 2) : row.cells)
                                 .map((cell, i) => {
                                     const props = cell.getCellProps();
-                                    return (
-                                        <td {...props}>
-                                            {cell.render('Cell')}
-                                        </td>
-                                    )
+                                    console.log(cell.column);
+                                    if(cell.column.Header == "Bestellmenge"){
+                                        //cell.getCellProps.
+                                        console.log("YEY");
+                                        console.log(row.index);
+                                        let id = "Inputfield" + row.index;
+                                        return(
+                                            <input type="text" id= {id} onBlur={saveBestellung}></input>
+                                        );
+                                    }
+                                    else{
+                                        return (
+                                            <td {...props}>
+                                                {cell.render('Cell')}
+                                            </td>
+                                        )
+                                    }
                                 })}
                     </tr>
                 )
@@ -66,4 +82,6 @@ export function BestellungTable({columns, data, updateMyData, skipPageReset, dis
             </tbody>
         </BTable>
     )
+
+
 }

@@ -63,7 +63,9 @@ export function LagerTable({columns, data, updateMyData, skipPageReset, dispatch
                                     } else if (i !== 0) {
                                         props.onClick = () => dispatchModal("EditProduktModal", cell, row);
                                         props.style = {...props.style, cursor: "pointer"};
+
                                     }
+
                                     return (
                                         <td {...props}>
                                             {cell.render('Cell')}

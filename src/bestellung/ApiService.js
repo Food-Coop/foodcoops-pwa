@@ -6,7 +6,8 @@ const ApiContext = createContext(null);
 
 export const ApiProvider = (props) => {
     const value = {
-        readFrischBestand: props.readFrischBestand || readFrischBestand
+        readFrischBestand: props.readFrischBestand || readFrischBestand,
+        createFrischBestellung: props.createFrischBestellung || createFrischBestellung
     };
 
     return (
@@ -19,12 +20,24 @@ export const ApiProvider = (props) => {
 export const useApi = () => {
     return {
         readFrischBestand,
+        createFrischBestellung,
     };
 };
 
 const BACKEND_URL = "http://localhost:8080/";
 const FRISCHBESTAND = "frischBestand/";
+const FRISCHBESTELLUNG =  "frischBestellung/";
 
-const readFrischBestand= (id = undefined) => id ?
+const readFrischBestand = (id = undefined) => id ?
     fetch(BACKEND_URL + FRISCHBESTAND + id) :
     fetch(BACKEND_URL + FRISCHBESTAND);
+
+const createFrischBestellung = (produkt, datum, menge) =>
+    {
+        fetch(BACKEND_URL + FRISCHBESTELLUNG, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({id: null, produkt, datum, menge}),
+    });}

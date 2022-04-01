@@ -9,6 +9,9 @@ import {useApi} from './ApiService';
 export function Bestellung(){
     const columns = React.useMemo(
         () => [
+            {   Header: 'ProduktID',
+                accessor: 'id'
+            },
             {
                 Header: 'Produkt',
                 accessor: 'name',
@@ -96,10 +99,31 @@ export function Bestellung(){
     }
 
     const submitBestellung = () => {
-        let values = {data}
-        let [rowData] = values.filter(({column}) => column.id === "bestellmenge ");
-        alert(rowData.value);
-    }
+        for(let i = 0; i < data.length; i++){
+            let produktId = "ProduktId" + i;
+            let frischBestandId = document.getElementById(produktId).innerText;
+            let datum = new Date();
+            let bestellId = "Inputfield" + i;
+            let bestellmenge = document.getElementById(bestellId).value;
+            //Check Bestellmenge valid
+            if(bestellmenge == ""){
+            }
+            else if(bestellmenge > 10){
+                let artikel = "ProduktName" + i;
+                let artikelname = document.getElementById(artikel).innerText;
+                if(window.confirm("Möchten Sie wirklich " + bestellmenge + " " + artikelname + " bestellen?")){
+                    api.createFrischBestellung(frischBestandId, datum, bestellmenge);
+                }
+                else{
+                    alert("Okay, dieses Produkt wird nicht bestellt. Alle anderen schon.");
+                }
+            }
+            else{
+                api.createFrischBestellung(frischBestandId, datum, bestellmenge);
+            }
+        }
+        alert("Ihre Bestellung wurde übermittelt. Vielen Dank!");
+    };
 
     const content = () => {
         if (isLoading) {
@@ -117,9 +141,6 @@ export function Bestellung(){
                     updateMyData={updateMyData}
                     skipPageReset={skipPageReset}
                     dispatchModal={dispatchModal}/>
-
-                
-                
             );
         }
 

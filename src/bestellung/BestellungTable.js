@@ -54,11 +54,35 @@ export function BestellungTable({columns, data, updateMyData, skipPageReset, dis
                             (row.original.hasOwnProperty("produkte") ? row.cells.slice(0, 2) : row.cells)
                                 .map((cell, i) => {
                                     const props = cell.getCellProps();
-                                    return (
-                                        <td {...props}>
-                                            {cell.render('Cell')}
-                                        </td>
-                                    )
+                                    if(cell.column.Header == "ProduktID"){
+                                        let id = "ProduktId" + row.index;
+                                        return(
+                                            <td{...props} id = {id}>
+                                                {cell.render('Cell')}
+                                            </td>
+                                        );
+                                    }
+                                    else if(cell.column.Header == "Produkt"){
+                                        let id = "ProduktName" + row.index;
+                                        return(
+                                            <td{...props} id = {id}>
+                                                {cell.render('Cell')}
+                                            </td>
+                                        );
+                                    }
+                                    else if(cell.column.Header == "Bestellmenge"){
+                                        let id = "Inputfield" + row.index;
+                                        return(
+                                            <input type="text" id={id}></input>
+                                        )
+                                    }
+                                    else{
+                                        return (
+                                            <td {...props}>
+                                                {cell.render('Cell')}
+                                            </td>
+                                        )
+                                    }
                                 })}
                     </tr>
                 )

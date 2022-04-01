@@ -5,6 +5,9 @@ import Row from 'react-bootstrap/Row'
 import {BestellungTable} from "./BestellungTable";
 import {deepAssign, deepClone} from '../lager/util'
 import {useApi} from './ApiService';
+import {useTable} from "react-table";
+
+
 
 export function Bestellung(){
     const columns = React.useMemo(
@@ -35,11 +38,6 @@ export function Bestellung(){
             {
                 Header: 'Bestellmenge',
                 accessor: 'bestellmenge',
-                Cell: () => {
-                    return(
-                        <input type="text"></input>
-                    );
-                }
             },
         ]
     );
@@ -48,6 +46,8 @@ export function Bestellung(){
     const [data, setData] = React.useState([]);
     const [modal, setModal] = React.useState({type: null, state: {}});
     const [skipPageReset, setSkipPageReset] = React.useState(false);
+
+
 
     const api = useApi();
 

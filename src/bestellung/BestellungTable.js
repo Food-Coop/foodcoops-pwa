@@ -30,6 +30,10 @@ export function BestellungTable({columns, data, updateMyData, skipPageReset, dis
         useExpanded
     )
 
+    const saveBestellung = () => {
+        console.log("saveBestellung");
+    }
+
     return (
         <BTable striped bordered hover size="sm" {...getTableProps()}>
             <thead>
@@ -90,4 +94,6 @@ export function BestellungTable({columns, data, updateMyData, skipPageReset, dis
             </tbody>
         </BTable>
     )
+
+
 }

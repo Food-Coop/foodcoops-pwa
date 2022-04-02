@@ -105,6 +105,7 @@ export function Bestellung(){
             let datum = new Date();
             let bestellId = "Inputfield" + i;
             let bestellmenge = document.getElementById(bestellId).value;
+            let personId = " 11589rqw-139e-466c-80e0-a1bcad7c9996";
             //Check Bestellmenge valid
             if(bestellmenge == ""){
             }
@@ -112,14 +113,14 @@ export function Bestellung(){
                 let artikel = "ProduktName" + i;
                 let artikelname = document.getElementById(artikel).innerText;
                 if(window.confirm("Möchten Sie wirklich " + bestellmenge + " " + artikelname + " bestellen?")){
-                    api.createFrischBestellung(frischBestandId, datum, bestellmenge);
+                    api.createFrischBestellung(frischBestandId, personId, datum, bestellmenge);
                 }
                 else{
                     alert("Okay, dieses Produkt wird nicht bestellt. Alle anderen schon.");
                 }
             }
             else{
-                api.createFrischBestellung(frischBestandId, datum, bestellmenge);
+                api.createFrischBestellung(personId, frischBestandId, bestellmenge, datum);
             }
         }
         alert("Ihre Bestellung wurde übermittelt. Vielen Dank!");

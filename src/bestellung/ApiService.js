@@ -7,7 +7,8 @@ const ApiContext = createContext(null);
 export const ApiProvider = (props) => {
     const value = {
         readFrischBestand: props.readFrischBestand || readFrischBestand,
-        createFrischBestellung: props.createFrischBestellung || createFrischBestellung
+        createFrischBestellung: props.createFrischBestellung || createFrischBestellung,
+        createFrischBestellung2: props.createFrischBestellung2 || createFrischBestellung2
     };
 
     return (
@@ -21,6 +22,7 @@ export const useApi = () => {
     return {
         readFrischBestand,
         createFrischBestellung,
+        createFrischBestellung2,
     };
 };
 
@@ -32,14 +34,29 @@ const readFrischBestand = (id = undefined) => id ?
     fetch(BACKEND_URL + FRISCHBESTAND + id) :
     fetch(BACKEND_URL + FRISCHBESTAND);
 
-const createFrischBestellung = (person, produkt, menge, datum) =>
+const createFrischBestellung = (personId, frischBestandId, menge, datum) =>
     {
         fetch(BACKEND_URL + FRISCHBESTELLUNG, {
         method: "POST",
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({id: null, person, produkt, menge, datum, }),
+        body: JSON.stringify({id: null, personId, frischBestandId, menge, datum, }),
+        })
+        //Read Http-Response
+        .then(response => {
+            alert(response.status)
+        })
+    }
+
+    const createFrischBestellung2 = (id, personId, frischBestandId, menge, datum) =>
+    {
+        fetch(BACKEND_URL + FRISCHBESTELLUNG, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({id, personId, frischBestandId, menge, datum, }),
         })
         //Read Http-Response
         .then(response => {

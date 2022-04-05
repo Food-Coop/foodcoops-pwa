@@ -12,21 +12,11 @@ on:
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
-
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
-on:
-  push:
-    branches:
-      - master
-      - github-actions
-  pull_request:
-    branches:
-      - master
       
 jobs:
   build:
     runs-on: ubuntu-latest
-    name: 
+    name: Build and Deploy
     steps:
     - name: Install dependencies
       run: npm install

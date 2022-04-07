@@ -106,7 +106,6 @@ export function Bestellung(){
             let bestellId = "Inputfield" + i;
             let bestellmenge = document.getElementById(bestellId).value;
             let personId = "11589rqw-139e-466c-80e0-a1bcad7c9996";
-            let id = "testId"
             //Check if Bestellmenge is valid
             if(bestellmenge == ""){
             }
@@ -136,15 +135,15 @@ export function Bestellung(){
             );
         }
     
-            return (
-                <BestellungTable
-                    columns={columns}
-                    data={data}
-                    updateMyData={updateMyData}
-                    skipPageReset={skipPageReset}
-                    dispatchModal={dispatchModal}/>
-            );
-        }
+        return (
+            <BestellungTable
+                columns={columns}
+                data={data}
+                updateMyData={updateMyData}
+                skipPageReset={skipPageReset}
+                dispatchModal={dispatchModal}/>
+        );
+    }
 
     return(
         <div>

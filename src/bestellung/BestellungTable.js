@@ -1,6 +1,7 @@
 import {useExpanded, useTable} from "react-table";
 import BTable from "react-bootstrap/Table";
 import React from "react";
+import {Bestellung} from "./Bestellung";
 
 export function BestellungTable({columns, data, updateMyData, skipPageReset, dispatchModal}) {
     const {
@@ -77,7 +78,15 @@ export function BestellungTable({columns, data, updateMyData, skipPageReset, dis
                                     else if(cell.column.Header == "Bestellmenge"){
                                         let id = "Inputfield" + row.index;
                                         return(
-                                            <input type="text" id={id}></input>
+                                            <input type="text" id={id} onChange={() => Bestellung.calculatePrice()}></input>
+                                        )
+                                    }
+                                    else if(cell.column.Header == "Preis"){
+                                        let id = "PreisId" + row.index;
+                                        return(
+                                            <td{...props} id = {id}>
+                                                {cell.render('Cell')}
+                                            </td>
                                         )
                                     }
                                     else{

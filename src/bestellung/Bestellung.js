@@ -99,12 +99,15 @@ export function Bestellung(){
     }
 
     const submitBestellung = () => {
+        let preis = 0;
         for(let i = 0; i < data.length; i++){
             let produktId = "ProduktId" + i;
             let frischBestandId = document.getElementById(produktId).innerText;
             let datum = new Date();
             let bestellId = "Inputfield" + i;
             let bestellmenge = document.getElementById(bestellId).value;
+            let preisId = "PreisId" + i;
+            preis += document.getElementById(preisId).innerText * bestellmenge;
             let personId = "11589rqw-139e-466c-80e0-a1bcad7c9996";
             //Check if Bestellmenge is valid
             if(bestellmenge == ""){
@@ -123,6 +126,7 @@ export function Bestellung(){
                 api.createFrischBestellung(personId, frischBestandId, bestellmenge, datum);
             }
         }
+        document.getElementById("preis").innerHTML = "Preis: " + preis + "€";
         alert("Ihre Bestellung wurde übermittelt. Vielen Dank!");
     };
 
@@ -153,6 +157,7 @@ export function Bestellung(){
             <div style={{overflowX: "auto", width: "100%"}}>
                 {content()}
                 <Button style={{margin:"0.25rem"}} variant="success" onClick={() => submitBestellung()}>Submit Bestellung</Button>
+                <h4 id = "preis">Hier wird beim Absenden der Bestellung der Preis berechnet</h4>
             </div>
 
         </div>

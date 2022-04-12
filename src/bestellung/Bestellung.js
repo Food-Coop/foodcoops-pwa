@@ -156,8 +156,8 @@ export function Bestellung(){
             </Row> */}
             <div style={{overflowX: "auto", width: "100%"}}>
                 {content()}
+                <h4 id = "preis"></h4>
                 <Button style={{margin:"0.25rem"}} variant="success" onClick={() => submitBestellung()}>Submit Bestellung</Button>
-                <h4 id = "preis">Hier wird beim Absenden der Bestellung der Preis berechnet</h4>
             </div>
 
         </div>

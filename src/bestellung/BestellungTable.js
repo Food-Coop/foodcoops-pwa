@@ -31,8 +31,15 @@ export function BestellungTable({columns, data, updateMyData, skipPageReset, dis
         useExpanded
     )
 
-    const saveBestellung = () => {
-        console.log("saveBestellung");
+    const calculatePrice = () => {
+        let preis = 0;
+        for(let i = 0; i < data.length; i++){
+            let bestellId = "Inputfield" + i;
+            let bestellmenge = document.getElementById(bestellId).value;
+            let preisId = "PreisId" + i;
+            preis += document.getElementById(preisId).innerText * bestellmenge;
+        }
+        document.getElementById("preis").innerHTML = "Preis: " + preis + "€";
     }
 
     return (
@@ -78,7 +85,7 @@ export function BestellungTable({columns, data, updateMyData, skipPageReset, dis
                                     else if(cell.column.Header == "Bestellmenge"){
                                         let id = "Inputfield" + row.index;
                                         return(
-                                            <input type="text" id={id} onChange={() => Bestellung.calculatePrice()}></input>
+                                            <input type="text" id={id} onChange={() => calculatePrice()}></input>
                                         )
                                     }
                                     else if(cell.column.Header == "Preis"){

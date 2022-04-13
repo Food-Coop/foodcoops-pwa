@@ -65,6 +65,7 @@ export function Bestellung(){
             );
         }, []
     )
+    
     const dispatchModal = (type, cell, row) => {
         let columnId = undefined;
         let rowId = undefined;

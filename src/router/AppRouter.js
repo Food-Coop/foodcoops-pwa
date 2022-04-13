@@ -5,6 +5,7 @@ import {AuthButton} from "../auth/AuthButton";
 import {About} from "../About";
 import {Lager} from "../lager/Lager";
 import {Bestellung} from "../bestellung/Bestellung";
+import {Gebindemanagement} from "../gebindemanagement/Gebindemanagement";
 import {PrivateRoute} from "../auth/PrivateRoute";
 import {Home} from "../Home";
 
@@ -23,12 +24,16 @@ export const AppRouter = () => {
                 <Link style={{paddingRight: "1em"}} to={"/bestellung"}>
                     Bestellung
                 </Link>
+                <Link style={{paddingRight: "1em"}} to={"/gebindemanagement"}>
+                    Gebindemanagement
+                </Link>
                 <AuthButton/>
             </nav>
             <Switch>
                 <Route exact path="/login" component={AuthButton}/>
                 <Route exact path="/about" component={About}/>
                 <PrivateRoute roles={["Einkäufer"]} path="/lager" component={Lager}/>
+                <PrivateRoute roles={["Einkäufer"]} path="/gebindemanagement" component={Gebindemanagement}/>
                 <PrivateRoute roles={["Mitglied"]} path="/bestellung" component={Bestellung}/>
                 <Route path="/" component={Home}/>
             </Switch>

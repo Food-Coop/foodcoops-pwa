@@ -15,6 +15,7 @@ export function BestellungTable({columns, data, updateMyData, skipPageReset, dis
         {
             columns,
             data,
+            initialState: { hiddenColumns: ['id'] },
             // show produkte as sub rows
             getSubRows: row => row.produkte,
             // use the skipPageReset option to disable page resetting temporarily

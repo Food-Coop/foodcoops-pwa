@@ -11,6 +11,14 @@ export function Gebindemanagement(){
                 accessor: 'id'
             },
             {
+                Header: 'Produkt',
+                accessor: 'produkt',
+            },
+            {
+                Header: 'Gesamtpreis',
+                accessor: 'gesamtpreis',
+            },
+            {
                 Header: 'Bestellmenge',
                 accessor: 'bestellmenge',
             },
@@ -19,19 +27,20 @@ export function Gebindemanagement(){
 
     const [isLoading, setIsLoading] = React.useState(true);
     const [data, setData] = React.useState([]);
-    const [modal, setModal] = React.useState({type: null, state: {}});
     const [skipPageReset, setSkipPageReset] = React.useState(false);
 
     const api = useApi();
 
     React.useEffect(
         () => {
-            //api.readFrischBestellungProProdukt()
-            api.readFrischBestellung()
+            api.readFrischBestellungProProdukt()
+            //api.readFrischBestellung()
                 .then((r) => r.json())
                 .then((r) => {
                     setData(old => {
+                        console.log("R parsed: " + JSON.stringify(r));
                         const n = r?._embedded?.frischBestellungRepresentationList;
+                        console.log(n);
                         return n === undefined ? old : n;
                     });
                     setIsLoading(false);
@@ -39,21 +48,6 @@ export function Gebindemanagement(){
             );
         }, []
     )
-    
-    const dispatchModal = (type, cell, row) => {
-        let columnId = undefined;
-        let rowId = undefined;
-        let values = undefined;
-        try {
-            columnId = cell.column.id
-            rowId = row.id;
-            values = row.cells;
-        } catch (e) {}
-        let state = {};
-        setModal({
-            type, state
-        })
-    }
 
     const updateMyData = (rowId, columnId, value) => {
         // We also turn on the flag to not reset the page
@@ -87,8 +81,7 @@ export function Gebindemanagement(){
                 columns={columns}
                 data={data}
                 updateMyData={updateMyData}
-                skipPageReset={skipPageReset}
-                dispatchModal={dispatchModal}/>
+                skipPageReset={skipPageReset}/>
         );
     }
 

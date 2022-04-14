@@ -5,7 +5,6 @@ import Row from 'react-bootstrap/Row'
 import {BestellungTable} from "./BestellungTable";
 import {deepAssign, deepClone} from '../lager/util'
 import {useApi} from './ApiService';
-import {useTable} from "react-table";
 
 
 
@@ -41,6 +40,8 @@ export function Bestellung(){
             },
         ]
     );
+
+    const initialState = { hiddenColumns: ['id']};
 
     const [isLoading, setIsLoading] = React.useState(true);
     const [data, setData] = React.useState([]);

@@ -3,7 +3,7 @@ import BTable from "react-bootstrap/Table";
 import React from "react";
 import {Gebindemanagement} from "./Gebindemanagement";
 
-export function GebindemanagementTable({columns, data, updateMyData, skipPageReset, dispatchModal}) {
+export function GebindemanagementTable({columns, data, updateMyData, skipPageReset}) {
     const {
         getTableProps,
         getTableBodyProps,

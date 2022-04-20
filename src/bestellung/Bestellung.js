@@ -3,8 +3,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row'
 import {BestellungTable} from "./BestellungTable";
-import {deepAssign, deepClone} from '../lager/util'
+import {deepAssign, deepClone} from '../util'
 import {useApi} from './ApiService';
+import {useKeycloak} from "@react-keycloak/web";
 
 
 
@@ -41,8 +42,10 @@ export function Bestellung(){
         ]
     );
 
-    const initialState = { hiddenColumns: ['id']};
 
+    //const initialState = { hiddenColumns: ['id']};
+
+    const [xfrischbestand, setXfrischbestand] = React.useState([]);
     const [isLoading, setIsLoading] = React.useState(true);
     const [data, setData] = React.useState([]);
     const [modal, setModal] = React.useState({type: null, state: {}});
@@ -51,6 +54,7 @@ export function Bestellung(){
 
 
     const api = useApi();
+    const {keycloak} = useKeycloak();
 
     React.useEffect(
         () => {
@@ -58,6 +62,7 @@ export function Bestellung(){
                 .then((r) => r.json())
                 .then((r) => {
                     setData(old => {
+                        //console.log(JSON.stringify(r));
                         const n = r?._embedded?.frischBestandRepresentationList;
                         return n === undefined ? old : n;
                     });
@@ -101,31 +106,51 @@ export function Bestellung(){
     }
 
     const submitBestellung = () => {
+
+        const result = {};
+
+
+        let a_personId = "person_id";
+        let a_frischbestand = "frischbestand";
+        let a_bestellmenge = "bestellmenge";
+        let a_datum = "datum";
+
         let preis = 0;
-        for(let i = 0; i < data.length; i++){
+        for (let i = 0; i < data.length; i++) {
             let produktId = "ProduktId" + i;
             let frischBestandId = document.getElementById(produktId).innerText;
+
             let datum = new Date();
             let bestellId = "Inputfield" + i;
             let bestellmenge = document.getElementById(bestellId).value;
-            let preisId = "PreisId" + i;
-            preis += document.getElementById(preisId).innerText * bestellmenge;
-            let personId = "11589rqw-139e-466c-80e0-a1bcad7c9996";
+            let personId = keycloak.tokenParsed.preferred_username;
             //Check if Bestellmenge is valid
-            if(bestellmenge == ""){
-            }
-            else if(bestellmenge > 10){
-                let artikel = "ProduktName" + i;
-                let artikelname = document.getElementById(artikel).innerText;
-                if(window.confirm("Möchten Sie wirklich " + bestellmenge + " " + artikelname + " bestellen?")){
-                    api.createFrischBestellung(personId, frischBestandId, bestellmenge, datum);
+            if (bestellmenge == "") {
+            } else {
+                //console.log("FrischbestandID: " + frischBestandId);
+                //console.log("aijsdoiasjodiasj: " + JSON.stringify(data[i]));
+                const {_links, ...supported} = data[i];
+                //console.log("Supported: " + JSON.stringify(supported));
+                //console.log("API Frischbestand: " + JSON.stringify(xfrischbestand));
+
+                deepAssign(a_personId, result, personId);
+                deepAssign(a_frischbestand, result, supported);
+                deepAssign(a_bestellmenge, result, bestellmenge);
+                deepAssign(a_datum, result, datum);
+                //console.log("Assigned: " + JSON.stringify(result));
+                if (bestellmenge <= 10) {
+                    api.createFrischBestellung(result);
                 }
-                else{
-                    alert("Okay, dieses Produkt wird nicht bestellt. Alle anderen schon.");
+                else {
+                    let artikel = "ProduktName" + i;
+                    let artikelname = document.getElementById(artikel).innerText;
+                    if(window.confirm("Möchten Sie wirklich " + bestellmenge + " " + artikelname + " bestellen?")){
+                        api.createFrischBestellung(result);
+                    }
+                    else{
+                        alert("Okay, dieses Produkt wird nicht bestellt. Alle anderen schon.");
+                    }
                 }
-            }
-            else{
-                api.createFrischBestellung(personId, frischBestandId, bestellmenge, datum);
             }
         }
         document.getElementById("preis").innerHTML = "Preis: " + preis + "€";
@@ -140,7 +165,7 @@ export function Bestellung(){
                 </div>
             );
         }
-    
+
         return (
             <BestellungTable
                 columns={columns}
@@ -153,9 +178,7 @@ export function Bestellung(){
 
     return(
         <div>
-            {/* <Row style={{margin: "1rem"}}>
-                <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("NewFrischBestellungModal")}>Neue Bestellung</Button>
-            </Row> */}
+
             <div style={{overflowX: "auto", width: "100%"}}>
                 {content()}
                 <h4 id = "preis"></h4>

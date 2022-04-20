@@ -1,7 +1,7 @@
 import React from "react";
 import Button from "react-bootstrap/Button";
 import {LagerModal} from "./LagerModal";
-import {deepAssign} from "./util";
+import {deepAssign} from "../util";
 import {IconInput} from "./IconInput";
 
 function defaultData(columns) {
@@ -9,8 +9,10 @@ function defaultData(columns) {
     const getName = (accessor, humanName) => typeof humanName === "string" ? humanName : capitalize(accessor);
 
     const tableColumns = [...columns, {Header: "Kategorie", accessor: "kategorie"}];
+    //console.log("table columns: " + JSON.stringify(tableColumns));
     const convert = ({Header: humanName, accessor}) => [accessor, {name: getName(accessor, humanName), value: ""}];
     const initial = Object.fromEntries(tableColumns.map(convert));
+    //console.log("table columns after: " + JSON.stringify(initial));
 
     initial["name"].value = "Produktname";
     initial["lagerbestand.istLagerbestand"].value = 0.0;
@@ -33,11 +35,15 @@ export function NewProduktModal(props) {
     };
 
     const save = () => {
+        //console.log("save " + Object.entries(initial));
+        //console.log("save " + JSON.stringify(initial));
         const result = {};
         for (const [accessor, {value}] of Object.entries(initial)) {
+            //console.log("Intital Accesor, value: " + accessor + " / " + value);
             deepAssign(accessor, result, value);
         }
         for (const [accessor, {value}] of Object.entries(newData)) {
+            //console.log("newdata Accesor, value: " + accessor + " / " + value);
             deepAssign(accessor, result, value);
         }
 
@@ -51,7 +57,8 @@ export function NewProduktModal(props) {
         }
 
         // FIXME: support setting icon and kategorie (see added TODO items)
-        const {icon, ...supported} = result;
+        const {icon,...supported} = result;
+        //console.log("Supported: " + JSON.stringify(supported));
         props.create(supported);
         close();
     };

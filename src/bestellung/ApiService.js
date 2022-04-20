@@ -32,17 +32,12 @@ const readFrischBestand = (id = undefined) => id ?
     fetch(BACKEND_URL + FRISCHBESTAND + id) :
     fetch(BACKEND_URL + FRISCHBESTAND);
 
-const createFrischBestellung = (person_id, frischbestand_id, bestellmenge, datum) =>
-    {
-        fetch(BACKEND_URL + FRISCHBESTELLUNG, {
+const createFrischBestellung = (data) =>
+    fetch(BACKEND_URL + FRISCHBESTELLUNG, {
         method: "POST",
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({id: null, person_id, frischbestand_id, bestellmenge, datum}),
-        })
-        //Read Http-Response
-        // .then(response => {
-        //     alert(response.status)
-        // })
-    }
+        body: JSON.stringify({...data, id: "undefined"}),
+    });
+

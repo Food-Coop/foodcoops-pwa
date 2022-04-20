@@ -18,11 +18,11 @@ export const AppRouter = () => {
                 <Link style={{paddingRight: "1em"}} to="/">
                     Food Coops
                 </Link>
-                <Link style={{paddingRight: "1em"}} to={"/lager"}>
-                    Lager management
-                </Link>
                 <Link style={{paddingRight: "1em"}} to={"/bestellung"}>
-                    Bestellung
+                    Bestellen
+                </Link>
+                <Link style={{paddingRight: "1em"}} to={"/lager"}>
+                    Lagermanagement
                 </Link>
                 <Link style={{paddingRight: "1em"}} to={"/gebindemanagement"}>
                     Gebindemanagement

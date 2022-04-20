@@ -8,7 +8,7 @@ import {EditKategorieModal} from "./EditKategorieModal";
 import {useApi} from './ApiService';
 import {NewKategorieModal} from './NewKategorieModal';
 import {NewProduktModal} from './NewProduktModal';
-import {deepAssign, deepClone} from './util';
+import {deepAssign, deepClone} from '../util';
 import {EditEinheitenModal} from "./EditEinheitenModal";
 
 export function Lager() {
@@ -88,7 +88,7 @@ export function Lager() {
                 .then((r) => {
                         setData(old => {
                             const n = r?._embedded?.produktRepresentationList;
-                            console.log(JSON.stringify(n));
+                            //console.log(JSON.stringify(n));
                             return n === undefined ? old : n;
                         });
                         setIsLoading(false);
@@ -202,6 +202,8 @@ export function Lager() {
         (async function () {
             const response = await api.createProdukt(data1);
             let ms = Date.now();
+            console.log("Data1 in newP: " + data1)
+            console.log("Data1 stringed in newP: " + JSON.stringify(data1));
             console.log("create new p: " + ms + "ms");
             console.log("Response" + response);
             if(response.ok) {

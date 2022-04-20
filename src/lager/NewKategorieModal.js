@@ -1,7 +1,7 @@
 import React from "react";
 import Button from "react-bootstrap/Button";
 import {LagerModal} from "./LagerModal";
-import {deepAssign} from "./util";
+import {deepAssign} from "../util";
 import {IconInput} from "./IconInput";
 
 export function NewKategorieModal(props) {

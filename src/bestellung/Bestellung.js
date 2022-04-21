@@ -45,16 +45,37 @@ export function Bestellung(){
 
     //const initialState = { hiddenColumns: ['id']};
 
-    const [xfrischbestand, setXfrischbestand] = React.useState([]);
+    const [frischBestellung, setFrischBestellung] = React.useState([]);
     const [isLoading, setIsLoading] = React.useState(true);
     const [data, setData] = React.useState([]);
     const [modal, setModal] = React.useState({type: null, state: {}});
     const [skipPageReset, setSkipPageReset] = React.useState(false);
 
 
+    const getdeadline = () => {
+        let datum = new Date();
+        var heute = new Date(datum.getFullYear(), datum.getMonth(), datum.getDate());
+        var deadline = new Date(heute.setDate(heute.getDate()-heute.getDay()));
+        return deadline;
+    }
+
 
     const api = useApi();
     const {keycloak} = useKeycloak();
+
+    function updateBestellung() {
+        let personId = keycloak.tokenParsed.preferred_username;
+        api.readFrischBestellung(personId)
+            .then(r => r.json())
+            .then(r => {
+                setFrischBestellung(old => {
+                    console.log("R stringed :" + JSON.stringify(r));
+                    const n = r?._embedded?.frischBestellungRepresentationList
+                    console.log(n);
+                    return n === undefined ? old : n;
+                });
+            });
+    }
 
     React.useEffect(
         () => {
@@ -69,8 +90,11 @@ export function Bestellung(){
                     setIsLoading(false);
                 }
             );
+            updateBestellung();
         }, []
     )
+
+
     
     const dispatchModal = (type, cell, row) => {
         let columnId = undefined;
@@ -105,6 +129,16 @@ export function Bestellung(){
         )
     }
 
+    const checkAlreadyOrdered = (frischBestandId) =>{
+        for(let j = 0; j < frischBestellung.length; j++){
+            console.log("FBSD: " + frischBestellung[j].frischbestand.id)
+            if(frischBestandId == frischBestellung[j].frischbestand.id){
+                return true;
+            }
+        }
+        return false;
+    }
+
     const submitBestellung = () => {
 
         const result = {};
@@ -119,31 +153,38 @@ export function Bestellung(){
         for (let i = 0; i < data.length; i++) {
             let produktId = "ProduktId" + i;
             let frischBestandId = document.getElementById(produktId).innerText;
-
+            let personId = keycloak.tokenParsed.preferred_username;
             let datum = new Date();
+            let deadline = getdeadline();
             let bestellId = "Inputfield" + i;
             let bestellmenge = document.getElementById(bestellId).value;
-            let personId = keycloak.tokenParsed.preferred_username;
+
             //Check if Bestellmenge is valid
             if (bestellmenge == "") {
             } 
             else {
-                var heute = new Date(datum.getFullYear(), datum.getMonth(), datum.getDate());
-                var deadline = new Date(heute.setDate(heute.getDate()-heute.getDay()));
-                alert(deadline);
-                if(datum > deadline){
-                    //Update Bestellung
-                    //console.log("FrischbestandID: " + frischBestandId);
-                    //console.log("aijsdoiasjodiasj: " + JSON.stringify(data[i]));
-                    const {_links, ...supported} = data[i];
-                    //console.log("Supported: " + JSON.stringify(supported));
-                    //console.log("API Frischbestand: " + JSON.stringify(xfrischbestand));
+                //alert(deadline);
+                //Überprüfe ob bereits eine Bestellung in dieser Woche getätigt wurde
+                const {_links, ...supported} = data[i];
 
-                    deepAssign(a_personId, result, personId);
-                    deepAssign(a_frischbestand, result, supported);
-                    deepAssign(a_bestellmenge, result, bestellmenge);
-                    deepAssign(a_datum, result, datum);
-                    //console.log("Assigned: " + JSON.stringify(result));
+                console.log("PersonId: " + personId);
+                deepAssign(a_personId, result, personId);
+                deepAssign(a_frischbestand, result, supported);
+                deepAssign(a_bestellmenge, result, bestellmenge);
+                deepAssign(a_datum, result, datum);
+
+                //Neue Bestellung
+                //console.log("FrischbestandID: " + frischBestandId);
+                //console.log("aijsdoiasjodiasj: " + JSON.stringify(data[i]));
+
+                //console.log("Supported: " + JSON.stringify(supported));
+                //console.log("API Frischbestand: " + JSON.stringify(xfrischbestand));
+
+                //console.log("Assigned: " + JSON.stringify(result));
+
+                console.log(checkAlreadyOrdered(frischBestandId));
+                if(checkAlreadyOrdered(frischBestandId)){
+
                     if (bestellmenge <= 10) {
                         api.updateFrischBestellung(result, frischBestandId);
                     }
@@ -159,18 +200,7 @@ export function Bestellung(){
                     }
                 }
                 else{
-                    //Neue Bestellung
-                    //console.log("FrischbestandID: " + frischBestandId);
-                    //console.log("aijsdoiasjodiasj: " + JSON.stringify(data[i]));
-                    const {_links, ...supported} = data[i];
-                    //console.log("Supported: " + JSON.stringify(supported));
-                    //console.log("API Frischbestand: " + JSON.stringify(xfrischbestand));
 
-                    deepAssign(a_personId, result, personId);
-                    deepAssign(a_frischbestand, result, supported);
-                    deepAssign(a_bestellmenge, result, bestellmenge);
-                    deepAssign(a_datum, result, datum);
-                    //console.log("Assigned: " + JSON.stringify(result));
                     if (bestellmenge <= 10) {
                         api.createFrischBestellung(result);
                     }
@@ -185,6 +215,7 @@ export function Bestellung(){
                         }
                     }
                 }
+                updateBestellung();
             }
         }
         document.getElementById("preis").innerHTML = "Preis: " + preis + "€";

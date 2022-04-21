@@ -133,10 +133,10 @@ export function Bestellung(){
         for(let j = 0; j < frischBestellung.length; j++){
             console.log("FBSD: " + frischBestellung[j].frischbestand.id)
             if(frischBestandId == frischBestellung[j].frischbestand.id){
-                return true;
+                return frischBestellung[j].id;
             }
         }
-        return false;
+        return null;
     }
 
     const submitBestellung = () => {
@@ -167,7 +167,6 @@ export function Bestellung(){
                 //Überprüfe ob bereits eine Bestellung in dieser Woche getätigt wurde
                 const {_links, ...supported} = data[i];
 
-                console.log("PersonId: " + personId);
                 deepAssign(a_personId, result, personId);
                 deepAssign(a_frischbestand, result, supported);
                 deepAssign(a_bestellmenge, result, bestellmenge);
@@ -183,16 +182,17 @@ export function Bestellung(){
                 //console.log("Assigned: " + JSON.stringify(result));
 
                 console.log(checkAlreadyOrdered(frischBestandId));
-                if(checkAlreadyOrdered(frischBestandId)){
+                let check = checkAlreadyOrdered(frischBestandId);
+                if(check != null){
 
                     if (bestellmenge <= 10) {
-                        api.updateFrischBestellung(result, frischBestandId);
+                        api.updateFrischBestellung(result, check);
                     }
                     else {
                         let artikel = "ProduktName" + i;
                         let artikelname = document.getElementById(artikel).innerText;
                         if(window.confirm("Möchten Sie wirklich " + bestellmenge + " " + artikelname + " bestellen?")){
-                            api.updateFrischBestellung(result, frischBestandId);
+                            api.updateFrischBestellung(result, check);
                         }
                         else{
                             alert("Okay, dieses Produkt wird nicht bestellt. Alle anderen schon.");

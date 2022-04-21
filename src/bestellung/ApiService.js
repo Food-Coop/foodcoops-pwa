@@ -54,12 +54,12 @@ const createFrischBestellung = (data) =>
         body: JSON.stringify({...data, id: "undefined"}),
     });
 
-    const updateFrischBestellung = (data, frischBestandId) =>
-    fetch(BACKEND_URL + FRISCHBESTELLUNG + frischBestandId, {
+    const updateFrischBestellung = (data, frischBestellungId) =>
+    fetch(BACKEND_URL + FRISCHBESTELLUNG + frischBestellungId, {
         method: "PUT",
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({...data, id: frischBestandId}),
+        body: JSON.stringify({...data, id: frischBestellungId}),
     });
 

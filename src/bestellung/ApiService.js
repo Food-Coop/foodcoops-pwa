@@ -7,7 +7,8 @@ const ApiContext = createContext(null);
 export const ApiProvider = (props) => {
     const value = {
         readFrischBestand: props.readFrischBestand || readFrischBestand,
-        createFrischBestellung: props.createFrischBestellung || createFrischBestellung
+        createFrischBestellung: props.createFrischBestellung || createFrischBestellung,
+        updateFrischBestellung: props.updateFrischBestellung || updateFrischBestellung
     };
 
     return (
@@ -20,7 +21,8 @@ export const ApiProvider = (props) => {
 export const useApi = () => {
     return {
         readFrischBestand,
-        createFrischBestellung
+        createFrischBestellung,
+        updateFrischBestellung
     };
 };
 
@@ -39,5 +41,14 @@ const createFrischBestellung = (data) =>
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({...data, id: "undefined"}),
+    });
+
+    const updateFrischBestellung = (data, frischBestandId) =>
+    fetch(BACKEND_URL + FRISCHBESTELLUNG, {
+        method: "PUT",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({...data, id: frischBestandId}),
     });
 

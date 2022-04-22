@@ -78,9 +78,9 @@ export function Bestellung(){
             .then(r => r.json())
             .then(r => {
                 setFrischBestellung(old => {
-                    console.log("R stringed :" + JSON.stringify(r));
+                    //console.log("R stringed :" + JSON.stringify(r));
                     const n = r?._embedded?.frischBestellungRepresentationList
-                    console.log(n);
+                    //console.log(n);
                     return n === undefined ? old : n;
                 });
             });
@@ -106,20 +106,16 @@ export function Bestellung(){
                     setData(old => {
                         //console.log(JSON.stringify(r));
                         let n = r?._embedded?.frischBestandRepresentationList;
-                        console.log("n1 frischbestand: " + JSON.stringify(n[1]));
                         return n === undefined ? old : n;
                     });
                     setIsLoading(false);
                 }
             );
-            let datum1 = getDeadline(0);
-            let datum2 = getDeadline(-7);
             let person_id = keycloak.tokenParsed.preferred_username;
-            api.readFrischBestellungBetweenDatesProPerson(datum1, datum2, person_id)
+            api.readFrischBestellungBetweenDatesProPerson(person_id)
                 .then((r) => r.json())
                 .then((r) => {
                     setFrischBestellungBetweenDatesProPerson(old => {
-                        //console.log(JSON.stringify(r));
                         let n = r?._embedded?.frischBestellungRepresentationList;
                         return n === undefined ? old : n;
                     });
@@ -262,14 +258,12 @@ export function Bestellung(){
         for(let i = 0; i < data.length; i++){
             for(let j = 0; j < frischBestellungSumme.length; j++){
                 if(data[i].id === frischBestellungSumme[j].frischbestand.id){
-                    deepAssign("bestellsumme", data[i], frischBestellungSumme[j].bestellmenge)
+                    deepAssign("bestellsumme", data[i], frischBestellungSumme[j].bestellmenge);
                 }
             }
-        }
-        for(let i = 0; i < data.length; i++){
             for(let j = 0; j < frischBestellungBetweenDatesProPerson.length; j++){
                 if(data[i].id === frischBestellungBetweenDatesProPerson[j].frischbestand.id){
-                    deepAssign("bestellmenge", data[i], frischBestellungBetweenDatesProPerson[j].bestellmenge)
+                    deepAssign("bestellmengeAlt", data[i], frischBestellungBetweenDatesProPerson[j].bestellmenge);
                 }
             }
         }

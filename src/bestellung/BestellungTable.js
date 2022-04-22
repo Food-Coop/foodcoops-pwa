@@ -85,8 +85,12 @@ export function BestellungTable({columns, data, updateMyData, skipPageReset, dis
                                     }
                                     else if(cell.column.Header == "Bestellmenge"){
                                         let id = "Inputfield" + row.index;
+                                        let vorwoche = data[row.index].bestellmengeAlt;
+                                        if(vorwoche === undefined){
+                                            vorwoche = 0;
+                                        }
                                         return(
-                                            <input type="text" placeholder={"Vorwoche: " + 5} id={id} onChange={() => calculatePrice()}></input>
+                                            <input type="text" placeholder={"Vorwoche: " + vorwoche} id={id} onChange={() => calculatePrice()}></input>
                                         )
                                     }
                                     else if(cell.column.Header == "Preis"){

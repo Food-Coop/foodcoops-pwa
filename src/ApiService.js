@@ -221,6 +221,5 @@ const updateFrischBestellung = (data, frischBestellungId) =>
         body: JSON.stringify({...data, id: frischBestellungId}),
     });
 
-const readFrischBestellungBetweenDatesProPerson = (datum1, datum2, person_id) => {
-    fetch(BACKEND_URL + FRISCHBESTELLUNG + datum1 + "/" + datum2 + "/" + person_id)
-}
+const readFrischBestellungBetweenDatesProPerson = (person_id) => 
+    fetch(BACKEND_URL + FRISCHBESTELLUNG + PERSON + person_id)

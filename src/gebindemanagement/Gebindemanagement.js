@@ -1,7 +1,7 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {deepAssign, deepClone} from '../util'
-import {useApi} from './ApiService';
+import {useApi} from '../ApiService';
 import {GebindemanagementTable} from "./GebindemanagementTable";
 
 export function Gebindemanagement(){

@@ -5,7 +5,7 @@ import Row from 'react-bootstrap/Row'
 import {LagerTable} from "./LagerTable";
 import {EditProduktModal} from "./EditProduktModal";
 import {EditKategorieModal} from "./EditKategorieModal";
-import {useApi} from './ApiService';
+import {useApi} from '../ApiService';
 import {NewKategorieModal} from './NewKategorieModal';
 import {NewProduktModal} from './NewProduktModal';
 import {deepAssign, deepClone} from '../util';

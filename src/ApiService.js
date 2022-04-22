@@ -16,7 +16,14 @@ export const ApiProvider = (props) => {
         updateKategorie: props.updateKategorie || updateKategorie,
         createEinheit: props.createEinheit || createEinheit,
         readEinheit: props.readEinheit || readEinheit,
-        deleteEinheit: props.deleteEinheit || deleteEinheit
+        deleteEinheit: props.deleteEinheit || deleteEinheit,
+        readFrischBestellung: props.readFrischBestellung || readFrischBestellung,
+        readFrischBestellungProProdukt: props.readFrischBestellungProProdukt || readFrischBestellungProProdukt,
+        readFrischBestand: props.readFrischBestand || readFrischBestand,
+        readFrischBestellungProPerson: props.readFrischBestellungProPerson || readFrischBestellungProPerson,
+        createFrischBestellung: props.createFrischBestellung || createFrischBestellung,
+        updateFrischBestellung: props.updateFrischBestellung || updateFrischBestellung,
+        readFrischBestellungBetweenDatesProPerson: props.readFrischBestellungBetweenDatesProPerson || readFrischBestellungBetweenDatesProPerson
     };
 
     return (
@@ -38,7 +45,14 @@ export const useApi = () => {
         updateKategorie,
         createEinheit,
         readEinheit,
-        deleteEinheit
+        deleteEinheit,
+        readFrischBestellung,
+        readFrischBestellungProProdukt,
+        readFrischBestand,
+        readFrischBestellungProPerson,
+        createFrischBestellung,
+        updateFrischBestellung,
+        readFrischBestellungBetweenDatesProPerson
     };
 
     // FIXME: Get services working correctly https://the-guild.dev/blog/injectable-services-in-react
@@ -50,6 +64,11 @@ const BACKEND_URL = "http://localhost:8080/";
 const KATEGORIEN = "kategorien/";
 const PRODUKTE = "produkte/";
 const EINHEITEN = "einheiten/";
+const FRISCHBESTELLUNG =  "frischBestellung/";
+const DATUM = "datum/"
+const MENGE = "menge/"
+const FRISCHBESTAND = "frischBestand/";
+const PERSON = "person/";
 
 /**
  * https://github.com/Food-Coop/foodcoops-backend#new-produkte
@@ -106,10 +125,6 @@ const createKategorie = (name, icon) =>
         },
         body: JSON.stringify({id: "", name, icon}),
     });
-
-
-
-
 
 /**
  * https://github.com/Food-Coop/foodcoops-backend#get-all-kategorien
@@ -174,3 +189,38 @@ const deleteEinheit = (id) =>
             'Content-Type': 'application/json',
         },
     });
+
+const readFrischBestellung = () => 
+    fetch(BACKEND_URL + FRISCHBESTELLUNG + DATUM);
+
+const readFrischBestellungProProdukt = () => 
+    fetch(BACKEND_URL + FRISCHBESTELLUNG + DATUM + MENGE);
+
+const readFrischBestand = (id = undefined) => id ?
+    fetch(BACKEND_URL + FRISCHBESTAND + id) :
+    fetch(BACKEND_URL + FRISCHBESTAND);
+
+const readFrischBestellungProPerson = (person_id) =>
+    fetch(BACKEND_URL + FRISCHBESTELLUNG + DATUM + person_id)
+
+const createFrischBestellung = (data) =>
+    fetch(BACKEND_URL + FRISCHBESTELLUNG, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({...data, id: "undefined"}),
+    });
+
+const updateFrischBestellung = (data, frischBestellungId) =>
+    fetch(BACKEND_URL + FRISCHBESTELLUNG + frischBestellungId, {
+        method: "PUT",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({...data, id: frischBestellungId}),
+    });
+
+const readFrischBestellungBetweenDatesProPerson = (datum1, datum2, person_id) => {
+    fetch(BACKEND_URL + FRISCHBESTELLUNG + datum1 + "/" + datum2 + "/" + person_id)
+}

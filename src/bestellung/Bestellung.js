@@ -4,7 +4,7 @@ import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row'
 import {BestellungTable} from "./BestellungTable";
 import {deepAssign, deepClone} from '../util'
-import {useApi} from './ApiService';
+import {useApi} from '../ApiService';
 import {useKeycloak} from "@react-keycloak/web";
 
 
@@ -28,17 +28,21 @@ export function Bestellung(){
                 accessor: 'preis',
             },
             {
-                Header: 'Einheit',
-                accessor: 'einheit.name',
-            },
-            {
                 Header: 'Gebindegröße',
                 accessor: 'gebindegroesse',
+            },
+            {
+                Header: 'Gesamtbestellung',
+                accessor: 'bestellsumme',
             },
             {
                 Header: 'Bestellmenge',
                 accessor: 'bestellmenge',
             },
+            {
+                Header: 'Einheit',
+                accessor: 'einheit.name',
+            }
         ]
     );
 
@@ -46,16 +50,21 @@ export function Bestellung(){
     //const initialState = { hiddenColumns: ['id']};
 
     const [frischBestellung, setFrischBestellung] = React.useState([]);
+    const [frischBestellungBetweenDatesProPerson, setFrischBestellungBetweenDatesProPerson] = React.useState([]);
     const [isLoading, setIsLoading] = React.useState(true);
+    const [isAlsoLoading, setIsAlsoLoading] = React.useState(true);
+    const [isAlsoLoading2, setIsAlsoLoading2] = React.useState(true);
     const [data, setData] = React.useState([]);
     const [modal, setModal] = React.useState({type: null, state: {}});
     const [skipPageReset, setSkipPageReset] = React.useState(false);
+    const [frischBestellungSumme, setFrischBestellungSumme] = React.useState([]);
 
 
-    const getdeadline = () => {
+    const getDeadline = (n) => {
+        //n = 7 => nächste Deadline, n = 0 => letzte Deadline, n = -7 => vorletzte Deadline, ...
         let datum = new Date();
         var heute = new Date(datum.getFullYear(), datum.getMonth(), datum.getDate());
-        var deadline = new Date(heute.setDate(heute.getDate()-heute.getDay()));
+        var deadline = new Date(heute.setDate(heute.getDate()-heute.getDay() + n));
         return deadline;
     }
 
@@ -65,7 +74,7 @@ export function Bestellung(){
 
     function updateBestellung() {
         let personId = keycloak.tokenParsed.preferred_username;
-        api.readFrischBestellung(personId)
+        api.readFrischBestellungProPerson(personId)
             .then(r => r.json())
             .then(r => {
                 setFrischBestellung(old => {
@@ -79,22 +88,47 @@ export function Bestellung(){
 
     React.useEffect(
         () => {
+            api.readFrischBestellungProProdukt()
+                .then((r) => r.json())
+                .then((r) => {
+                    setFrischBestellungSumme(old => {
+                        const n = r?._embedded?.frischBestellungRepresentationList;
+                        //console.log("n1 frischbestellung: " + JSON.stringify(n[1]));
+                        return n === undefined ? old : n;
+                    });
+                    setIsAlsoLoading(false);
+                }
+            );
+
             api.readFrischBestand()
                 .then((r) => r.json())
                 .then((r) => {
                     setData(old => {
                         //console.log(JSON.stringify(r));
-                        const n = r?._embedded?.frischBestandRepresentationList;
+                        let n = r?._embedded?.frischBestandRepresentationList;
+                        console.log("n1 frischbestand: " + JSON.stringify(n[1]));
                         return n === undefined ? old : n;
                     });
                     setIsLoading(false);
                 }
             );
+            let datum1 = getDeadline(0);
+            let datum2 = getDeadline(-7);
+            let person_id = keycloak.tokenParsed.preferred_username;
+            api.readFrischBestellungBetweenDatesProPerson(datum1, datum2, person_id)
+                .then((r) => r.json())
+                .then((r) => {
+                    setFrischBestellungBetweenDatesProPerson(old => {
+                        //console.log(JSON.stringify(r));
+                        let n = r?._embedded?.frischBestellungRepresentationList;
+                        return n === undefined ? old : n;
+                    });
+                    setIsAlsoLoading2(false);
+                }
+            );
             updateBestellung();
         }, []
     )
-
-
     
     const dispatchModal = (type, cell, row) => {
         let columnId = undefined;
@@ -140,10 +174,7 @@ export function Bestellung(){
     }
 
     const submitBestellung = () => {
-
         const result = {};
-
-
         let a_personId = "person_id";
         let a_frischbestand = "frischbestand";
         let a_bestellmenge = "bestellmenge";
@@ -155,7 +186,6 @@ export function Bestellung(){
             let frischBestandId = document.getElementById(produktId).innerText;
             let personId = keycloak.tokenParsed.preferred_username;
             let datum = new Date();
-            let deadline = getdeadline();
             let bestellId = "Inputfield" + i;
             let bestellmenge = document.getElementById(bestellId).value;
 
@@ -175,10 +205,8 @@ export function Bestellung(){
                 //Neue Bestellung
                 //console.log("FrischbestandID: " + frischBestandId);
                 //console.log("aijsdoiasjodiasj: " + JSON.stringify(data[i]));
-
                 //console.log("Supported: " + JSON.stringify(supported));
                 //console.log("API Frischbestand: " + JSON.stringify(xfrischbestand));
-
                 //console.log("Assigned: " + JSON.stringify(result));
 
                 console.log(checkAlreadyOrdered(frischBestandId));
@@ -223,12 +251,27 @@ export function Bestellung(){
     };
 
     const content = () => {
-        if (isLoading) {
+        if (isLoading || isAlsoLoading || isAlsoLoading2) {
             return (
                 <div className="spinner-border" role="status" style={{margin: "5rem"}}>
                     <span className="sr-only">Loading...</span>
                 </div>
             );
+        }
+
+        for(let i = 0; i < data.length; i++){
+            for(let j = 0; j < frischBestellungSumme.length; j++){
+                if(data[i].id === frischBestellungSumme[j].frischbestand.id){
+                    deepAssign("bestellsumme", data[i], frischBestellungSumme[j].bestellmenge)
+                }
+            }
+        }
+        for(let i = 0; i < data.length; i++){
+            for(let j = 0; j < frischBestellungBetweenDatesProPerson.length; j++){
+                if(data[i].id === frischBestellungBetweenDatesProPerson[j].frischbestand.id){
+                    deepAssign("bestellmenge", data[i], frischBestellungBetweenDatesProPerson[j].bestellmenge)
+                }
+            }
         }
 
         return (
@@ -241,10 +284,22 @@ export function Bestellung(){
         );
     }
 
+    const deadline = () => {
+        let date = getDeadline(7);
+        let year = date.getFullYear();
+        let month = date.getMonth() + 1;
+        let day = date.getDate();
+        date = "Deadline: " + day + "." + month + "." + year + " 00:00 Uhr";
+        return (
+            <div>{date}</div>
+        );
+    }
+
     return(
         <div>
 
             <div style={{overflowX: "auto", width: "100%"}}>
+                {deadline()}
                 {content()}
                 <h4 id = "preis"></h4>
                 <Button style={{margin:"0.25rem"}} variant="success" onClick={() => submitBestellung()}>Submit Bestellung</Button>

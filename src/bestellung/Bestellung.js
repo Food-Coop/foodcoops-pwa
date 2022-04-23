@@ -55,6 +55,7 @@ export function Bestellung(){
     const [isAlsoLoading, setIsAlsoLoading] = React.useState(true);
     const [isAlsoLoading2, setIsAlsoLoading2] = React.useState(true);
     const [data, setData] = React.useState([]);
+    const [reducerValue, forceUpdate] = React.useReducer(x => x+1, 0);
     const [modal, setModal] = React.useState({type: null, state: {}});
     const [skipPageReset, setSkipPageReset] = React.useState(false);
     const [frischBestellungSumme, setFrischBestellungSumme] = React.useState([]);
@@ -123,7 +124,7 @@ export function Bestellung(){
                 }
             );
             updateBestellung();
-        }, []
+        }, [reducerValue]
     )
     
     const dispatchModal = (type, cell, row) => {
@@ -205,7 +206,7 @@ export function Bestellung(){
                 //console.log("API Frischbestand: " + JSON.stringify(xfrischbestand));
                 //console.log("Assigned: " + JSON.stringify(result));
 
-                console.log(checkAlreadyOrdered(frischBestandId));
+                console.log("Check: " + checkAlreadyOrdered(frischBestandId));
                 let check = checkAlreadyOrdered(frischBestandId);
                 if(check != null){
 
@@ -239,7 +240,7 @@ export function Bestellung(){
                         }
                     }
                 }
-                updateBestellung();
+                forceUpdate();
             }
         }
         document.getElementById("preis").innerHTML = "Preis: " + preis + "€";

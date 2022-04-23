@@ -69,19 +69,37 @@ export function BestellungTable({columns, data, updateMyData, skipPageReset, dis
                                     const props = cell.getCellProps();
                                     if(cell.column.Header == "ProduktID"){
                                         let id = "ProduktId" + row.index;
-                                        return(
-                                            <td{...props} id = {id}>
-                                                {cell.render('Cell')}
-                                            </td>
-                                        );
+                                        if(data[row.index].verfuegbarkeit == true){
+                                            return(
+                                                <td{...props} id = {id}>
+                                                    {cell.render('Cell')}
+                                                </td>
+                                            );
+                                        }
+                                        else{
+                                            return(
+                                                <td{...props} id = {id} style={{color:'grey'}}>
+                                                    {cell.render('Cell')}
+                                                </td>
+                                            );
+                                        }
                                     }
                                     else if(cell.column.Header == "Produkt"){
                                         let id = "ProduktName" + row.index;
-                                        return(
-                                            <td{...props} id = {id}>
-                                                {cell.render('Cell')}
-                                            </td>
-                                        );
+                                        if(data[row.index].verfuegbarkeit == true){
+                                            return(
+                                                <td{...props} id = {id}>
+                                                    {cell.render('Cell')}
+                                                </td>
+                                            );
+                                        }
+                                        else{
+                                            return(
+                                                <td{...props} id = {id} style={{color:'grey'}}>
+                                                    {cell.render('Cell')}
+                                                </td>
+                                            );
+                                        }
                                     }
                                     else if(cell.column.Header == "Bestellmenge"){
                                         let id = "Inputfield" + row.index;
@@ -89,24 +107,50 @@ export function BestellungTable({columns, data, updateMyData, skipPageReset, dis
                                         if(vorwoche === undefined){
                                             vorwoche = 0;
                                         }
-                                        return(
-                                            <input type="text" placeholder={"Vorwoche: " + vorwoche} id={id} onChange={() => calculatePrice()}></input>
-                                        )
+                                        if(data[row.index].verfuegbarkeit == true){
+                                            return(
+                                                <input type="text" placeholder={"Vorwoche: " + vorwoche} id={id} onChange={() => calculatePrice()}></input>
+                                            )
+                                        }
+                                        else{
+                                            return(
+                                                <input type="text" placeholder={"Vorwoche: " + vorwoche} id={id} onChange={() => calculatePrice()} disabled></input>
+                                            )
+                                        }
+                                        
                                     }
                                     else if(cell.column.Header == "Preis"){
                                         let id = "PreisId" + row.index;
-                                        return(
-                                            <td{...props} id = {id}>
-                                                {cell.render('Cell')}
-                                            </td>
-                                        )
+                                        if(data[row.index].verfuegbarkeit == true){
+                                            return(
+                                                <td{...props} id = {id}>
+                                                    {cell.render('Cell')}
+                                                </td>
+                                            )
+                                        }
+                                        else{
+                                            return(
+                                                <td{...props} id = {id} style={{color:'grey'}}>
+                                                    {cell.render('Cell')}
+                                                </td>
+                                            )
+                                        }
                                     }
                                     else{
-                                        return (
-                                            <td {...props}>
-                                                {cell.render('Cell')}
-                                            </td>
-                                        )
+                                        if(data[row.index].verfuegbarkeit == true){
+                                            return (
+                                                <td {...props}>
+                                                    {cell.render('Cell')}
+                                                </td>
+                                            )
+                                        }
+                                        else{
+                                            return (
+                                                <td {...props} style={{color:'grey'}}>
+                                                    {cell.render('Cell')}
+                                                </td>
+                                            )
+                                        }
                                     }
                                 })}
                     </tr>

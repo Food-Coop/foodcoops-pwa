@@ -105,8 +105,8 @@ export function Bestellung(){
                 .then((r) => r.json())
                 .then((r) => {
                     setData(old => {
-                        //console.log(JSON.stringify(r));
                         let n = r?._embedded?.frischBestandRepresentationList;
+                        console.log(JSON.stringify(n));
                         return n === undefined ? old : n;
                     });
                     setIsLoading(false);
@@ -162,7 +162,7 @@ export function Bestellung(){
 
     const checkAlreadyOrdered = (frischBestandId) =>{
         for(let j = 0; j < frischBestellung.length; j++){
-            console.log("FBSD: " + frischBestellung[j].frischbestand.id)
+            //console.log("FBSD: " + frischBestellung[j].frischbestand.id)
             if(frischBestandId == frischBestellung[j].frischbestand.id){
                 return frischBestellung[j].id;
             }
@@ -261,6 +261,9 @@ export function Bestellung(){
                 if(data[i].id === frischBestellungSumme[j].frischbestand.id){
                     deepAssign("bestellsumme", data[i], frischBestellungSumme[j].bestellmenge);
                 }
+                // else{
+                //     deepAssign("bestellsumme", data[i], 0);
+                // }   
             }
             for(let j = 0; j < frischBestellungBetweenDatesProPerson.length; j++){
                 if(data[i].id === frischBestellungBetweenDatesProPerson[j].frischbestand.id){
@@ -273,6 +276,7 @@ export function Bestellung(){
             <BestellungTable
                 columns={columns}
                 data={data}
+                getTrProps={getTrProps}
                 updateMyData={updateMyData}
                 skipPageReset={skipPageReset}
                 dispatchModal={dispatchModal}/>
@@ -289,6 +293,18 @@ export function Bestellung(){
             <div>{date}</div>
         );
     }
+
+    const getTrProps = (state, rowInfo, instance) => {
+        if (rowInfo) {
+          return {
+            style: {
+              background: rowInfo.row.preis > 2 ? 'red' : 'green',
+              color: 'white'
+            }
+          }
+        }
+        return {};
+      }
 
     return(
         <div>

@@ -7,8 +7,6 @@ import {deepAssign, deepClone} from '../util'
 import {useApi} from '../ApiService';
 import {useKeycloak} from "@react-keycloak/web";
 
-
-
 export function Bestellung(){
     const columns = React.useMemo(
         () => [
@@ -60,7 +58,6 @@ export function Bestellung(){
     const [skipPageReset, setSkipPageReset] = React.useState(false);
     const [frischBestellungSumme, setFrischBestellungSumme] = React.useState([]);
 
-
     const getDeadline = (n) => {
         //n = 7 => nächste Deadline, n = 0 => letzte Deadline, n = -7 => vorletzte Deadline, ...
         let datum = new Date();
@@ -106,7 +103,6 @@ export function Bestellung(){
                 .then((r) => {
                     setData(old => {
                         let n = r?._embedded?.frischBestandRepresentationList;
-                        console.log(JSON.stringify(n));
                         return n === undefined ? old : n;
                     });
                     setIsLoading(false);
@@ -136,7 +132,7 @@ export function Bestellung(){
             rowId = row.id;
             values = row.cells;
         } catch (e) {}
-        let state = {};
+        let state = {}
         setModal({
             type, state
         })
@@ -198,15 +194,6 @@ export function Bestellung(){
                 deepAssign(a_frischbestand, result, supported);
                 deepAssign(a_bestellmenge, result, bestellmenge);
                 deepAssign(a_datum, result, datum);
-
-                //Neue Bestellung
-                //console.log("FrischbestandID: " + frischBestandId);
-                //console.log("aijsdoiasjodiasj: " + JSON.stringify(data[i]));
-                //console.log("Supported: " + JSON.stringify(supported));
-                //console.log("API Frischbestand: " + JSON.stringify(xfrischbestand));
-                //console.log("Assigned: " + JSON.stringify(result));
-
-                console.log("Check: " + checkAlreadyOrdered(frischBestandId));
                 let check = checkAlreadyOrdered(frischBestandId);
                 if(check != null){
 
@@ -261,15 +248,21 @@ export function Bestellung(){
                 if(data[i].id === frischBestellungSumme[j].frischbestand.id){
                     deepAssign("bestellsumme", data[i], frischBestellungSumme[j].bestellmenge);
                 }
-                // else{
-                //     deepAssign("bestellsumme", data[i], 0);
-                // }   
+                else{
+                    deepAssign("bestellsumme", data[i], 0);
+                } 
             }
             for(let j = 0; j < frischBestellungBetweenDatesProPerson.length; j++){
                 if(data[i].id === frischBestellungBetweenDatesProPerson[j].frischbestand.id){
                     deepAssign("bestellmengeAlt", data[i], frischBestellungBetweenDatesProPerson[j].bestellmenge);
-                }
+                }    
             }
+            for(let j = 0; j < frischBestellung.length; j++){
+                if(checkAlreadyOrdered(data[i].id)){
+                    deepAssign("bestellmengeNeu", data[i], frischBestellung[j].bestellmenge);
+                }   
+            }
+            
         }
 
         return (
@@ -308,14 +301,12 @@ export function Bestellung(){
 
     return(
         <div>
-
             <div style={{overflowX: "auto", width: "100%"}}>
                 {deadline()}
                 {content()}
                 <h4 id = "preis"></h4>
                 <Button style={{margin:"0.25rem"}} variant="success" onClick={() => submitBestellung()}>Submit Bestellung</Button>
             </div>
-
         </div>
     );
 }

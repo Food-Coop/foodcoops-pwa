@@ -23,7 +23,10 @@ export const ApiProvider = (props) => {
         readFrischBestellungProPerson: props.readFrischBestellungProPerson || readFrischBestellungProPerson,
         createFrischBestellung: props.createFrischBestellung || createFrischBestellung,
         updateFrischBestellung: props.updateFrischBestellung || updateFrischBestellung,
-        readFrischBestellungBetweenDatesProPerson: props.readFrischBestellungBetweenDatesProPerson || readFrischBestellungBetweenDatesProPerson
+        readFrischBestellungBetweenDatesProPerson: props.readFrischBestellungBetweenDatesProPerson || readFrischBestellungBetweenDatesProPerson,
+        createFrischBestand: props.createFrischBestand || createFrischBestand,
+        deleteFrischBestand: props.deleteFrischBestand || deleteFrischBestand,
+        updateFrischBestand: props.updateFrischBestand || updateFrischBestand,
     };
 
     return (
@@ -52,7 +55,10 @@ export const useApi = () => {
         readFrischBestellungProPerson,
         createFrischBestellung,
         updateFrischBestellung,
-        readFrischBestellungBetweenDatesProPerson
+        readFrischBestellungBetweenDatesProPerson,
+        createFrischBestand,
+        updateFrischBestand,
+        deleteFrischBestand
     };
 
     // FIXME: Get services working correctly https://the-guild.dev/blog/injectable-services-in-react
@@ -223,3 +229,30 @@ const updateFrischBestellung = (data, frischBestellungId) =>
 
 const readFrischBestellungBetweenDatesProPerson = (person_id) => 
     fetch(BACKEND_URL + FRISCHBESTELLUNG + PERSON + person_id)
+
+const createFrischBestand = (data) =>
+fetch(BACKEND_URL + PRODUKTE, {
+    method: "POST",
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({...data, id: "undefined"}),
+});
+
+const updateFrischBestand = (changedData, id) => 
+    fetch(BACKEND_URL + PRODUKTE + id, {
+        method: "PUT",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(changedData),
+    });
+
+const deleteFrischBestand = (id) => 
+    fetch(BACKEND_URL + PRODUKTE + id, {
+        method: "DELETE",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
+

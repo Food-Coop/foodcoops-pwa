@@ -2,6 +2,7 @@ import {useExpanded, useTable} from "react-table";
 import BTable from "react-bootstrap/Table";
 import React from "react";
 import {Bestellung} from "./Bestellung";
+import { EditFrischBestandModal } from "./EditFrischBestandModal";
 
 export function BestellungTable({columns, data, updateMyData, skipPageReset, dispatchModal}) {
     const {
@@ -67,6 +68,8 @@ export function BestellungTable({columns, data, updateMyData, skipPageReset, dis
                             (row.original.hasOwnProperty("produkte") ? row.cells.slice(0, 2) : row.cells)
                                 .map((cell, i) => {
                                     const props = cell.getCellProps();
+                                    props.onClick = () => dispatchModal("EditFrischBestandModal", cell, row);
+                                    props.style = {...props.style, cursor: "pointer"};
                                     if(cell.column.Header == "ProduktID"){
                                         let id = "ProduktId" + row.index;
                                         if(data[row.index].verfuegbarkeit == true){
@@ -104,19 +107,35 @@ export function BestellungTable({columns, data, updateMyData, skipPageReset, dis
                                     else if(cell.column.Header == "Bestellmenge"){
                                         let id = "Inputfield" + row.index;
                                         let vorwoche = data[row.index].bestellmengeAlt;
-                                        if(vorwoche === undefined){
-                                            vorwoche = 0;
-                                        }
-                                        if(data[row.index].verfuegbarkeit == true){
-                                            return(
-                                                <input type="text" placeholder={"Vorwoche: " + vorwoche} id={id} onChange={() => calculatePrice()}></input>
-                                            )
+                                        let woche = data[row.index].bestellmengeNeu;
+                                        if(woche == undefined){
+                                            if(vorwoche === undefined){
+                                                vorwoche = 0;
+                                            }
+                                            if(data[row.index].verfuegbarkeit == true){
+                                                return(
+                                                    <input type="text" placeholder={"Bestellung Vorwoche: " + vorwoche} id={id} onChange={() => calculatePrice()}></input>
+                                                )
+                                            }
+                                            else{
+                                                return(
+                                                    <input type="text" placeholder={"Bestellung Vorwoche: " + vorwoche} id={id} onChange={() => calculatePrice()} disabled></input>
+                                                )
+                                            }
                                         }
                                         else{
-                                            return(
-                                                <input type="text" placeholder={"Vorwoche: " + vorwoche} id={id} onChange={() => calculatePrice()} disabled></input>
-                                            )
+                                            if(data[row.index].verfuegbarkeit == true){
+                                                return(
+                                                    <input type="text" placeholder={"Bestellung Aktuell: " + woche} id={id} onChange={() => calculatePrice()}></input>
+                                                )
+                                            }
+                                            else{
+                                                return(
+                                                    <input type="text" placeholder={"Bestellung Aktuell: " + woche} id={id} onChange={() => calculatePrice()} disabled></input>
+                                                )
+                                            }
                                         }
+                                        
                                         
                                     }
                                     else if(cell.column.Header == "Preis"){

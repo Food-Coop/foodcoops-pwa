@@ -91,7 +91,7 @@ export function Bestellung(){
                 .then((r) => {
                     setFrischBestellungSumme(old => {
                         const n = r?._embedded?.frischBestellungRepresentationList;
-                        //console.log("n1 frischbestellung: " + JSON.stringify(n[1]));
+                        console.log("n1 frischbestellung: " + JSON.stringify(n[1]));
                         return n === undefined ? old : n;
                     });
                     setIsAlsoLoading(false);
@@ -103,6 +103,7 @@ export function Bestellung(){
                 .then((r) => {
                     setData(old => {
                         let n = r?._embedded?.frischBestandRepresentationList;
+                        console.log("n1 frischbestellung: " + JSON.stringify(n[1]));
                         return n === undefined ? old : n;
                     });
                     setIsLoading(false);

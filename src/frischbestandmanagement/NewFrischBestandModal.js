@@ -1,6 +1,6 @@
 import React from "react";
 import Button from "react-bootstrap/Button";
-import {BestellungModal} from "./BestellungModal";
+import {BestellungModal} from "../bestellung/BestellungModal";
 import {deepAssign} from "../util";
 import {IconInput} from "../lager/IconInput";
 

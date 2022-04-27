@@ -1,8 +1,7 @@
 import {useExpanded, useTable} from "react-table";
 import BTable from "react-bootstrap/Table";
 import React from "react";
-import {Bestellung} from "./Bestellung";
-import { EditFrischBestandModal } from "./EditFrischBestandModal";
+import { EditFrischBestandModal } from "../frischbestandmanagement/EditFrischBestandModal";
 
 export function BestellungTable({columns, data, updateMyData, skipPageReset, dispatchModal}) {
     const {

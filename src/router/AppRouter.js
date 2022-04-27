@@ -8,6 +8,7 @@ import {Bestellung} from "../bestellung/Bestellung";
 import {Gebindemanagement} from "../gebindemanagement/Gebindemanagement";
 import {PrivateRoute} from "../auth/PrivateRoute";
 import {Home} from "../Home";
+import {FrischBestandManagement} from "../frischbestandmanagement/FrischBestandManagement";
 
 export const AppRouter = () => {
     const {initialized} = useKeycloak();
@@ -27,6 +28,9 @@ export const AppRouter = () => {
                 <Link style={{paddingRight: "1em"}} to={"/gebindemanagement"}>
                     Gebindemanagement
                 </Link>
+                <Link style={{paddingRight: "1em"}} to={"/frischbestandmanagement"}>
+                    Frischbestandmanagement
+                </Link>
                 <AuthButton/>
             </nav>
             <Switch>
@@ -34,6 +38,7 @@ export const AppRouter = () => {
                 <Route exact path="/about" component={About}/>
                 <PrivateRoute roles={["Einkäufer"]} path="/lager" component={Lager}/>
                 <PrivateRoute roles={["Einkäufer"]} path="/gebindemanagement" component={Gebindemanagement}/>
+                <PrivateRoute roles={["Einkäufer"]} path="/frischbestandmanagement" component={FrischBestandManagement}/>
                 <PrivateRoute roles={["Mitglied"]} path="/bestellung" component={Bestellung}/>
                 <Route path="/" component={Home}/>
             </Switch>

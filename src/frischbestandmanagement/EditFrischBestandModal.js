@@ -1,7 +1,7 @@
 import React from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
-import {BestellungModal} from "./BestellungModal";
+import {BestellungModal} from "../bestellung/BestellungModal";
 
 export function EditFrischBestandModal(props) {
     const rowData = props.rowData || [];

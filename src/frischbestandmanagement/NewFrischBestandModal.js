@@ -1,6 +1,6 @@
 import React from "react";
 import Button from "react-bootstrap/Button";
-import {BestellungModal} from "../bestellung/BestellungModal";
+import {FrischBestandModal} from "./FrischBestandModal";
 import {deepAssign} from "../util";
 import {IconInput} from "../lager/IconInput";
 
@@ -14,10 +14,11 @@ function defaultData(columns) {
     const initial = Object.fromEntries(tableColumns.map(convert));
     //console.log("table columns after: " + JSON.stringify(initial));
 
-    initial["name"].value = "FrischBestandame";
+    initial["name"].value = "Name";
+    initial["verfuegbarkeit"].value = 1;
     initial["herkunftsland"].value = "DE";
     initial["gebindegroesse"].value = 0;
-    initial["preis"].value = 0.0;
+    initial["preis"].value = 0;
 
     return initial;
 }
@@ -48,11 +49,14 @@ export function NewFrischBestandModal(props) {
             deepAssign(accessor, result, value);
         }
 
-        if (!result.lagerbestand?.einheit?.id) {
+        if (!result.einheit?.id) {
             const find = props.einheiten[0];
             deepAssign("einheit.id", result, find.id);
         }
-
+        if (!result.kategorie) {
+            const find = props.kategorien[0];
+            result.kategorie = find.id;
+        }
         // FIXME: support setting icon and kategorie (see added TODO items)
         const {icon,...supported} = result;
         //console.log("Supported: " + JSON.stringify(supported));
@@ -89,14 +93,14 @@ export function NewFrischBestandModal(props) {
             edit = <div>
                 <IconInput setIcon={setIcon}/>
             </div>;
-        // } else if (accessor === "kategorie") {
-        //     edit = (
-        //         <div>
-        //             <select onChange={onChange} style={{width: "100%"}}>
-        //                 {props.kategorien.map(({name, id}, i) => <option key={i} value={id}>{name}</option>)}
-        //             </select>
-        //         </div>
-        //     );
+        } else if (accessor === "kategorie") {
+            edit = (
+                <div>
+                    <select onChange={onChange} style={{width: "100%"}}>
+                        {props.kategorien.map(({name, id}, i) => <option key={i} value={id}>{name}</option>)}
+                    </select>
+                </div>
+            );
         } else if (accessor === "einheit.name") {
             edit = (
                 <div>
@@ -126,7 +130,7 @@ export function NewFrischBestandModal(props) {
     </>;
 
     return (
-        <BestellungModal
+        <FrischBestandModal
             title={title}
             body={body}
             footer={footer}

@@ -1,10 +1,11 @@
 import {useExpanded, useTable} from "react-table";
 import BTable from "react-bootstrap/Table";
 import React from "react";
+import { EditFrischBestandModal } from "./EditFrischBestandModal";
 
 
 
-export function FrischBestandTable({columns, data, skipPageReset}) {
+export function FrischBestandTable({columns, data, updateMyData, skipPageReset, dispatchModal}) {
     const {
         getTableProps,
         getTableBodyProps,
@@ -54,8 +55,18 @@ export function FrischBestandTable({columns, data, skipPageReset}) {
                             row.cells
                                 .map((cell, i) => {
                                     const props = cell.getCellProps();
+                                    if (i !== 0) {
+                                        props.onClick = () => dispatchModal("EditFrischBestandModal", cell, row);
+                                        props.style = {...props.style, cursor: "pointer"};
+                                    }
+                                    if(data[row.index].verfuegbarkeit == true){
+                                        data[row.index].verfuegbarkeit = 1;
+                                    }
+                                    else{
+                                        data[row.index].verfuegbarkeit = 0;
+                                    }
                                     return (
-                                        <td {...props} style={{color: 'grey'}}>
+                                        <td {...props}>
                                             {cell.render('Cell')}
                                         </td>
                                     )

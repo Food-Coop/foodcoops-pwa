@@ -40,6 +40,10 @@ export function Bestellung(){
             {
                 Header: 'Einheit',
                 accessor: 'einheit.name',
+            },
+            {
+                Header: 'Kategorie',
+                accessor: 'lagerkategorie.name',
             }
         ]
     );
@@ -91,7 +95,6 @@ export function Bestellung(){
                 .then((r) => {
                     setFrischBestellungSumme(old => {
                         const n = r?._embedded?.frischBestellungRepresentationList;
-                        console.log("n1 frischbestellung: " + JSON.stringify(n[1]));
                         return n === undefined ? old : n;
                     });
                     setIsAlsoLoading(false);

@@ -22,11 +22,11 @@ export const AppRouter = () => {
                 <Link style={{paddingRight: "1em"}} to={"/bestellung"}>
                     Bestellen
                 </Link>
-                <Link style={{paddingRight: "1em"}} to={"/lager"}>
-                    Lagermanagement
-                </Link>
                 <Link style={{paddingRight: "1em"}} to={"/gebindemanagement"}>
                     Gebindemanagement
+                </Link>
+                <Link style={{paddingRight: "1em"}} to={"/lager"}>
+                    Lagermanagement
                 </Link>
                 <Link style={{paddingRight: "1em"}} to={"/frischbestandmanagement"}>
                     Frischbestandmanagement

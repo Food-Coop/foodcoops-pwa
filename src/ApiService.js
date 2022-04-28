@@ -231,7 +231,7 @@ const readFrischBestellungBetweenDatesProPerson = (person_id) =>
     fetch(BACKEND_URL + FRISCHBESTELLUNG + PERSON + person_id)
 
 const createFrischBestand = (data) =>
-fetch(BACKEND_URL + PRODUKTE, {
+fetch(BACKEND_URL + FRISCHBESTAND, {
     method: "POST",
     headers: {
         'Content-Type': 'application/json',
@@ -239,8 +239,8 @@ fetch(BACKEND_URL + PRODUKTE, {
     body: JSON.stringify({...data, id: "undefined"}),
 });
 
-const updateFrischBestand = (changedData, id) => 
-    fetch(BACKEND_URL + PRODUKTE + id, {
+const updateFrischBestand = (changedData, id) =>
+    fetch(BACKEND_URL + FRISCHBESTAND + id, {
         method: "PUT",
         headers: {
             'Content-Type': 'application/json',
@@ -249,7 +249,7 @@ const updateFrischBestand = (changedData, id) =>
     });
 
 const deleteFrischBestand = (id) => 
-    fetch(BACKEND_URL + PRODUKTE + id, {
+    fetch(BACKEND_URL + FRISCHBESTAND + id, {
         method: "DELETE",
         headers: {
             'Content-Type': 'application/json',

@@ -38,9 +38,7 @@ export function Gebindemanagement(){
                 .then((r) => r.json())
                 .then((r) => {
                     setData(old => {
-                        console.log("R parsed: " + JSON.stringify(r));
                         const n = r?._embedded?.frischBestellungRepresentationList;
-                        console.log(n);
                         return n === undefined ? old : n;
                     });
                     setIsLoading(false);
@@ -87,7 +85,6 @@ export function Gebindemanagement(){
 
     return(
         <div style={{overflowX: "auto", width: "100%"}}>
-            <h4><b><i>Tabelle mit allen eingegangenen Bestellungen von vor einer Woche bis jetzt</i></b></h4>
             {content()}
         </div>
     );

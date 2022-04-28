@@ -86,6 +86,23 @@ export function BestellungTable({columns, data, updateMyData, skipPageReset, dis
                                             );
                                         }
                                     }
+                                    else if(cell.column.Header == "Kategorie"){
+                                        let id = "KategorieId" + row.index;
+                                        if(data[row.index].verfuegbarkeit == true){
+                                            return(
+                                                <td{...props} id = {id}>
+                                                    {cell.render('Cell')}
+                                                </td>
+                                            );
+                                        }
+                                        else{
+                                            return(
+                                                <td{...props} id = {id} style={{color:'grey'}}>
+                                                    {cell.render('Cell')}
+                                                </td>
+                                            );
+                                        }
+                                    }
                                     else if(cell.column.Header == "Produkt"){
                                         let id = "ProduktName" + row.index;
                                         if(data[row.index].verfuegbarkeit == true){

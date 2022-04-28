@@ -126,7 +126,6 @@ export function Lager() {
                     deepAssign(columnId, old[kategorieId], value);
                     return deepClone(old);
                 }
-
                 // walk the old data object using the accessor of the table columns
                 deepAssign(columnId, old[kategorieId].produkte[produktId], value);
 
@@ -143,7 +142,6 @@ export function Lager() {
         for (const [accessor, {value}] of Object.entries(patch)) {
             deepAssign(accessor, changedData, value);
         }
-
         api.updateProdukt(produkt.id, changedData);
     };
 
@@ -285,7 +283,6 @@ export function Lager() {
                 </div>
             );
         }
-        //console.log("data entries" + Object.values(data)[1]);
         return (
             <LagerTable
                 columns={columns}

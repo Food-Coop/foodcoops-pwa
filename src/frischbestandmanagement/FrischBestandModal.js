@@ -1,7 +1,7 @@
 import React from "react";
 import Modal from "react-bootstrap/Modal";
 
-export function BestellungModal(props) {
+export function  FrischBestandModal(props) {
     const {show, hide, title, body, footer, parentProps} = props;
     return (
         <Modal

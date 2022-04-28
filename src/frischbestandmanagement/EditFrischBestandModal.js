@@ -1,7 +1,7 @@
 import React from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
-import {BestellungModal} from "../bestellung/BestellungModal";
+import {FrischBestandModal} from "./FrischBestandModal";
 
 export function EditFrischBestandModal(props) {
     const rowData = props.rowData || [];
@@ -96,7 +96,7 @@ export function EditFrischBestandModal(props) {
     </>;
 
     return (
-        <BestellungModal
+        <FrischBestandModal
             title={title}
             body={body}
             footer={footer}

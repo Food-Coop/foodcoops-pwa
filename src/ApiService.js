@@ -239,7 +239,7 @@ fetch(BACKEND_URL + FRISCHBESTAND, {
     body: JSON.stringify({...data, id: "undefined"}),
 });
 
-const updateFrischBestand = (changedData, id) =>
+const updateFrischBestand = (id, changedData) =>
     fetch(BACKEND_URL + FRISCHBESTAND + id, {
         method: "PUT",
         headers: {

@@ -100,14 +100,13 @@ export function FrischBestandManagement() {
     }
 
     const persistFrischBestand = (rowId, patch) => {
-        const [kategorieId, produktId] = rowId.split('.').map(e => parseInt(e));
-        const {produkte, id: kategorie} = data[kategorieId];
-        const produkt = produkte[produktId];
-        const changedData = {...deepClone(produkt), kategorie};
+        const frischBestand = data[rowId];
+        const changedData = {...deepClone(frischBestand)};
         for (const [accessor, {value}] of Object.entries(patch)) {
             deepAssign(accessor, changedData, value);
         }
-        api.updateProdukt(produkt.id, changedData);
+        console.log("CD:  " + JSON.stringify(changedData))
+        api.updateProdukt(frischBestand.id, changedData);
     };
 
     const deleteFrischBestand = (rowId) => {

@@ -244,21 +244,21 @@ export function Bestellung(){
 
         for(let i = 0; i < data.length; i++){
             for(let j = 0; j < frischBestellungSumme.length; j++){
-                if(data[i].id === frischBestellungSumme[j].frischbestand.id){
-                    deepAssign("bestellsumme", data[i], frischBestellungSumme[j].bestellmenge);
+                if(data[j].id === frischBestellungSumme[j].frischbestand.id){
+                    deepAssign("bestellsumme", data[j], frischBestellungSumme[j].bestellmenge);
                 }
                 else{
-                    deepAssign("bestellsumme", data[i], 0);
+                    deepAssign("bestellsumme", data[j], 0);
                 } 
             }
             for(let j = 0; j < frischBestellungBetweenDatesProPerson.length; j++){
-                if(data[i].id === frischBestellungBetweenDatesProPerson[j].frischbestand.id){
-                    deepAssign("bestellmengeAlt", data[i], frischBestellungBetweenDatesProPerson[j].bestellmenge);
+                if(data[j].id === frischBestellungBetweenDatesProPerson[j].frischbestand.id){
+                    deepAssign("bestellmengeAlt", data[j], frischBestellungBetweenDatesProPerson[j].bestellmenge);
                 }    
             }
             for(let j = 0; j < frischBestellung.length; j++){
-                if(checkAlreadyOrdered(data[i].id)){
-                    deepAssign("bestellmengeNeu", data[i], frischBestellung[j].bestellmenge);
+                if(checkAlreadyOrdered(data[j].id)){
+                    deepAssign("bestellmengeNeu", data[j], frischBestellung[j].bestellmenge);
                 }   
             }
             

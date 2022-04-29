@@ -36,6 +36,7 @@ export function EditFrischBestandModal(props) {
     };
 
     const remove = () => {
+        console.log("Remove: " + props.rowId);
         props.deleteFrischBestand(props.rowId);
         close();
     };

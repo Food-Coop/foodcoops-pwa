@@ -19,39 +19,6 @@ export function Lager() {
     const columns = React.useMemo(
         () => [
             {
-                id: 'expander',
-                Header: ({getToggleAllRowsExpandedProps, isAllRowsExpanded}) => (
-                    <span {...getToggleAllRowsExpandedProps()}>
-                {isAllRowsExpanded ? 'Icon' : 'Icon'}
-              </span>
-                ),
-                accessor: 'icon',
-                Cell: ({cell, row}) => {
-                    return row.original.hasOwnProperty("produkte") ? (
-                        <span
-                            {...row.getToggleRowExpandedProps({
-                                style: {
-                                    paddingLeft: `${row.depth * 2}rem`,
-                                }
-                            })}
-                        >
-
-                <div {
-                         ...{
-                             style: {
-                                 height: "1.5em",
-                                 backgroundImage: "url(" + cell.value + ")",
-                                 backgroundSize: "contain",
-                                 backgroundRepeat: "no-repeat",
-                                 backgroundPosition: "center"
-                             }
-                         }
-                     } />
-                </span>
-                    ) : null;
-                }
-            },
-            {
                 Header: 'Name',
                 accessor: 'name',
             },
@@ -66,7 +33,7 @@ export function Lager() {
             {
                 Header: 'Einheit',
                 accessor: 'lagerbestand.einheit.name',
-            },
+            }
         ],
         []
     );
@@ -199,12 +166,12 @@ export function Lager() {
      */
     const deleteProdukt = (rowId) => {
         const old = data;
-        const [kategorieId, produktId] = rowId.split('.').map(e => parseInt(e));
-        const kategorie = old[kategorieId];
-        api.deleteProdukt(kategorie.produkte[produktId].id)
+        // const [kategorieId, produktId] = rowId.split('.').map(e => parseInt(e));
+        // const kategorie = old[kategorieId];
+        api.deleteProdukt(old[rowId].id)
             .then(r => {
                 if (r.ok) {
-                    const [produkt] = kategorie.produkte.splice(produktId, 1);
+                    //const [produkt] = kategorie.produkte.splice(produktId, 1);
                     setSkipPageReset(true);
                     setData(deepClone(old));
                 } else {
@@ -217,11 +184,6 @@ export function Lager() {
     const newProdukt = (data1) => {
         (async function () {
             const response = await api.createProdukt(data1);
-            let ms = Date.now();
-            console.log("Data1 in newP: " + data1)
-            console.log("Data1 stringed in newP: " + JSON.stringify(data1));
-            console.log("create new p: " + ms + "ms");
-            console.log("Response" + response);
             if(response.ok) {
                 const newProdukt = await response.json();
                     setSkipPageReset(true);

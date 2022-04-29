@@ -55,7 +55,7 @@ export function NewFrischBestandModal(props) {
         }
         if (!result.kategorie) {
             const find = props.kategorien[0];
-            result.kategorie = find.id;
+            result.kategorie = find.id + find.name;
         }
         // FIXME: support setting icon and kategorie (see added TODO items)
         const {icon,...supported} = result;

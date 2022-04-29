@@ -106,14 +106,12 @@ export function FrischBestandManagement() {
             deepAssign(accessor, changedData, value);
         }
         console.log("CD:  " + JSON.stringify(changedData))
-        api.updateProdukt(frischBestand.id, changedData);
+        api.updateFrischBestand(frischBestand.id, changedData);
     };
 
     const deleteFrischBestand = (rowId) => {
         const old = data;
-        console.log(data[rowId].id)
-        let frischBestandId = document.getElementById("ProduktId").innerHTML;
-        api.deleteFrischBestand(frischBestandId)
+        api.deleteFrischBestand(old[rowId].id)
             .then(r => {
                 if (r.ok) {
                    // const [produkt] = kategorie.produkte.splice(produktId, 1);
@@ -127,12 +125,7 @@ export function FrischBestandManagement() {
 
     const newFrischBestand = (data1) => {
         (async function () {
-            const response = await api.createProdukt(data1);
-            let ms = Date.now();
-            console.log("Data1 in newP: " + data1)
-            console.log("Data1 stringed in newP: " + JSON.stringify(data1));
-            console.log("create new p: " + ms + "ms");
-            console.log("Response " + JSON.stringify(response));
+            const response = await api.createFrischBestand(data1);
             if(response.ok) {
                 const newFrischBestand = await response.json();
                     setSkipPageReset(true);

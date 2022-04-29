@@ -53,12 +53,15 @@ export function NewProduktModal(props) {
         }
         if (!result.kategorie) {
             const find = props.kategorien[0];
-            result.kategorie = find.id;
+            console.log("props.kategorien " + JSON.stringify(props.kategorien));
+            deepAssign("lagerkategorie.id", result, find.id)
+            deepAssign("lagerkategorie.name", result, find.name);
+            //result.kategorie = find.id;
         }
 
         // FIXME: support setting icon and kategorie (see added TODO items)
         const {icon,...supported} = result;
-        //console.log("Supported: " + JSON.stringify(supported));
+        console.log("Supported: " + JSON.stringify(supported));
         props.create(supported);
         close();
     };

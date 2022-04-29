@@ -67,6 +67,10 @@ export function Lager() {
                 Header: 'Einheit',
                 accessor: 'lagerbestand.einheit.name',
             },
+            {
+                Header: 'Kategorie',
+                accessor: 'lagerkategorie.name',
+            }
         ],
         []
     );
@@ -87,8 +91,9 @@ export function Lager() {
                 .then((r) => r.json())
                 .then((r) => {
                         setData(old => {
+                            console.log("R Produkt: " + JSON.stringify(r));
                             const n = r?._embedded?.produktRepresentationList;
-                            //console.log(JSON.stringify(n));
+                            console.log("N PRODUKT " + JSON.stringify(n));
                             return n === undefined ? old : n;
                         });
                         setIsLoading(false);

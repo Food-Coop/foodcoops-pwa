@@ -53,14 +53,13 @@ export function LagerTable({columns, data, updateMyData, skipPageReset, dispatch
                         {
                             // canExpand is true for the kategorien header row
                             // make the kategorien name span multiple columns for these rows
-                            (row.original.hasOwnProperty("produkte") ? row.cells.slice(0, 2) : row.cells)
-                                .map((cell, i) => {
+                            row.cells.map((cell, i) => {
                                     const props = cell.getCellProps();
                                     if (i === 1 && row.original.hasOwnProperty("produkte")) {
                                         props.colSpan = row.cells.length - 1;
                                         props.style = {...props.style, fontWeight: "bold", cursor: "pointer"};
                                         props.onClick = () => dispatchModal("EditKategorieModal", cell, row);
-                                    } else if (i !== 0) {
+                                    } else {
                                         props.onClick = () => dispatchModal("EditProduktModal", cell, row);
                                         props.style = {...props.style, cursor: "pointer"};
 

@@ -70,6 +70,25 @@ export function EditFrischBestandModal(props) {
                 </td>
             </tr>
         }
+        if (accessor === "kategorie.name") {
+            const onChange = function ({target: {value}}) {
+                const changed = {};
+                changed["kategorie.id"] = {name, value};
+                return setNewData(prev => ({...prev, ...changed}));
+            };
+            return <tr key={accessor}>
+                <td>
+                    <label style={{margin: 0}}>{name}:</label>
+                </td>
+                <td>
+                    <div>
+                        <select onChange={onChange} style={{width: "100%"}}>
+                            {props.kategorien.map(({name, id}, i) => <option key={i} value={id}>{name}</option>)}
+                        </select>
+                    </div>
+                </td>
+            </tr>
+        }
         return <tr key={accessor}>
             <td>
                 <label style={{margin: 0}}>{name}:</label>
@@ -88,6 +107,7 @@ export function EditFrischBestandModal(props) {
     };
     const body = Object.entries(merged)
         .filter(([a, {}])=> a !== "einheit.id")
+        .filter(([a, {}])=> a !== "kategorie.id")
         .map(mapper);
 
     const footer = <>

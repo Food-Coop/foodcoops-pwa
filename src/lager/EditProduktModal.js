@@ -6,13 +6,16 @@ import {LagerModal} from "./LagerModal";
 export function EditProduktModal(props) {
     const rowData = props.rowData || [];
     const [newData, setNewData] = React.useState({});
-
     const close = () => {
         props.close();
         setNewData({});
     };
 
+
+
+
     const save = () => {
+        //console.log("Kategorieprops: " + JSON.stringify(props));
         let idVisited = false;
         for (const [accessor, {value}] of Object.entries(newData)) {
             if (accessor === "lagerbestand.einheit.id") {
@@ -30,6 +33,7 @@ export function EditProduktModal(props) {
             newData["lagerbestand.einheit.id"] = {name:"Id", value: find.id};
         }
 
+        //console.log("newData: " + JSON.stringify(new
         props.persist(props.rowId, newData);
 
         close();
@@ -69,6 +73,25 @@ export function EditProduktModal(props) {
                 </td>
             </tr>
         }
+        if (accessor === "kategorie.name") {
+            const onChange = function ({target: {value}}) {
+                const changed = {};
+                changed["kategorie.id"] = {name, value};
+                return setNewData(prev => ({...prev, ...changed}));
+            };
+            return <tr key={accessor}>
+                <td>
+                    <label style={{margin: 0}}>{name}:</label>
+                </td>
+                <td>
+                    <div>
+                        <select onChange={onChange} style={{width: "100%"}}>
+                            {props.kategorien.map(({name, id}, i) => <option key={i} value={id}>{name}</option>)}
+                        </select>
+                    </div>
+                </td>
+            </tr>
+        }
         return <tr key={accessor}>
             <td>
                 <label style={{margin: 0}}>{name}:</label>
@@ -87,6 +110,7 @@ export function EditProduktModal(props) {
     };
     const body = Object.entries(merged)
         .filter(([a, {}])=> a !== "lagerbestand.einheit.id")
+        .filter(([a, {}])=> a !== "kategorie.id")
         .map(mapper);
 
     const footer = <>

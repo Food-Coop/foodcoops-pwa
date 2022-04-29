@@ -8,10 +8,9 @@ function defaultData(columns) {
     const capitalize = word => word.replace(/^\w/, c => c.toUpperCase());
     const getName = (accessor, humanName) => typeof humanName === "string" ? humanName : capitalize(accessor);
 
-    const tableColumns = [...columns, {Header: "Kategorie", accessor: "kategorie"}];
     //console.log("table columns: " + JSON.stringify(tableColumns));
     const convert = ({Header: humanName, accessor}) => [accessor, {name: getName(accessor, humanName), value: ""}];
-    const initial = Object.fromEntries(tableColumns.map(convert));
+    const initial = Object.fromEntries(columns.map(convert));
     //console.log("table columns after: " + JSON.stringify(initial));
 
     initial["name"].value = "Name";
@@ -55,12 +54,15 @@ export function NewFrischBestandModal(props) {
         }
         if (!result.kategorie) {
             const find = props.kategorien[0];
-            result.kategorie = find.id + find.name;
+            console.log("props.kategorien " + JSON.stringify(props.kategorien));
+            let kategorie = {};
+            deepAssign("id", kategorie, find.id);
+            deepAssign("name", kategorie, find.name);
+            deepAssign("kategorie", result, kategorie);
         }
         // FIXME: support setting icon and kategorie (see added TODO items)
-        const {icon,...supported} = result;
         //console.log("Supported: " + JSON.stringify(supported));
-        props.create(supported);
+        props.create(result);
         close();
     };
 
@@ -73,7 +75,12 @@ export function NewFrischBestandModal(props) {
             // edge case: dropdown value is the id of the einheit but accessor is the name of the einheit
             if (accessor === "einheit.name") {
                 changed["einheit.id"] = {name, value};
-            } else {
+            }
+            else if(accessor === "kategorie.name") {
+                changed["kategorie.id"] = {name, value};
+
+            }
+            else{
                 changed[accessor] = {name, value};
             }
 
@@ -85,15 +92,7 @@ export function NewFrischBestandModal(props) {
                 onChange={onChange}
                 style={{width: "100%"}}/>;
 
-        if (accessor === "icon") {
-            // FIXME: icons are not supported by the API yet
-            return;
-            // noinspection UnreachableCodeJS
-            const setIcon = icon => setNewData(prev => ({...prev, icon}));
-            edit = <div>
-                <IconInput setIcon={setIcon}/>
-            </div>;
-        } else if (accessor === "kategorie") {
+        if (accessor === "kategorie.name") {
             edit = (
                 <div>
                     <select onChange={onChange} style={{width: "100%"}}>
@@ -122,6 +121,7 @@ export function NewFrischBestandModal(props) {
     };
     const body = Object.entries(initial)
         .filter(([a, {}])=> a !== "einheit.id")
+        .filter(([a, {}])=> a !== "kategorie.id")
         .map(mapper);
 
     const footer = <>

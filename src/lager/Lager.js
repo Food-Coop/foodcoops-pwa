@@ -33,7 +33,11 @@ export function Lager() {
             {
                 Header: 'Einheit',
                 accessor: 'lagerbestand.einheit.name',
-            }
+            },
+            {
+                Header: 'Kategorie',
+                accessor: 'kategorie.name',
+            },
         ],
         []
     );
@@ -44,6 +48,8 @@ export function Lager() {
     const [einheiten, setEinheiten] = React.useState([]);
     const [kategorien, setKategorien] = React.useState([]);
     const [skipPageReset, setSkipPageReset] = React.useState(false);
+
+
 
     const api = useApi();
 
@@ -182,6 +188,7 @@ export function Lager() {
 
 
     const newProdukt = (data1) => {
+        console.log("Data1: " + JSON.stringify(data1));
         (async function () {
             const response = await api.createProdukt(data1);
             if(response.ok) {
@@ -292,6 +299,7 @@ export function Lager() {
                 persist={persistProdukt}
                 deleteProdukt={deleteProdukt}
                 einheiten={einheiten}
+                kategorien={kategorien}
                 rowId={modal.state.rowId}
                 rowData={modal.state.rowData}/>
 

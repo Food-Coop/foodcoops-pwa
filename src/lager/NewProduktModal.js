@@ -8,10 +8,9 @@ function defaultData(columns) {
     const capitalize = word => word.replace(/^\w/, c => c.toUpperCase());
     const getName = (accessor, humanName) => typeof humanName === "string" ? humanName : capitalize(accessor);
 
-    const tableColumns = [...columns, {Header: "Kategorie", accessor: "kategorie"}];
     //console.log("table columns: " + JSON.stringify(tableColumns));
     const convert = ({Header: humanName, accessor}) => [accessor, {name: getName(accessor, humanName), value: ""}];
-    const initial = Object.fromEntries(tableColumns.map(convert));
+    const initial = Object.fromEntries(columns.map(convert));
     //console.log("table columns after: " + JSON.stringify(initial));
 
     initial["name"].value = "Produktname";
@@ -51,18 +50,18 @@ export function NewProduktModal(props) {
             const find = props.einheiten[0];
             deepAssign("lagerbestand.einheit.id", result, find.id);
         }
-        if (!result.kategorie) {
+        if (!result.kategorie?.id) {
             const find = props.kategorien[0];
             console.log("props.kategorien " + JSON.stringify(props.kategorien));
-            deepAssign("lagerkategorie.id", result, find.id)
-            deepAssign("lagerkategorie.name", result, find.name);
+            let kategorie = {};
+            deepAssign("id", kategorie, find.id);
+            deepAssign("name", kategorie, find.name);
+            deepAssign("kategorie", result, kategorie);
             //result.kategorie = find.id;
         }
 
-        // FIXME: support setting icon and kategorie (see added TODO items)
-        const {icon,...supported} = result;
-        console.log("Supported: " + JSON.stringify(supported));
-        props.create(supported);
+        console.log("Supported: " + JSON.stringify(result));
+        props.create(result);
         close();
     };
 
@@ -87,15 +86,7 @@ export function NewProduktModal(props) {
                 onChange={onChange}
                 style={{width: "100%"}}/>;
 
-        if (accessor === "icon") {
-            // FIXME: icons are not supported by the API yet
-            return;
-            // noinspection UnreachableCodeJS
-            const setIcon = icon => setNewData(prev => ({...prev, icon}));
-            edit = <div>
-                <IconInput setIcon={setIcon}/>
-            </div>;
-        } else if (accessor === "kategorie") {
+        if (accessor === "kategorie.name") {
             edit = (
                 <div>
                     <select onChange={onChange} style={{width: "100%"}}>
@@ -124,6 +115,7 @@ export function NewProduktModal(props) {
     };
     const body = Object.entries(initial)
         .filter(([a, {}])=> a !== "lagerbestand.einheit.id")
+        .filter(([a, {}])=> a !== "kategorie.id")
         .map(mapper);
 
     const footer = <>

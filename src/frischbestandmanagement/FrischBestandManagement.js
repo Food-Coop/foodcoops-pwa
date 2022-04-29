@@ -36,6 +36,10 @@ export function FrischBestandManagement() {
                 accessor: 'einheit.name',
             },
             {
+                Header: 'Kategorie',
+                accessor: 'kategorie.name',
+            },
+            {
                 Header: 'Preis',
                 accessor: 'preis',
             }
@@ -262,6 +266,7 @@ export function FrischBestandManagement() {
                 persist={persistFrischBestand}
                 deleteFrischBestand={deleteFrischBestand}
                 einheiten={einheiten}
+                kategorien={kategorien}
                 rowId={modal.state.rowId}
                 rowData={modal.state.rowData}/>
 

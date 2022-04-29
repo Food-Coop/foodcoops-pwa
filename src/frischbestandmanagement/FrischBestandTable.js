@@ -52,13 +52,10 @@ export function FrischBestandTable({columns, data, updateMyData, skipPageReset, 
                 return (
                     <tr {...row.getRowProps()}>
                         {
-                            row.cells
-                                .map((cell, i) => {
+                            row.cells.map((cell, i) => {
                                     const props = cell.getCellProps();
-                                    if (i !== 0) {
-                                        props.onClick = () => dispatchModal("EditFrischBestandModal", cell, row);
-                                        props.style = {...props.style, cursor: "pointer"};
-                                    }
+                                    props.onClick = () => dispatchModal("EditFrischBestandModal", cell, row);
+                                    props.style = {...props.style, cursor: "pointer"};
                                     if(data[row.index].verfuegbarkeit == true){
                                         data[row.index].verfuegbarkeit = 1;
                                     }

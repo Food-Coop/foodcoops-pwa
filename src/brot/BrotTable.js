@@ -66,27 +66,8 @@ export function BrotTable({columns, data, updateMyData, skipPageReset, dispatchM
                             (row.original.hasOwnProperty("produkte") ? row.cells.slice(0, 2) : row.cells)
                                 .map((cell, i) => {
                                     const props = cell.getCellProps();
-                                    props.onClick = () => dispatchModal("EditFrischBestandModal", cell, row);
-                                    props.style = {...props.style, cursor: "pointer"};
-                                    if(cell.column.Header == "ProduktID"){
+                                    if(cell.column.Header == "BrotID"){
                                         let id = "ProduktId" + row.index;
-                                        if(data[row.index].verfuegbarkeit == true){
-                                            return(
-                                                <td{...props} id = {id}>
-                                                    {cell.render('Cell')}
-                                                </td>
-                                            );
-                                        }
-                                        else{
-                                            return(
-                                                <td{...props} id = {id} style={{color:'grey'}}>
-                                                    {cell.render('Cell')}
-                                                </td>
-                                            );
-                                        }
-                                    }
-                                    else if(cell.column.Header == "Kategorie"){
-                                        let id = "KategorieId" + row.index;
                                         if(data[row.index].verfuegbarkeit == true){
                                             return(
                                                 <td{...props} id = {id}>
@@ -150,8 +131,6 @@ export function BrotTable({columns, data, updateMyData, skipPageReset, dispatchM
                                                 )
                                             }
                                         }
-                                        
-                                        
                                     }
                                     else if(cell.column.Header == "Preis"){
                                         let id = "PreisId" + row.index;

@@ -260,13 +260,11 @@ const deleteFrischBestand = (id) =>
 
 // Brotbestellung
 
-// FrischBestellung
-
 const readBrotBestellung = () => 
-    fetch(BACKEND_URL + FRISCHBESTELLUNG + DATUM);
+    fetch(BACKEND_URL + BROTBESTELLUNG + DATUM);
 
 const createBrotBestellung = (data) =>
-    fetch(BACKEND_URL + FRISCHBESTELLUNG, {
+    fetch(BACKEND_URL + BROTBESTELLUNG, {
         method: "POST",
         headers: {
             'Content-Type': 'application/json',
@@ -275,7 +273,7 @@ const createBrotBestellung = (data) =>
     });
 
 const updateBrotBestellung = (data, frischBestellungId) =>
-    fetch(BACKEND_URL + FRISCHBESTELLUNG + frischBestellungId, {
+    fetch(BACKEND_URL + BROTBESTELLUNG + frischBestellungId, {
         method: "PUT",
         headers: {
             'Content-Type': 'application/json',
@@ -284,13 +282,13 @@ const updateBrotBestellung = (data, frischBestellungId) =>
     });
 
 const readBrotBestellungProPerson = (person_id) =>
-    fetch(BACKEND_URL + FRISCHBESTELLUNG + DATUM + person_id)
+    fetch(BACKEND_URL + BROTBESTELLUNG + DATUM + person_id)
 
 const readBrotBestellungProProdukt = () => 
-    fetch(BACKEND_URL + FRISCHBESTELLUNG + DATUM + MENGE);
+    fetch(BACKEND_URL + BROTBESTELLUNG + DATUM + MENGE);
 
 const readBrotBestellungBetweenDatesProPerson = (person_id) => 
-    fetch(BACKEND_URL + FRISCHBESTELLUNG + PERSON + person_id)
+    fetch(BACKEND_URL + BROTBESTELLUNG + PERSON + person_id)
 
 // Brotbestand
 

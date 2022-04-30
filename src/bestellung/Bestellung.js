@@ -1,9 +1,8 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Button from 'react-bootstrap/Button';
-import Row from 'react-bootstrap/Row'
 import {BestellungTable} from "./BestellungTable";
-import {deepAssign, deepClone} from '../util'
+import {deepAssign} from '../util'
 import {useApi} from '../ApiService';
 import {useKeycloak} from "@react-keycloak/web";
 
@@ -54,35 +53,10 @@ export function Bestellung(){
     const [isAlsoLoading2, setIsAlsoLoading2] = React.useState(true);
     const [data, setData] = React.useState([]);
     const [reducerValue, forceUpdate] = React.useReducer(x => x+1, 0);
-    const [modal, setModal] = React.useState({type: null, state: {}});
-    const [skipPageReset, setSkipPageReset] = React.useState(false);
     const [frischBestellungSumme, setFrischBestellungSumme] = React.useState([]);
-
-    const getDeadline = (n) => {
-        //n = 7 => nächste Deadline, n = 0 => letzte Deadline, n = -7 => vorletzte Deadline, ...
-        let datum = new Date();
-        var heute = new Date(datum.getFullYear(), datum.getMonth(), datum.getDate());
-        var deadline = new Date(heute.setDate(heute.getDate()-heute.getDay() + n));
-        return deadline;
-    }
-
 
     const api = useApi();
     const {keycloak} = useKeycloak();
-
-    function updateBestellung() {
-        let personId = keycloak.tokenParsed.preferred_username;
-        api.readFrischBestellungProPerson(personId)
-            .then(r => r.json())
-            .then(r => {
-                setFrischBestellung(old => {
-                    //console.log("R stringed :" + JSON.stringify(r));
-                    const n = r?._embedded?.frischBestellungRepresentationList
-                    //console.log(n);
-                    return n === undefined ? old : n;
-                });
-            });
-    }
 
     React.useEffect(
         () => {
@@ -96,7 +70,6 @@ export function Bestellung(){
                     setIsAlsoLoading(false);
                 }
             );
-
             api.readFrischBestand()
                 .then((r) => r.json())
                 .then((r) => {
@@ -118,42 +91,17 @@ export function Bestellung(){
                     setIsAlsoLoading2(false);
                 }
             );
-            updateBestellung();
+            api.readFrischBestellungProPerson(person_id)
+                .then(r => r.json())
+                .then(r => {
+                    setFrischBestellung(old => {
+                        const n = r?._embedded?.frischBestellungRepresentationList
+                        return n === undefined ? old : n;
+                    }
+                );
+            });
         }, [reducerValue]
     )
-    
-    const dispatchModal = (type, cell, row) => {
-        let columnId = undefined;
-        let rowId = undefined;
-        let values = undefined;
-        try {
-            columnId = cell.column.id
-            rowId = row.id;
-            values = row.cells;
-        } catch (e) {}
-        let state = {}
-        setModal({
-            type, state
-        })
-    }
-
-    const updateMyData = (rowId, columnId, value) => {
-        // We also turn on the flag to not reset the page
-        setSkipPageReset(true)
-        setData(old => {
-                const [kategorieId, produktId] = rowId.split('.').map(e => parseInt(e));
-                if (produktId === undefined) {
-                    deepAssign(columnId, old[kategorieId], value);
-                    return deepClone(old);
-                }
-
-                // walk the old data object using the accessor of the table columns
-                deepAssign(columnId, old[kategorieId].produkte[produktId], value);
-
-                return deepClone(old);
-            }
-        )
-    }
 
     const checkAlreadyOrdered = (frischBestandId) =>{
         for(let j = 0; j < frischBestellung.length; j++){
@@ -165,13 +113,16 @@ export function Bestellung(){
         return null;
     }
 
+    const getDeadline = (n) => {
+        //n = 7 => nächste Deadline, n = 0 => letzte Deadline, n = -7 => vorletzte Deadline, ...
+        let datum = new Date();
+        var heute = new Date(datum.getFullYear(), datum.getMonth(), datum.getDate());
+        var deadline = new Date(heute.setDate(heute.getDate()-heute.getDay() + n));
+        return deadline;
+    }
+
     const submitBestellung = () => {
         const result = {};
-        let a_personId = "person_id";
-        let a_frischbestand = "frischbestand";
-        let a_bestellmenge = "bestellmenge";
-        let a_datum = "datum";
-
         let preis = 0;
         for (let i = 0; i < data.length; i++) {
             let produktId = "ProduktId" + i;
@@ -185,17 +136,16 @@ export function Bestellung(){
             if (bestellmenge == "") {
             } 
             else {
-                //alert(deadline);
-                //Überprüfe ob bereits eine Bestellung in dieser Woche getätigt wurde
                 const {_links, ...supported} = data[i];
+                deepAssign("person_id", result, personId);
+                deepAssign("frischbestand", result, supported);
+                deepAssign("bestellmenge", result, bestellmenge);
+                deepAssign("datum", result, datum);
 
-                deepAssign(a_personId, result, personId);
-                deepAssign(a_frischbestand, result, supported);
-                deepAssign(a_bestellmenge, result, bestellmenge);
-                deepAssign(a_datum, result, datum);
+                //Überprüfe ob bereits eine Bestellung in dieser Woche getätigt wurde
                 let check = checkAlreadyOrdered(frischBestandId);
                 if(check != null){
-
+                    //Bestellung updaten
                     if (bestellmenge <= 10) {
                         api.updateFrischBestellung(result, check);
                     }
@@ -210,8 +160,9 @@ export function Bestellung(){
                         }
                     }
                 }
-                else{
 
+                else{
+                    //Neue Bestellung abgeben
                     if (bestellmenge <= 10) {
                         api.createFrischBestellung(result);
                     }
@@ -230,7 +181,7 @@ export function Bestellung(){
             }
         }
         document.getElementById("preis").innerHTML = "Preis: " + preis + "€";
-        //alert("Ihre Bestellung wurde übermittelt. Vielen Dank!");
+        alert("Ihre Bestellung wurde übermittelt. Vielen Dank!");
     };
 
     const content = () => {
@@ -267,11 +218,7 @@ export function Bestellung(){
         return (
             <BestellungTable
                 columns={columns}
-                data={data}
-                getTrProps={getTrProps}
-                updateMyData={updateMyData}
-                skipPageReset={skipPageReset}
-                dispatchModal={dispatchModal}/>
+                data={data}/>
         );
     }
 
@@ -285,18 +232,6 @@ export function Bestellung(){
             <div>{date}</div>
         );
     }
-
-    const getTrProps = (state, rowInfo, instance) => {
-        if (rowInfo) {
-          return {
-            style: {
-              background: rowInfo.row.preis > 2 ? 'red' : 'green',
-              color: 'white'
-            }
-          }
-        }
-        return {};
-      }
 
     return(
         <div>

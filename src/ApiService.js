@@ -27,6 +27,7 @@ export const ApiProvider = (props) => {
         createFrischBestand: props.createFrischBestand || createFrischBestand,
         deleteFrischBestand: props.deleteFrischBestand || deleteFrischBestand,
         updateFrischBestand: props.updateFrischBestand || updateFrischBestand,
+        readBrotBestand: props.readBrotBestand || readBrotBestand
     };
 
     return (
@@ -58,7 +59,8 @@ export const useApi = () => {
         readFrischBestellungBetweenDatesProPerson,
         createFrischBestand,
         updateFrischBestand,
-        deleteFrischBestand
+        deleteFrischBestand,
+        readBrotBestand
     };
 
     // FIXME: Get services working correctly https://the-guild.dev/blog/injectable-services-in-react
@@ -75,6 +77,7 @@ const DATUM = "datum/"
 const MENGE = "menge/"
 const FRISCHBESTAND = "frischBestand/";
 const PERSON = "person/";
+const BROT = "brotBestand/";
 
 /**
  * https://github.com/Food-Coop/foodcoops-backend#new-produkte
@@ -255,4 +258,9 @@ const deleteFrischBestand = (id) =>
             'Content-Type': 'application/json',
         },
     });
+
+const readBrotBestand = (id = undefined) => id ?
+    fetch(BACKEND_URL + BROT + id) :
+    fetch(BACKEND_URL + BROT);
+
 

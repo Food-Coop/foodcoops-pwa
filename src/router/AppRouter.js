@@ -5,6 +5,7 @@ import {AuthButton} from "../auth/AuthButton";
 import {About} from "../About";
 import {Lager} from "../lager/Lager";
 import {Bestellung} from "../bestellung/Bestellung";
+import { Brot } from "../brot/Brot";
 import {Gebindemanagement} from "../gebindemanagement/Gebindemanagement";
 import {PrivateRoute} from "../auth/PrivateRoute";
 import {Home} from "../Home";
@@ -16,11 +17,11 @@ export const AppRouter = () => {
         <Router>
             <nav className="Header">
                 <img className="Header-logo" src="manifest-icon-512.png" alt="logo"/>
-                <Link style={{paddingRight: "1em"}} to="/">
-                    Food Coops
-                </Link>
                 <Link style={{paddingRight: "1em"}} to={"/bestellung"}>
-                    Bestellen
+                    Frischbestellung
+                </Link>
+                <Link style={{paddingRight: "1em"}} to={"/brot"}>
+                    Brotbestellung
                 </Link>
                 <Link style={{paddingRight: "1em"}} to={"/gebindemanagement"}>
                     Gebindemanagement
@@ -40,6 +41,7 @@ export const AppRouter = () => {
                 <PrivateRoute roles={["Einkäufer"]} path="/gebindemanagement" component={Gebindemanagement}/>
                 <PrivateRoute roles={["Einkäufer"]} path="/frischbestandmanagement" component={FrischBestandManagement}/>
                 <PrivateRoute roles={["Mitglied"]} path="/bestellung" component={Bestellung}/>
+                <PrivateRoute roles={["Mitglied"]} path="/brot" component={Brot}/>
                 <Route path="/" component={Home}/>
             </Switch>
             <footer>

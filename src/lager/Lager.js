@@ -6,7 +6,6 @@ import {LagerTable} from "./LagerTable";
 import {EditProduktModal} from "./EditProduktModal";
 import {EditKategorieModal} from "./EditKategorieModal";
 import {useApi} from '../ApiService';
-import {NewKategorieModal} from './NewKategorieModal';
 import {NewProduktModal} from './NewProduktModal';
 import {deepAssign, deepClone} from '../util';
 import {EditEinheitenModal} from "./EditEinheitenModal";
@@ -283,7 +282,7 @@ export function Lager() {
     return (
         <div>
             <Row style={{margin: "1rem"}}>
-                <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("NewKategorieModal")}>Kategorie erstellen</Button>
+                <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("KategorienModal")}>Kategorie erstellen</Button>
                 <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("NewProduktModal")}>Produkt erstellen</Button>
                 <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("EinheitenModal")}>Einheiten erstellen</Button>
                 <Button style={{margin:"0.25rem"}} variant="success" onClick={() => window.open("https://foodcoops-backend.herokuapp.com/externeliste")}>Externe Einkaufsliste</Button>
@@ -303,20 +302,6 @@ export function Lager() {
                 rowId={modal.state.rowId}
                 rowData={modal.state.rowData}/>
 
-            <EditKategorieModal
-                show={modal.type === "EditKategorieModal"}
-                close={() => dispatchModal(null)}
-                updateMyData={updateMyData}
-                persist={persistKategorie}
-                deleteKategorie={deleteKategorie}
-                {...modal.state} />
-
-            <NewKategorieModal
-                show={modal.type === "NewKategorieModal"}
-                close={() => dispatchModal(null)}
-                create={newKategorie}
-                {...modal.state} />
-
             <NewProduktModal
                 show={modal.type === "NewProduktModal"}
                 close={() => dispatchModal(null)}
@@ -332,6 +317,14 @@ export function Lager() {
                 create={newEinheit}
                 remove={deleteEinheit}
                 einheiten={einheiten}
+                {...modal.state} />
+
+            <EditKategorieModal
+                show={modal.type === "KategorienModal"}
+                close={() => dispatchModal(null)}
+                create={newKategorie}
+                remove={deleteKategorie}
+                kategorien={kategorien}
                 {...modal.state} />
         </div>
     )

@@ -8,7 +8,6 @@ import {FrischBestandTable} from "./FrischBestandTable";
 import {EditFrischBestandModal} from "./EditFrischBestandModal";
 import { NewFrischBestandModal } from './NewFrischBestandModal';
 import {EditKategorieModal} from "../lager/EditKategorieModal";
-import {NewKategorieModal} from '../lager/NewKategorieModal';
 import {EditEinheitenModal} from "../lager/EditEinheitenModal";
 
 
@@ -250,7 +249,7 @@ export function FrischBestandManagement() {
     return(
         <div>
             <Row style={{margin: "1rem"}}>
-                <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("NewKategorieModal")}>Kategorie erstellen</Button>
+                <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("KategorienModal")}>Kategorie erstellen</Button>
                 <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("NewFrischBestandModal")}>Frischbestand erstellen</Button>
                 <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("EinheitenModal")}>Einheiten erstellen</Button>
             </Row>
@@ -271,17 +270,11 @@ export function FrischBestandManagement() {
                 rowData={modal.state.rowData}/>
 
             <EditKategorieModal
-                show={modal.type === "EditKategorieModal"}
-                close={() => dispatchModal(null)}
-                updateMyData={updateMyData}
-                persist={persistKategorie}
-                deleteKategorie={deleteKategorie}
-                {...modal.state} />
-
-            <NewKategorieModal
-                show={modal.type === "NewKategorieModal"}
+                show={modal.type === "KategorienModal"}
                 close={() => dispatchModal(null)}
                 create={newKategorie}
+                remove={deleteKategorie}
+                kategorien={kategorien}
                 {...modal.state} />
 
             <NewFrischBestandModal

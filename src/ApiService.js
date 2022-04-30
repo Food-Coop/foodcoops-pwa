@@ -10,24 +10,39 @@ export const ApiProvider = (props) => {
         readProdukt: props.readProdukt || readProdukt,
         deleteProdukt: props.deleteProdukt || deleteProdukt,
         updateProdukt: props.updateProdukt || updateProdukt,
+
         createKategorie: props.createKategorie || createKategorie,
         readKategorie: props.readKategorie || readKategorie,
         deleteKategorie: props.deleteKategorie || deleteKategorie,
         updateKategorie: props.updateKategorie || updateKategorie,
+
         createEinheit: props.createEinheit || createEinheit,
         readEinheit: props.readEinheit || readEinheit,
         deleteEinheit: props.deleteEinheit || deleteEinheit,
+
         readFrischBestellung: props.readFrischBestellung || readFrischBestellung,
-        readFrischBestellungProProdukt: props.readFrischBestellungProProdukt || readFrischBestellungProProdukt,
-        readFrischBestand: props.readFrischBestand || readFrischBestand,
         readFrischBestellungProPerson: props.readFrischBestellungProPerson || readFrischBestellungProPerson,
+        readFrischBestellungProProdukt: props.readFrischBestellungProProdukt || readFrischBestellungProProdukt,
+        readFrischBestellungBetweenDatesProPerson: props.readFrischBestellungBetweenDatesProPerson || readFrischBestellungBetweenDatesProPerson,
         createFrischBestellung: props.createFrischBestellung || createFrischBestellung,
         updateFrischBestellung: props.updateFrischBestellung || updateFrischBestellung,
-        readFrischBestellungBetweenDatesProPerson: props.readFrischBestellungBetweenDatesProPerson || readFrischBestellungBetweenDatesProPerson,
+        
+        readFrischBestand: props.readFrischBestand || readFrischBestand,
         createFrischBestand: props.createFrischBestand || createFrischBestand,
         deleteFrischBestand: props.deleteFrischBestand || deleteFrischBestand,
         updateFrischBestand: props.updateFrischBestand || updateFrischBestand,
-        readBrotBestand: props.readBrotBestand || readBrotBestand
+
+        readBrotBestand: props.readBrotBestand || readBrotBestand,
+        createBrotBestand: props.createBrotBestand || createBrotBestand,
+        deleteBrotBestand: props.deleteBrotBestand || deleteBrotBestand,
+        updateBrotBestand: props.updateBrotBestand || updateBrotBestand,
+
+        readBrotBestellung: props.readBrotBestellung || readBrotBestellung,
+        readBrotBestellungProPerson: props.readBrotBestellungProPerson || readBrotBestellungProPerson,
+        readBrotBestellungProProdukt: props.readBrotBestellungProProdukt || readBrotBestellungProProdukt,
+        readBrotBestellungBetweenDatesProPerson: props.readBrotBestellungBetweenDatesProPerson || readBrotBestellungBetweenDatesProPerson,
+        createBrotBestellung: props.createBrotBestellung || createBrotBestellung,
+        updateBrotBestellung: props.updateBrotBestellung || updateBrotBestellung,
     };
 
     return (
@@ -43,31 +58,43 @@ export const useApi = () => {
         readProdukt,
         deleteProdukt,
         updateProdukt,
+
         createKategorie,
         readKategorie,
         deleteKategorie,
         updateKategorie,
+
         createEinheit,
         readEinheit,
         deleteEinheit,
+
         readFrischBestellung,
         readFrischBestellungProProdukt,
-        readFrischBestand,
         readFrischBestellungProPerson,
+        readFrischBestellungBetweenDatesProPerson,
         createFrischBestellung,
         updateFrischBestellung,
-        readFrischBestellungBetweenDatesProPerson,
+
+        readFrischBestand,
         createFrischBestand,
         updateFrischBestand,
         deleteFrischBestand,
-        readBrotBestand
-    };
 
-    // FIXME: Get services working correctly https://the-guild.dev/blog/injectable-services-in-react
-    // return useContext(ApiContext);
+        readBrotBestand,
+        createBrotBestand,
+        deleteBrotBestand,
+        updateBrotBestand,
+
+        readBrotBestellung,
+        readBrotBestellungProProdukt,
+        readBrotBestellungProPerson,
+        readBrotBestellungBetweenDatesProPerson,
+        createBrotBestellung,
+        updateBrotBestellung,
+    };
 };
 
-//const BACKEND_URL = "https://foodcoops-backend.herokuapp.com/";
+//const OLD_BACKEND_URL = "https://foodcoops-backend.herokuapp.com/";
 const BACKEND_URL = "http://localhost:8080/";
 const KATEGORIEN = "kategorien/";
 const PRODUKTE = "produkte/";
@@ -77,11 +104,11 @@ const DATUM = "datum/"
 const MENGE = "menge/"
 const FRISCHBESTAND = "frischBestand/";
 const PERSON = "person/";
-const BROT = "brotBestand/";
+const BROTBESTAND = "brotBestand/";
+const BROTBESTELLUNG = "brotBestellung/";
 
-/**
- * https://github.com/Food-Coop/foodcoops-backend#new-produkte
- */
+// Produkt
+
 const createProdukt = (data) =>
     fetch(BACKEND_URL + PRODUKTE, {
         method: "POST",
@@ -91,18 +118,10 @@ const createProdukt = (data) =>
         body: JSON.stringify({...data, id: "undefined"}),
     });
 
-
-/**
- * https://github.com/Food-Coop/foodcoops-backend#get-all-produkte
- * https://github.com/Food-Coop/foodcoops-backend#get-one-produkte
- */
 const readProdukt = (id = undefined) => id ?
     fetch(BACKEND_URL + PRODUKTE + id) :
     fetch(BACKEND_URL + PRODUKTE);
 
-/**
- * https://github.com/Food-Coop/foodcoops-backend#delete-produkte
- */
 const deleteProdukt = (id) =>
     fetch(BACKEND_URL + PRODUKTE + id, {
         method: "DELETE",
@@ -111,9 +130,6 @@ const deleteProdukt = (id) =>
         },
     });
 
-/**
- * https://github.com/Food-Coop/foodcoops-backend#update-produkte
- */
 const updateProdukt = (id, changedData) =>
     fetch(BACKEND_URL + PRODUKTE + id, {
         method: "PUT",
@@ -123,9 +139,12 @@ const updateProdukt = (id, changedData) =>
         body: JSON.stringify(changedData),
     });
 
-/**
- * https://github.com/Food-Coop/foodcoops-backend#new-kategorien
- */
+// Kategorie
+
+const readKategorie = (id = undefined) => id ?
+    fetch(BACKEND_URL + KATEGORIEN + id) :
+    fetch(BACKEND_URL + KATEGORIEN);
+
 const createKategorie = (name, icon) =>
     fetch(BACKEND_URL + KATEGORIEN, {
         method: "POST",
@@ -135,29 +154,6 @@ const createKategorie = (name, icon) =>
         body: JSON.stringify({id: "", name, icon}),
     });
 
-/**
- * https://github.com/Food-Coop/foodcoops-backend#get-all-kategorien
- * https://github.com/Food-Coop/foodcoops-backend#get-one-kategorien
- */
-const readKategorie = (id = undefined) => id ?
-    fetch(BACKEND_URL + KATEGORIEN + id) :
-    fetch(BACKEND_URL + KATEGORIEN);
-    //alert ("readkat");
-
-/**
- * https://github.com/Food-Coop/foodcoops-backend#delete-kategorien
- */
-const deleteKategorie = (id) =>
-    fetch(BACKEND_URL + KATEGORIEN + id, {
-        method: "DELETE",
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    });
-
-/**
- * https://github.com/Food-Coop/foodcoops-backend#update-kategorien
- */
 const updateKategorie = (id, name) =>
     fetch(BACKEND_URL + KATEGORIEN + id, {
         method: "PUT",
@@ -167,18 +163,20 @@ const updateKategorie = (id, name) =>
         body: JSON.stringify({name}),
     });
 
-/**
- * https://github.com/Food-Coop/foodcoops-backend#get-all-einheiten
- * https://github.com/Food-Coop/foodcoops-backend#get-one-einheiten
- */
+const deleteKategorie = (id) =>
+    fetch(BACKEND_URL + KATEGORIEN + id, {
+        method: "DELETE",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
+
+// Einheit
+
 const readEinheit = (id = undefined) => id ?
     fetch(BACKEND_URL + EINHEITEN + id) :
     fetch(BACKEND_URL + EINHEITEN);
 
-
-/**
- * https://github.com/kingr89/Food-Coop-REST-Service#new-einheiten
- */
 const createEinheit = (name) =>
     fetch(BACKEND_URL + EINHEITEN, {
         method: "POST",
@@ -188,9 +186,6 @@ const createEinheit = (name) =>
         body: JSON.stringify({id: null, name}),
     });
 
-/**
- * https://github.com/kingr89/Food-Coop-REST-Service#delete-einheiten
- */
 const deleteEinheit = (id) =>
     fetch(BACKEND_URL + EINHEITEN + id, {
         method: "DELETE",
@@ -199,18 +194,10 @@ const deleteEinheit = (id) =>
         },
     });
 
+// FrischBestellung
+
 const readFrischBestellung = () => 
     fetch(BACKEND_URL + FRISCHBESTELLUNG + DATUM);
-
-const readFrischBestellungProProdukt = () => 
-    fetch(BACKEND_URL + FRISCHBESTELLUNG + DATUM + MENGE);
-
-const readFrischBestand = (id = undefined) => id ?
-    fetch(BACKEND_URL + FRISCHBESTAND + id) :
-    fetch(BACKEND_URL + FRISCHBESTAND);
-
-const readFrischBestellungProPerson = (person_id) =>
-    fetch(BACKEND_URL + FRISCHBESTELLUNG + DATUM + person_id)
 
 const createFrischBestellung = (data) =>
     fetch(BACKEND_URL + FRISCHBESTELLUNG, {
@@ -230,8 +217,20 @@ const updateFrischBestellung = (data, frischBestellungId) =>
         body: JSON.stringify({...data, id: frischBestellungId}),
     });
 
+const readFrischBestellungProPerson = (person_id) =>
+    fetch(BACKEND_URL + FRISCHBESTELLUNG + DATUM + person_id)
+
+const readFrischBestellungProProdukt = () => 
+    fetch(BACKEND_URL + FRISCHBESTELLUNG + DATUM + MENGE);
+
 const readFrischBestellungBetweenDatesProPerson = (person_id) => 
     fetch(BACKEND_URL + FRISCHBESTELLUNG + PERSON + person_id)
+
+// Frischbestand
+
+const readFrischBestand = (id = undefined) => id ?
+    fetch(BACKEND_URL + FRISCHBESTAND + id) :
+    fetch(BACKEND_URL + FRISCHBESTAND);
 
 const createFrischBestand = (data) =>
 fetch(BACKEND_URL + FRISCHBESTAND, {
@@ -259,8 +258,69 @@ const deleteFrischBestand = (id) =>
         },
     });
 
-const readBrotBestand = (id = undefined) => id ?
-    fetch(BACKEND_URL + BROT + id) :
-    fetch(BACKEND_URL + BROT);
+// Brotbestellung
 
+// FrischBestellung
+
+const readBrotBestellung = () => 
+    fetch(BACKEND_URL + FRISCHBESTELLUNG + DATUM);
+
+const createBrotBestellung = (data) =>
+    fetch(BACKEND_URL + FRISCHBESTELLUNG, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({...data, id: "undefined"}),
+    });
+
+const updateBrotBestellung = (data, frischBestellungId) =>
+    fetch(BACKEND_URL + FRISCHBESTELLUNG + frischBestellungId, {
+        method: "PUT",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({...data, id: frischBestellungId}),
+    });
+
+const readBrotBestellungProPerson = (person_id) =>
+    fetch(BACKEND_URL + FRISCHBESTELLUNG + DATUM + person_id)
+
+const readBrotBestellungProProdukt = () => 
+    fetch(BACKEND_URL + FRISCHBESTELLUNG + DATUM + MENGE);
+
+const readBrotBestellungBetweenDatesProPerson = (person_id) => 
+    fetch(BACKEND_URL + FRISCHBESTELLUNG + PERSON + person_id)
+
+// Brotbestand
+
+const readBrotBestand = (id = undefined) => id ?
+    fetch(BACKEND_URL + BROTBESTAND + id) :
+    fetch(BACKEND_URL + BROTBESTAND);
+
+const createBrotBestand = (data) =>
+    fetch(BACKEND_URL + BROTBESTAND, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({...data, id: "undefined"}),
+    });
+    
+const updateBrotBestand = (id, changedData) =>
+    fetch(BACKEND_URL + BROTBESTAND + id, {
+        method: "PUT",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(changedData),
+    });
+
+const deleteBrotBestand = (id) => 
+    fetch(BACKEND_URL + BROTBESTAND + id, {
+        method: "DELETE",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
 

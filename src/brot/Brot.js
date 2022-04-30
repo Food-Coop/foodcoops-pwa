@@ -24,76 +24,75 @@ export function Brot(){
                 Header: 'Preis',
                 accessor: 'preis',
             },
-            // {
-            //     Header: 'Bestellmenge',
-            //     accessor: 'bestellmenge',
-            // }
+            {
+                Header: 'Bestellmenge',
+                accessor: 'bestellmenge',
+            }
         ]
     );
 
-    const [frischBestellung, setFrischBestellung] = React.useState([]);
-    const [frischBestellungBetweenDatesProPerson, setFrischBestellungBetweenDatesProPerson] = React.useState([]);
+    const [brotBestellung, setBrotBestellung] = React.useState([]);
+    const [brotBestellungBetweenDatesProPerson, setBrotBestellungBetweenDatesProPerson] = React.useState([]);
     const [isLoading, setIsLoading] = React.useState(true);
     const [isAlsoLoading, setIsAlsoLoading] = React.useState(true);
     const [isAlsoLoading2, setIsAlsoLoading2] = React.useState(true);
     const [data, setData] = React.useState([]);
     const [reducerValue, forceUpdate] = React.useReducer(x => x+1, 0);
-    const [frischBestellungSumme, setFrischBestellungSumme] = React.useState([]);
+    const [brotBestellungSumme, setBrotBestellungSumme] = React.useState([]);
 
     const api = useApi();
     const {keycloak} = useKeycloak();
 
     React.useEffect(
         () => {
-            // api.readFrischBestellungProProdukt()
-            //     .then((r) => r.json())
-            //     .then((r) => {
-            //         setFrischBestellungSumme(old => {
-            //             const n = r?._embedded?.frischBestellungRepresentationList;
-            //             return n === undefined ? old : n;
-            //         });
-            //         setIsAlsoLoading(false);
-            //     }
-            // );
+            api.readBrotBestellungProProdukt()
+                .then((r) => r.json())
+                .then((r) => {
+                    setBrotBestellungSumme(old => {
+                        const n = r?._embedded?.brotBestellungRepresentationList;
+                        return n === undefined ? old : n;
+                    });
+                    setIsAlsoLoading(false);
+                }
+            );
             api.readBrotBestand()
                 .then((r) => r.json())
                 .then((r) => {
                     setData(old => {
-                        let n = r?._embedded?.frischBestandRepresentationList;
+                        let n = r?._embedded?.brotBestandRepresentationList;
                         console.log("Hello: " + JSON.stringify(old));
                         return n === undefined ? old : n;
                     });
                     setIsLoading(false);
                 }
             );
-            // let person_id = keycloak.tokenParsed.preferred_username;
-            // api.readFrischBestellungBetweenDatesProPerson(person_id)
-            //     .then((r) => r.json())
-            //     .then((r) => {
-            //         setFrischBestellungBetweenDatesProPerson(old => {
-            //             let n = r?._embedded?.frischBestellungRepresentationList;
-            //             return n === undefined ? old : n;
-            //         });
-            //         setIsAlsoLoading2(false);
-            //     }
-            // );
-            // api.readFrischBestellungProPerson(person_id)
-            //     .then(r => r.json())
-            //     .then(r => {
-            //         setFrischBestellung(old => {
-            //             const n = r?._embedded?.frischBestellungRepresentationList
-            //             return n === undefined ? old : n;
-            //         }
-            //     );
-            // });
+            let person_id = keycloak.tokenParsed.preferred_username;
+            api.readBrotBestellungBetweenDatesProPerson(person_id)
+                .then((r) => r.json())
+                .then((r) => {
+                    setBrotBestellungBetweenDatesProPerson(old => {
+                        let n = r?._embedded?.brotBestellungRepresentationList;
+                        return n === undefined ? old : n;
+                    });
+                    setIsAlsoLoading2(false);
+                }
+            );
+            api.readBrotBestellungProPerson(person_id)
+                .then(r => r.json())
+                .then(r => {
+                    setBrotBestellung(old => {
+                        const n = r?._embedded?.brotBestellungRepresentationList
+                        return n === undefined ? old : n;
+                    }
+                );
+            });
         }, [reducerValue]
     )
 
-    const checkAlreadyOrdered = (frischBestandId) =>{
-        for(let j = 0; j < frischBestellung.length; j++){
-            //console.log("FBSD: " + frischBestellung[j].frischbestand.id)
-            if(frischBestandId == frischBestellung[j].frischbestand.id){
-                return frischBestellung[j].id;
+    const checkAlreadyOrdered = (brotBestandId) =>{
+        for(let j = 0; j < brotBestellung.length; j++){
+            if(brotBestandId == brotBestellung[j].brotbestand.id){
+                return brotBestellung[j].id;
             }
         }
         return null;
@@ -112,7 +111,7 @@ export function Brot(){
         let preis = 0;
         for (let i = 0; i < data.length; i++) {
             let produktId = "ProduktId" + i;
-            let frischBestandId = document.getElementById(produktId).innerText;
+            let brotBestandId = document.getElementById(produktId).innerText;
             let personId = keycloak.tokenParsed.preferred_username;
             let datum = new Date();
             let bestellId = "Inputfield" + i;
@@ -124,22 +123,22 @@ export function Brot(){
             else {
                 const {_links, ...supported} = data[i];
                 deepAssign("person_id", result, personId);
-                deepAssign("frischbestand", result, supported);
+                deepAssign("brotbestand", result, supported);
                 deepAssign("bestellmenge", result, bestellmenge);
                 deepAssign("datum", result, datum);
 
                 //Überprüfe ob bereits eine Bestellung in dieser Woche getätigt wurde
-                let check = checkAlreadyOrdered(frischBestandId);
+                let check = checkAlreadyOrdered(brotBestandId);
                 if(check != null){
                     //Bestellung updaten
                     if (bestellmenge <= 10) {
-                        api.updateFrischBestellung(result, check);
+                        api.updateBrotBestellung(result, check);
                     }
                     else {
                         let artikel = "ProduktName" + i;
                         let artikelname = document.getElementById(artikel).innerText;
                         if(window.confirm("Möchten Sie wirklich " + bestellmenge + " " + artikelname + " bestellen?")){
-                            api.updateFrischBestellung(result, check);
+                            api.updateBrotBestellung(result, check);
                         }
                         else{
                             alert("Okay, dieses Produkt wird nicht bestellt. Alle anderen schon.");
@@ -150,13 +149,13 @@ export function Brot(){
                 else{
                     //Neue Bestellung abgeben
                     if (bestellmenge <= 10) {
-                        api.createFrischBestellung(result);
+                        api.createBrotBestellung(result);
                     }
                     else {
                         let artikel = "ProduktName" + i;
                         let artikelname = document.getElementById(artikel).innerText;
                         if(window.confirm("Möchten Sie wirklich " + bestellmenge + " " + artikelname + " bestellen?")){
-                            api.createFrischBestellung(result);
+                            api.createBrotBestellung(result);
                         }
                         else{
                             alert("Okay, dieses Produkt wird nicht bestellt. Alle anderen schon.");
@@ -171,7 +170,7 @@ export function Brot(){
     };
 
     const content = () => {
-        if (isLoading){// || isAlsoLoading || isAlsoLoading2) {
+        if (isLoading || isAlsoLoading || isAlsoLoading2) {
             return (
                 <div className="spinner-border" role="status" style={{margin: "5rem"}}>
                     <span className="sr-only">Loading...</span>
@@ -180,22 +179,22 @@ export function Brot(){
         }
 
         for(let i = 0; i < data.length; i++){
-            for(let j = 0; j < frischBestellungSumme.length; j++){
-                if(data[j].id === frischBestellungSumme[j].frischbestand.id){
-                    deepAssign("bestellsumme", data[j], frischBestellungSumme[j].bestellmenge);
+            for(let j = 0; j < brotBestellungSumme.length; j++){
+                if(data[j].id === brotBestellungSumme[j].brotbestand.id){
+                    deepAssign("bestellsumme", data[j], brotBestellungSumme[j].bestellmenge);
                 }
                 else{
                     deepAssign("bestellsumme", data[j], 0);
                 } 
             }
-            for(let j = 0; j < frischBestellungBetweenDatesProPerson.length; j++){
-                if(data[j].id === frischBestellungBetweenDatesProPerson[j].frischbestand.id){
-                    deepAssign("bestellmengeAlt", data[j], frischBestellungBetweenDatesProPerson[j].bestellmenge);
+            for(let j = 0; j < brotBestellungBetweenDatesProPerson.length; j++){
+                if(data[j].id === brotBestellungBetweenDatesProPerson[j].brotbestand.id){
+                    deepAssign("bestellmengeAlt", data[j], brotBestellungBetweenDatesProPerson[j].bestellmenge);
                 }    
             }
-            for(let j = 0; j < frischBestellung.length; j++){
+            for(let j = 0; j < brotBestellung.length; j++){
                 if(checkAlreadyOrdered(data[j].id)){
-                    deepAssign("bestellmengeNeu", data[j], frischBestellung[j].bestellmenge);
+                    deepAssign("bestellmengeNeu", data[j], brotBestellung[j].bestellmenge);
                 }   
             }
             

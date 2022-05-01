@@ -43,6 +43,9 @@ export const ApiProvider = (props) => {
         readBrotBestellungBetweenDatesProPerson: props.readBrotBestellungBetweenDatesProPerson || readBrotBestellungBetweenDatesProPerson,
         createBrotBestellung: props.createBrotBestellung || createBrotBestellung,
         updateBrotBestellung: props.updateBrotBestellung || updateBrotBestellung,
+
+        readDeadline: props.readDeadline || readDeadline,
+        createDeadline: props.createDeadline || createDeadline,
     };
 
     return (
@@ -91,6 +94,9 @@ export const useApi = () => {
         readBrotBestellungBetweenDatesProPerson,
         createBrotBestellung,
         updateBrotBestellung,
+
+        readDeadline,
+        createDeadline
     };
 };
 
@@ -106,6 +112,7 @@ const FRISCHBESTAND = "frischBestand/";
 const PERSON = "person/";
 const BROTBESTAND = "brotBestand/";
 const BROTBESTELLUNG = "brotBestellung/";
+const DEADLINE = "deadline/"
 
 // Produkt
 
@@ -322,3 +329,17 @@ const deleteBrotBestand = (id) =>
         },
     });
 
+// Deadline
+
+const readDeadline = (id = undefined) => id ?
+    fetch(BACKEND_URL + DEADLINE + id) :
+    fetch(BACKEND_URL + DEADLINE);
+
+const createDeadline = (data) =>
+    fetch(BACKEND_URL + DEADLINE, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({...data, id: "undefined"}),
+    });

@@ -3,6 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import {deepAssign, deepClone} from '../util'
 import {useApi} from '../ApiService';
 import {GebindemanagementTable} from "./GebindemanagementTable";
+import { Deadline } from '../deadline/Deadline';
 
 export function Gebindemanagement(){
     const columns = React.useMemo(

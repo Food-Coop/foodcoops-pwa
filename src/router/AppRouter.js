@@ -6,6 +6,7 @@ import {About} from "../About";
 import {Lager} from "../lager/Lager";
 import {Bestellung} from "../bestellung/Bestellung";
 import { Brot } from "../brot/Brot";
+import { Deadline } from "../deadline/Deadline";
 import {Gebindemanagement} from "../gebindemanagement/Gebindemanagement";
 import {PrivateRoute} from "../auth/PrivateRoute";
 import {Home} from "../Home";
@@ -22,6 +23,9 @@ export const AppRouter = () => {
                 </Link>
                 <Link style={{paddingRight: "1em"}} to={"/brot"}>
                     Brotbestellung
+                </Link>
+                <Link style={{paddingRight: "1em"}} to={"/deadline"}>
+                    Deadline
                 </Link>
                 <Link style={{paddingRight: "1em"}} to={"/gebindemanagement"}>
                     Gebindemanagement
@@ -40,6 +44,7 @@ export const AppRouter = () => {
                 <PrivateRoute roles={["Einkäufer"]} path="/lager" component={Lager}/>
                 <PrivateRoute roles={["Einkäufer"]} path="/gebindemanagement" component={Gebindemanagement}/>
                 <PrivateRoute roles={["Einkäufer"]} path="/frischbestandmanagement" component={FrischBestandManagement}/>
+                <PrivateRoute roles={["Einkäufer"]} path="/deadline" component={Deadline}/>
                 <PrivateRoute roles={["Mitglied"]} path="/bestellung" component={Bestellung}/>
                 <PrivateRoute roles={["Mitglied"]} path="/brot" component={Brot}/>
                 <Route path="/" component={Home}/>

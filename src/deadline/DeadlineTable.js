@@ -31,6 +31,19 @@ export function DeadlineTable({columns, data, updateMyData, skipPageReset, dispa
         useExpanded
     )
 
+    const getLastDeadline = () => {
+        let lastDate = data[0].datum;
+        let row = 0;
+        for(let i = 0; i < data.length; i++){
+            if(data[i].datum > lastDate){
+                lastDate = data[i].datum;
+                row = i;
+            }
+            
+        }
+        return row;
+    }
+    
     return (
         <BTable striped bordered hover size="sm" {...getTableProps()}>
             <thead>
@@ -55,11 +68,13 @@ export function DeadlineTable({columns, data, updateMyData, skipPageReset, dispa
                             (row.original.hasOwnProperty("produkte") ? row.cells.slice(0, 2) : row.cells)
                                 .map((cell, i) => {
                                     const props = cell.getCellProps();
-                                    return(
-                                        <td{...props}>
-                                            {cell.render('Cell')}
-                                        </td>
-                                    );
+                                    if(row.index === getLastDeadline()){
+                                        return(
+                                            <td{...props}>
+                                                {cell.render('Cell')}
+                                            </td>
+                                        );
+                                    }
                                 })
                         }
                     </tr>

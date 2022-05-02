@@ -60,7 +60,6 @@ export function Brot(){
                 .then((r) => {
                     setData(old => {
                         let n = r?._embedded?.brotBestandRepresentationList;
-                        console.log("Hello: " + JSON.stringify(old));
                         return n === undefined ? old : n;
                     });
                     setIsLoading(false);

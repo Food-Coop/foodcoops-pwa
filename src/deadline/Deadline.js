@@ -19,6 +19,10 @@ export function Deadline(){
                 Header: 'Uhrzeit',
                 accessor: 'time',
             },
+            {
+                Header: 'Datum',
+                accessor: 'datum',
+            }
         ]
     );
 
@@ -36,9 +40,10 @@ export function Deadline(){
                 .then((r) => {
                     setData(old => {
                         const n = r?._embedded?.deadlineRepresentationList;
-                        console.log(JSON.stringify(n))
                         return n === undefined ? old : n;
+                        
                     });
+                    
                     setIsLoading(false);
                 }
             );
@@ -110,7 +115,6 @@ export function Deadline(){
                 </div>
             );
         }
-
         return (
             <DeadlineTable
                 columns={columns}

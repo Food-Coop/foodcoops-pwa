@@ -45,6 +45,7 @@ export const ApiProvider = (props) => {
         updateBrotBestellung: props.updateBrotBestellung || updateBrotBestellung,
 
         readDeadline: props.readDeadline || readDeadline,
+        readLastDeadline: props.readLastDeadline || readLastDeadline,
         createDeadline: props.createDeadline || createDeadline,
     };
 
@@ -96,6 +97,7 @@ export const useApi = () => {
         updateBrotBestellung,
 
         readDeadline,
+        readLastDeadline,
         createDeadline
     };
 };
@@ -113,6 +115,7 @@ const PERSON = "person/";
 const BROTBESTAND = "brotBestand/";
 const BROTBESTELLUNG = "brotBestellung/";
 const DEADLINE = "deadline/"
+const LAST = "last/";
 
 // Produkt
 
@@ -334,6 +337,9 @@ const deleteBrotBestand = (id) =>
 const readDeadline = (id = undefined) => id ?
     fetch(BACKEND_URL + DEADLINE + id) :
     fetch(BACKEND_URL + DEADLINE);
+
+const readLastDeadline = () =>
+    fetch(BACKEND_URL + DEADLINE + LAST);
 
 const createDeadline = (data) =>
     fetch(BACKEND_URL + DEADLINE, {

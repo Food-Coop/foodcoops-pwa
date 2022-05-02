@@ -42,6 +42,17 @@ export function Deadline(){
                     setIsLoading(false);
                 }
             );
+            // api.readLastDeadline()
+            //     .then((r) => r.json())
+            //     .then((r) => {
+            //         setData(old => {
+            //             const n = r?._embedded?.deadlineRepresentationList;
+            //             console.log(JSON.stringify(n))
+            //             return n === undefined ? old : n;
+            //         });
+            //         setIsLoading(false);
+            //     }
+            // );
         }, []
     );
 

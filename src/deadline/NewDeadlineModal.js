@@ -12,6 +12,7 @@ function defaultData(columns) {
     const initial = Object.fromEntries(columns.map(convert));
     //console.log("table columns after: " + JSON.stringify(initial));
 
+    initial["weekday"].value = "Montag";
     initial["time"].value = "23:59:59";
 
     return initial;
@@ -75,7 +76,7 @@ export function NewDeadlineModal(props) {
                     </select>
                 </div>
             );
-        } 
+        }
 
         return <tr key={accessor}>
             <td>

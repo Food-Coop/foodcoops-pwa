@@ -51,8 +51,13 @@ export function NewDeadlineModal(props) {
     const mapper = ([accessor, {name, value}]) => {
         const onChange = function ({target: {value}}) {
             const changed = {};
+            if(accessor === "datum"){
 
-            changed[accessor] = {name, value};
+            }
+            else{
+                changed[accessor] = {name, value};
+            }
+            
 
             return setNewData(prev => ({...prev, ...changed}));
         };
@@ -75,6 +80,11 @@ export function NewDeadlineModal(props) {
                         <option value="Sonntag">Sonntag</option>
                     </select>
                 </div>
+            );
+        }
+        if (accessor === "datum") {
+            edit = (
+                <div></div>
             );
         }
 

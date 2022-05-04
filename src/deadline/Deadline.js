@@ -35,33 +35,34 @@ export function Deadline(){
     
     React.useEffect(
         () => {
-            api.readDeadline()
+            // api.readDeadline()
+            //     .then((r) => r.json())
+            //     .then((r) => {
+            //         setData(old => {
+            //             const n = r?._embedded?.deadlineRepresentationList;
+            //             return n === undefined ? old : n;
+                        
+            //         });
+                    
+            //         setIsLoading(false);
+            //     }
+            // );
+            api.readLastDeadline()
                 .then((r) => r.json())
                 .then((r) => {
                     setData(old => {
                         const n = r?._embedded?.deadlineRepresentationList;
                         return n === undefined ? old : n;
-                        
                     });
-                    
                     setIsLoading(false);
                 }
             );
-            // api.readLastDeadline()
-            //     .then((r) => r.json())
-            //     .then((r) => {
-            //         setData(old => {
-            //             const n = r?._embedded?.deadlineRepresentationList;
-            //             console.log(JSON.stringify(n))
-            //             return n === undefined ? old : n;
-            //         });
-            //         setIsLoading(false);
-            //     }
-            // );
         }, []
     );
 
     const newDeadline = (data1) => {
+        let datum = new Date();
+        deepAssign("datum", data1, datum);
         (async function () {
             const response = await api.createDeadline(data1);
             if(response.ok) {

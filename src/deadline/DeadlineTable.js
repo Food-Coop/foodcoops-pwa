@@ -68,13 +68,13 @@ export function DeadlineTable({columns, data, updateMyData, skipPageReset, dispa
                             (row.original.hasOwnProperty("produkte") ? row.cells.slice(0, 2) : row.cells)
                                 .map((cell, i) => {
                                     const props = cell.getCellProps();
-                                    if(row.index === getLastDeadline()){
+                                    //if(row.index === getLastDeadline()){
                                         return(
                                             <td{...props}>
                                                 {cell.render('Cell')}
                                             </td>
                                         );
-                                    }
+                                    //}
                                 })
                         }
                     </tr>

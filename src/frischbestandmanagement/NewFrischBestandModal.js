@@ -77,7 +77,6 @@ export function NewFrischBestandModal(props) {
             }
             else if(accessor === "kategorie.name") {
                 changed["kategorie.id"] = {name, value};
-
             }
             else{
                 changed[accessor] = {name, value};

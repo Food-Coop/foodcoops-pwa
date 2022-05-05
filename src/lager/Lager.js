@@ -61,7 +61,6 @@ export function Lager() {
                 .then((r) => {
                         setData(old => {
                             const n = r?._embedded?.produktRepresentationList;
-                            //console.log(JSON.stringify(n));
                             return n === undefined ? old : n;
                         });
                         setIsLoading(false);

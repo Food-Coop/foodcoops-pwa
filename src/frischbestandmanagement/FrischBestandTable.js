@@ -1,10 +1,11 @@
 import {useExpanded, useTable} from "react-table";
 import BTable from "react-bootstrap/Table";
 import React from "react";
-import {EditProduktModal} from "./EditProduktModal";
-import {EditKategorieModal} from "./EditKategorieModal";
+import { EditFrischBestandModal } from "./EditFrischBestandModal";
 
-export function LagerTable({columns, data, updateMyData, skipPageReset, dispatchModal}) {
+
+
+export function FrischBestandTable({columns, data, updateMyData, skipPageReset, dispatchModal}) {
     const {
         getTableProps,
         getTableBodyProps,
@@ -16,6 +17,7 @@ export function LagerTable({columns, data, updateMyData, skipPageReset, dispatch
         {
             columns,
             data,
+            //initialState: { hiddenColumns: ['id'] },
             // show produkte as sub rows
             getSubRows: row => row.produkte,
             // use the skipPageReset option to disable page resetting temporarily
@@ -27,7 +29,6 @@ export function LagerTable({columns, data, updateMyData, skipPageReset, dispatch
             // automatically be available on the instance.
             // That way we can call this function from our
             // cell renderer!
-            updateMyData,
         },
         useExpanded
     )
@@ -51,26 +52,23 @@ export function LagerTable({columns, data, updateMyData, skipPageReset, dispatch
                 return (
                     <tr {...row.getRowProps()}>
                         {
-                            // canExpand is true for the kategorien header row
-                            // make the kategorien name span multiple columns for these rows
                             row.cells.map((cell, i) => {
                                     const props = cell.getCellProps();
-                                    if (i === 1 && row.original.hasOwnProperty("produkte")) {
-                                        props.colSpan = row.cells.length - 1;
-                                        props.style = {...props.style, fontWeight: "bold", cursor: "pointer"};
-                                        props.onClick = () => dispatchModal("EditKategorieModal", cell, row);
-                                    } else {
-                                        props.onClick = () => dispatchModal("EditProduktModal", cell, row);
-                                        props.style = {...props.style, cursor: "pointer"};
-
+                                    props.onClick = () => dispatchModal("EditFrischBestandModal", cell, row);
+                                    props.style = {...props.style, cursor: "pointer"};
+                                    if(data[row.index].verfuegbarkeit == true){
+                                        data[row.index].verfuegbarkeit = 1;
                                     }
-
+                                    else{
+                                        data[row.index].verfuegbarkeit = 0;
+                                    }
                                     return (
                                         <td {...props}>
                                             {cell.render('Cell')}
                                         </td>
                                     )
-                                })}
+                                })
+                        }
                     </tr>
                 )
             })}
@@ -78,3 +76,4 @@ export function LagerTable({columns, data, updateMyData, skipPageReset, dispatch
         </BTable>
     )
 }
+

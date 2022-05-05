@@ -2,66 +2,68 @@ import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row'
-import {LagerTable} from "./LagerTable";
-import {EditProduktModal} from "./EditProduktModal";
-import {EditKategorieModal} from "./EditKategorieModal";
-import {useApi} from '../ApiService';
-import {NewProduktModal} from './NewProduktModal';
 import {deepAssign, deepClone} from '../util';
-import {EditEinheitenModal} from "./EditEinheitenModal";
+import {useApi} from '../ApiService';
+import {FrischBestandTable} from "./FrischBestandTable";
+import {EditFrischBestandModal} from "./EditFrischBestandModal";
+import { NewFrischBestandModal } from './NewFrischBestandModal';
+import {EditKategorieModal} from "../lager/EditKategorieModal";
+import {EditEinheitenModal} from "../lager/EditEinheitenModal";
 
-export function Lager() {
 
-    /* Creates Columns,
-    first part selects image and displays it
-     */
+export function FrischBestandManagement() {
     const columns = React.useMemo(
         () => [
             {
-                Header: 'Name',
+                Header: 'Produkt',
                 accessor: 'name',
             },
             {
-                Header: 'Ist Lagerbestand',
-                accessor: 'lagerbestand.istLagerbestand',
+                Header: 'Verfügbarkeit',
+                accessor: 'verfuegbarkeit',
             },
             {
-                Header: 'Soll Lagerbestand',
-                accessor: 'lagerbestand.sollLagerbestand',
+                Header: 'Land',
+                accessor: 'herkunftsland',
+            },
+            {
+                Header: 'Gebindegröße',
+                accessor: 'gebindegroesse',
             },
             {
                 Header: 'Einheit',
-                accessor: 'lagerbestand.einheit.name',
+                accessor: 'einheit.name',
             },
             {
                 Header: 'Kategorie',
                 accessor: 'kategorie.name',
             },
-        ],
-        []
+            {
+                Header: 'Preis',
+                accessor: 'preis',
+            }
+        ],[]
     );
 
-    //states with their update function
     const [isLoading, setIsLoading] = React.useState(true);
     const [data, setData] = React.useState([]);
+    const [skipPageReset, setSkipPageReset] = React.useState(false);
     const [einheiten, setEinheiten] = React.useState([]);
     const [kategorien, setKategorien] = React.useState([]);
-    const [skipPageReset, setSkipPageReset] = React.useState(false);
     const [reducerValue, forceUpdate] = React.useReducer(x => x+1, 0);
-
 
 
     const api = useApi();
 
-    // TODO: use something like https://github.com/rally25rs/react-use-timeout#useinterval or https://react-table.tanstack.com/docs/faq#how-can-i-use-the-table-state-to-fetch-new-data to update the data
     React.useEffect(
         () => {
-            api.readProdukt()
+            api.readFrischBestand()
                 .then((r) => r.json())
                 .then((r) => {
                         setData(old => {
-                            const n = r?._embedded?.produktRepresentationList;
+                            let n = r?._embedded?.frischBestandRepresentationList;
                             return n === undefined ? old : n;
+
                         });
                         setIsLoading(false);
                     }
@@ -85,12 +87,7 @@ export function Lager() {
         }, [reducerValue]
     )
 
-    //alert(typeof(kategorien));
-    // When our cell renderer calls updateMyData, we'll use
-    // the rowIndex, columnId and new value to update the
-    // original data
     const updateMyData = (rowId, columnId, value) => {
-        console.log("rowId, columnId, value " + rowId + "," + columnId + "," + value);
         // We also turn on the flag to not reset the page
         setSkipPageReset(true)
         setData(old => {
@@ -107,16 +104,40 @@ export function Lager() {
         )
     }
 
-    const persistProdukt = (rowId, patch) => {
-
-        const produkt = data[rowId]
-        const changedData = {...deepClone(produkt)};
-
+    const persistFrischBestand = (rowId, patch) => {
+        const frischBestand = data[rowId];
+        const changedData = {...deepClone(frischBestand)};
         for (const [accessor, {value}] of Object.entries(patch)) {
             deepAssign(accessor, changedData, value);
         }
+        console.log("CD:  " + JSON.stringify(changedData))
+        api.updateFrischBestand(frischBestand.id, changedData);
+    };
 
-        api.updateProdukt(produkt.id, changedData);
+    const deleteFrischBestand = (rowId) => {
+        const old = data;
+        api.deleteFrischBestand(old[rowId].id)
+            .then(r => {
+                if (r.ok) {
+                   // const [produkt] = kategorie.produkte.splice(produktId, 1);
+                    setSkipPageReset(true);
+                    setData(deepClone(old));
+                } else {
+                    r.text().then(text => console.log(`unable to delete: ${text}`));
+                }
+            }, console.log);
+    }
+
+    const newFrischBestand = (data1) => {
+        (async function () {
+            const response = await api.createFrischBestand(data1);
+            if(response.ok) {
+                const newFrischBestand = await response.json();
+                    setSkipPageReset(true);
+                    setData(old => deepClone([...old, newFrischBestand]));
+                    forceUpdate();
+            }
+        })();
     };
 
     const persistKategorie = (rowId, patch) => {
@@ -150,39 +171,6 @@ export function Lager() {
         })();
     };
 
-    /**
-     * Deletes the item on a given row
-     */
-    const deleteProdukt = (rowId) => {
-        const old = data;
-        // const [kategorieId, produktId] = rowId.split('.').map(e => parseInt(e));
-        // const kategorie = old[kategorieId];
-        api.deleteProdukt(old[rowId].id)
-            .then(r => {
-                if (r.ok) {
-                    //const [produkt] = kategorie.produkte.splice(produktId, 1);
-                    setSkipPageReset(true);
-                    setData(deepClone(old));
-                } else {
-                    r.text().then(text => console.log(`unable to delete: ${text}`));
-                }
-            }, console.log);
-    }
-
-
-    const newProdukt = (data1) => {
-        console.log("Data1: " + JSON.stringify(data1));
-        (async function () {
-            const response = await api.createProdukt(data1);
-            if(response.ok) {
-                const newProdukt = await response.json();
-                    setSkipPageReset(true);
-                    setData(old => deepClone([...old, newProdukt]));
-                    forceUpdate();
-            }
-        })();
-    };
-
     const newEinheit = ({name}) => {
         (async function () {
             const response = await api.createEinheit(name);
@@ -203,9 +191,6 @@ export function Lager() {
         })();
     };
 
-    // After data chagnes, we turn the flag back off
-    // so that if data actually changes when we're not
-    // editing it, the page is reset
     React.useEffect(() => {
         setSkipPageReset(false)
     }, [data]);
@@ -223,10 +208,9 @@ export function Lager() {
         } catch (e) {
 
         }
-
         let state = {};
         switch (type) {
-            case "EditProduktModal":
+            case "EditFrischBestandModal":
                 state = {
                     rowData: values,
                     rowId
@@ -254,8 +238,9 @@ export function Lager() {
                 </div>
             );
         }
+
         return (
-            <LagerTable
+            <FrischBestandTable
                 columns={columns}
                 data={data}
                 updateMyData={updateMyData}
@@ -264,36 +249,44 @@ export function Lager() {
         );
     }
 
-    return (
+    return(
         <div>
             <Row style={{margin: "1rem"}}>
                 <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("KategorienModal")}>Kategorie erstellen</Button>
-                <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("NewProduktModal")}>Produkt erstellen</Button>
+                <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("NewFrischBestandModal")}>Frischbestand erstellen</Button>
                 <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("EinheitenModal")}>Einheiten erstellen</Button>
-                <Button style={{margin:"0.25rem"}} variant="success" onClick={() => window.open("https://foodcoops-backend.herokuapp.com/externeliste")}>Externe Einkaufsliste</Button>
             </Row>
+
             <div style={{overflowX: "auto", width: "100%"}}>
                 {content()}
             </div>
 
-            <EditProduktModal
-                show={modal.type === "EditProduktModal"}
+            <EditFrischBestandModal
+                show={modal.type === "EditFrischBestandModal"}
                 close={() => dispatchModal(null)}
                 updateMyData={updateMyData}
-                persist={persistProdukt}
-                deleteProdukt={deleteProdukt}
+                persist={persistFrischBestand}
+                deleteFrischBestand={deleteFrischBestand}
                 einheiten={einheiten}
                 kategorien={kategorien}
                 rowId={modal.state.rowId}
                 rowData={modal.state.rowData}/>
 
-            <NewProduktModal
-                show={modal.type === "NewProduktModal"}
+            <EditKategorieModal
+                show={modal.type === "KategorienModal"}
                 close={() => dispatchModal(null)}
-                create={newProdukt}
-                columns={columns}
+                create={newKategorie}
+                remove={deleteKategorie}
                 kategorien={kategorien}
+                {...modal.state} />
+
+            <NewFrischBestandModal
+                show={modal.type === "NewFrischBestandModal"}
+                close={() => dispatchModal(null)}
+                create={newFrischBestand}
+                columns={columns}
                 einheiten={einheiten}
+                kategorien={kategorien}
                 {...modal.state} />
 
             <EditEinheitenModal
@@ -303,14 +296,8 @@ export function Lager() {
                 remove={deleteEinheit}
                 einheiten={einheiten}
                 {...modal.state} />
-
-            <EditKategorieModal
-                show={modal.type === "KategorienModal"}
-                close={() => dispatchModal(null)}
-                create={newKategorie}
-                remove={deleteKategorie}
-                kategorien={kategorien}
-                {...modal.state} />
         </div>
     )
 }
+
+

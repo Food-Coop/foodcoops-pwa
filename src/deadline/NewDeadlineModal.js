@@ -1,8 +1,7 @@
 import React from "react";
 import Button from "react-bootstrap/Button";
-import {LagerModal} from "./LagerModal";
 import {deepAssign} from "../util";
-import {IconInput} from "./IconInput";
+import { DeadlineModal } from "./DeadlineModal";
 
 function defaultData(columns) {
     const capitalize = word => word.replace(/^\w/, c => c.toUpperCase());
@@ -13,14 +12,13 @@ function defaultData(columns) {
     const initial = Object.fromEntries(columns.map(convert));
     //console.log("table columns after: " + JSON.stringify(initial));
 
-    initial["name"].value = "Produktname";
-    initial["lagerbestand.istLagerbestand"].value = 0.0;
-    initial["lagerbestand.sollLagerbestand"].value = 0.0;
+    initial["weekday"].value = "Montag";
+    initial["time"].value = "23:59:59";
 
     return initial;
 }
 
-export function NewProduktModal(props) {
+export function NewDeadlineModal(props) {
     const [newData, setNewData] = React.useState({});
 
     const initial = {
@@ -34,49 +32,32 @@ export function NewProduktModal(props) {
     };
 
     const save = () => {
-        //console.log("save " + Object.entries(initial));
-        //console.log("save " + JSON.stringify(initial));
         const result = {};
         for (const [accessor, {value}] of Object.entries(initial)) {
-            //console.log("Intital Accesor, value: " + accessor + " / " + value);
             deepAssign(accessor, result, value);
         }
         for (const [accessor, {value}] of Object.entries(newData)) {
-            //console.log("newdata Accesor, value: " + accessor + " / " + value);
             deepAssign(accessor, result, value);
         }
-
-        if (!result.lagerbestand?.einheit?.id) {
-            const find = props.einheiten[0];
-            deepAssign("lagerbestand.einheit.id", result, find.id);
+        if (!result.weekday) {
+            //Diese if-Bedingung wird benötigt, damit das Ergebnis des Select mit in die Datenbank übernommen wird!!!
         }
-        if (!result.kategorie?.id) {
-            const find = props.kategorien[0];
-            console.log("props.kategorien " + JSON.stringify(props.kategorien));
-            let kategorie = {};
-            deepAssign("id", kategorie, find.id);
-            deepAssign("name", kategorie, find.name);
-            deepAssign("kategorie", result, kategorie);
-            //result.kategorie = find.id;
-        }
-
-        console.log("Supported: " + JSON.stringify(result));
         props.create(result);
         close();
     };
 
-    const title = "Produkt erstellen";
+    const title = "Deadline erstellen";
 
     const mapper = ([accessor, {name, value}]) => {
         const onChange = function ({target: {value}}) {
             const changed = {};
+            if(accessor === "datum"){
 
-            // edge case: dropdown value is the id of the einheit but accessor is the name of the einheit
-            if (accessor === "lagerbestand.einheit.name") {
-                changed["lagerbestand.einheit.id"] = {name, value};
-            } else {
+            }
+            else{
                 changed[accessor] = {name, value};
             }
+            
 
             return setNewData(prev => ({...prev, ...changed}));
         };
@@ -86,19 +67,17 @@ export function NewProduktModal(props) {
                 onChange={onChange}
                 style={{width: "100%"}}/>;
 
-        if (accessor === "kategorie.name") {
+        if (accessor === "weekday") {
             edit = (
                 <div>
                     <select onChange={onChange} style={{width: "100%"}}>
-                        {props.kategorien.map(({name, id}, i) => <option key={i} value={id}>{name}</option>)}
-                    </select>
-                </div>
-            );
-        } else if (accessor === "lagerbestand.einheit.name") {
-            edit = (
-                <div>
-                    <select onChange={onChange} style={{width: "100%"}}>
-                        {props.einheiten.map(({name, id}, i) => <option key={i} value={id}>{name}</option>)}
+                        <option value="Montag">Montag</option>
+                        <option value="Dienstag">Dienstag</option>
+                        <option value="Mittwoch">Mittwoch</option>
+                        <option value="Donnerstag">Donnerstag</option>
+                        <option value="Freitag">Freitag</option>
+                        <option value="Samstag">Samstag</option>
+                        <option value="Sonntag">Sonntag</option>
                     </select>
                 </div>
             );
@@ -114,9 +93,9 @@ export function NewProduktModal(props) {
         </tr>;
     };
     const body = Object.entries(initial)
-        .filter(([a, {}])=> a !== "lagerbestand.einheit.id")
-        .filter(([a, {}])=> a !== "kategorie.id")
+        .filter(([a, {}])=> a !== "datum")
         .map(mapper);
+
 
     const footer = <>
         <Button onClick={close}>Änderungen verwerfen</Button>
@@ -124,7 +103,7 @@ export function NewProduktModal(props) {
     </>;
 
     return (
-        <LagerModal
+        <DeadlineModal
             title={title}
             body={body}
             footer={footer}

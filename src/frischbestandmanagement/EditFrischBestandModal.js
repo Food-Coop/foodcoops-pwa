@@ -1,29 +1,29 @@
 import React from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
-import {LagerModal} from "./LagerModal";
+import {FrischBestandModal} from "./FrischBestandModal";
 
-export function EditProduktModal(props) {
+export function EditFrischBestandModal(props) {
     const rowData = props.rowData || [];
     const [newData, setNewData] = React.useState({});
+
     const close = () => {
         props.close();
         setNewData({});
     };
 
-
-
-
     const save = () => {
+        let idVisited = false;
         for (const [accessor, {value}] of Object.entries(newData)) {
-            if (accessor === "lagerbestand.einheit.id") {
+            if (accessor === "einheit.id") {
+                idVisited = true;
                 const find = props.einheiten.find(item => item.id === value);
-                props.updateMyData(props.rowId, "lagerbestand.einheit.name", find.name);
+                props.updateMyData(props.rowId, "einheit.name", find.name);
                 continue;
             }
             if (accessor === "kategorie.id") {
+                idVisited = true;
                 const find = props.kategorien.find(item => item.id === value);
-                console.log("FInd: " + find);
                 props.updateMyData(props.rowId, "kategorie.name", find.name);
                 continue;
             }
@@ -36,7 +36,8 @@ export function EditProduktModal(props) {
     };
 
     const remove = () => {
-        props.deleteProdukt(props.rowId);
+        console.log("Remove: " + props.rowId);
+        props.deleteFrischBestand(props.rowId);
         close();
     };
 
@@ -46,14 +47,21 @@ export function EditProduktModal(props) {
         ...newData
     };
 
-    const title = "Produkt bearbeiten";
+
+//{props.einheiten.map(({name, id}, i) => (<option key={i} value={id}>{name}</option>))}
+//     const testfunc = (name, id, i) => {
+//         console.log("This: " + this);
+//         return(<option key={i} value={id}>{name}</option>)
+//     }
+
+    const title = "FrischBestand bearbeiten";
 
     const mapper = ([accessor, {name, value}]) => {
-        if (accessor === "lagerbestand.einheit.name") {
+        if (accessor === "einheit.name") {
             const selectedEinheit = value;
             const onChange = function ({target: {value}}) {
                 const changed = {};
-                changed["lagerbestand.einheit.id"] = {name, value};
+                changed["einheit.id"] = {name, value};
                 return setNewData(prev => ({...prev, ...changed}));
             };
             return <tr key={accessor}>
@@ -68,7 +76,7 @@ export function EditProduktModal(props) {
                                     return (<option key={i} selected="selected" value={id}>{name}</option>)
                                 }
                                 return ((<option key={i} value={id}>{name}</option>));
-                            },selectedEinheit)}
+                                },selectedEinheit)}
                         </select>
                     </div>
                 </td>
@@ -116,18 +124,18 @@ export function EditProduktModal(props) {
         </tr>;
     };
     const body = Object.entries(merged)
-        .filter(([a, {}])=> a !== "lagerbestand.einheit.id")
+        .filter(([a, {}])=> a !== "einheit.id")
         .filter(([a, {}])=> a !== "kategorie.id")
         .map(mapper);
 
     const footer = <>
-        <Button variant="danger" onClick={remove}>Produkt löschen</Button>
+        <Button variant="danger" onClick={remove}>FrischBestand löschen</Button>
         <Button onClick={close}>Änderungen verwerfen</Button>
         <Button onClick={save}>Änderungen übernehmen</Button>
     </>;
 
     return (
-        <LagerModal
+        <FrischBestandModal
             title={title}
             body={body}
             footer={footer}

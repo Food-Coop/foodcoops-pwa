@@ -1,8 +1,7 @@
 import React from "react";
 import Button from "react-bootstrap/Button";
-import {LagerModal} from "./LagerModal";
+import {FrischBestandModal} from "./FrischBestandModal";
 import {deepAssign} from "../util";
-import {IconInput} from "./IconInput";
 
 function defaultData(columns) {
     const capitalize = word => word.replace(/^\w/, c => c.toUpperCase());
@@ -13,14 +12,16 @@ function defaultData(columns) {
     const initial = Object.fromEntries(columns.map(convert));
     //console.log("table columns after: " + JSON.stringify(initial));
 
-    initial["name"].value = "Produktname";
-    initial["lagerbestand.istLagerbestand"].value = 0.0;
-    initial["lagerbestand.sollLagerbestand"].value = 0.0;
+    initial["name"].value = "Name";
+    initial["verfuegbarkeit"].value = 1;
+    initial["herkunftsland"].value = "DE";
+    initial["gebindegroesse"].value = 0;
+    initial["preis"].value = 0;
 
     return initial;
 }
 
-export function NewProduktModal(props) {
+export function NewFrischBestandModal(props) {
     const [newData, setNewData] = React.useState({});
 
     const initial = {
@@ -46,35 +47,38 @@ export function NewProduktModal(props) {
             deepAssign(accessor, result, value);
         }
 
-        if (!result.lagerbestand?.einheit?.id) {
+        if (!result.einheit?.id) {
             const find = props.einheiten[0];
-            deepAssign("lagerbestand.einheit.id", result, find.id);
+            deepAssign("einheit.id", result, find.id);
         }
-        if (!result.kategorie?.id) {
+        if (!result.kategorie) {
             const find = props.kategorien[0];
             console.log("props.kategorien " + JSON.stringify(props.kategorien));
             let kategorie = {};
             deepAssign("id", kategorie, find.id);
             deepAssign("name", kategorie, find.name);
             deepAssign("kategorie", result, kategorie);
-            //result.kategorie = find.id;
         }
-
-        console.log("Supported: " + JSON.stringify(result));
+        // FIXME: support setting icon and kategorie (see added TODO items)
+        //console.log("Supported: " + JSON.stringify(supported));
         props.create(result);
         close();
     };
 
-    const title = "Produkt erstellen";
+    const title = "FrischBestand erstellen";
 
     const mapper = ([accessor, {name, value}]) => {
         const onChange = function ({target: {value}}) {
             const changed = {};
 
             // edge case: dropdown value is the id of the einheit but accessor is the name of the einheit
-            if (accessor === "lagerbestand.einheit.name") {
-                changed["lagerbestand.einheit.id"] = {name, value};
-            } else {
+            if (accessor === "einheit.name") {
+                changed["einheit.id"] = {name, value};
+            }
+            else if(accessor === "kategorie.name") {
+                changed["kategorie.id"] = {name, value};
+            }
+            else{
                 changed[accessor] = {name, value};
             }
 
@@ -94,7 +98,7 @@ export function NewProduktModal(props) {
                     </select>
                 </div>
             );
-        } else if (accessor === "lagerbestand.einheit.name") {
+        } else if (accessor === "einheit.name") {
             edit = (
                 <div>
                     <select onChange={onChange} style={{width: "100%"}}>
@@ -114,7 +118,7 @@ export function NewProduktModal(props) {
         </tr>;
     };
     const body = Object.entries(initial)
-        .filter(([a, {}])=> a !== "lagerbestand.einheit.id")
+        .filter(([a, {}])=> a !== "einheit.id")
         .filter(([a, {}])=> a !== "kategorie.id")
         .map(mapper);
 
@@ -124,7 +128,7 @@ export function NewProduktModal(props) {
     </>;
 
     return (
-        <LagerModal
+        <FrischBestandModal
             title={title}
             body={body}
             footer={footer}

@@ -1,10 +1,8 @@
 import {useExpanded, useTable} from "react-table";
 import BTable from "react-bootstrap/Table";
 import React from "react";
-import {EditProduktModal} from "./EditProduktModal";
-import {EditKategorieModal} from "./EditKategorieModal";
 
-export function LagerTable({columns, data, updateMyData, skipPageReset, dispatchModal}) {
+export function DeadlineTable({columns, data, updateMyData, skipPageReset, dispatchModal}) {
     const {
         getTableProps,
         getTableBodyProps,
@@ -16,6 +14,7 @@ export function LagerTable({columns, data, updateMyData, skipPageReset, dispatch
         {
             columns,
             data,
+            //initialState: { hiddenColumns: ['id'] },
             // show produkte as sub rows
             getSubRows: row => row.produkte,
             // use the skipPageReset option to disable page resetting temporarily
@@ -32,6 +31,19 @@ export function LagerTable({columns, data, updateMyData, skipPageReset, dispatch
         useExpanded
     )
 
+    const getLastDeadline = () => {
+        let lastDate = data[0].datum;
+        let row = 0;
+        for(let i = 0; i < data.length; i++){
+            if(data[i].datum > lastDate){
+                lastDate = data[i].datum;
+                row = i;
+            }
+            
+        }
+        return row;
+    }
+    
     return (
         <BTable striped bordered hover size="sm" {...getTableProps()}>
             <thead>
@@ -53,28 +65,24 @@ export function LagerTable({columns, data, updateMyData, skipPageReset, dispatch
                         {
                             // canExpand is true for the kategorien header row
                             // make the kategorien name span multiple columns for these rows
-                            row.cells.map((cell, i) => {
+                            (row.original.hasOwnProperty("produkte") ? row.cells.slice(0, 2) : row.cells)
+                                .map((cell, i) => {
                                     const props = cell.getCellProps();
-                                    if (i === 1 && row.original.hasOwnProperty("produkte")) {
-                                        props.colSpan = row.cells.length - 1;
-                                        props.style = {...props.style, fontWeight: "bold", cursor: "pointer"};
-                                        props.onClick = () => dispatchModal("EditKategorieModal", cell, row);
-                                    } else {
-                                        props.onClick = () => dispatchModal("EditProduktModal", cell, row);
-                                        props.style = {...props.style, cursor: "pointer"};
-
-                                    }
-
-                                    return (
-                                        <td {...props}>
-                                            {cell.render('Cell')}
-                                        </td>
-                                    )
-                                })}
+                                    //if(row.index === getLastDeadline()){
+                                        return(
+                                            <td{...props}>
+                                                {cell.render('Cell')}
+                                            </td>
+                                        );
+                                    //}
+                                })
+                        }
                     </tr>
                 )
             })}
             </tbody>
         </BTable>
     )
+
+
 }

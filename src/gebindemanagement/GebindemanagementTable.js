@@ -1,10 +1,9 @@
 import {useExpanded, useTable} from "react-table";
 import BTable from "react-bootstrap/Table";
 import React from "react";
-import {EditProduktModal} from "./EditProduktModal";
-import {EditKategorieModal} from "./EditKategorieModal";
+import {Gebindemanagement} from "./Gebindemanagement";
 
-export function LagerTable({columns, data, updateMyData, skipPageReset, dispatchModal}) {
+export function GebindemanagementTable({columns, data, updateMyData, skipPageReset}) {
     const {
         getTableProps,
         getTableBodyProps,
@@ -53,18 +52,9 @@ export function LagerTable({columns, data, updateMyData, skipPageReset, dispatch
                         {
                             // canExpand is true for the kategorien header row
                             // make the kategorien name span multiple columns for these rows
-                            row.cells.map((cell, i) => {
+                            (row.original.hasOwnProperty("produkte") ? row.cells.slice(0, 2) : row.cells)
+                                .map((cell, i) => {
                                     const props = cell.getCellProps();
-                                    if (i === 1 && row.original.hasOwnProperty("produkte")) {
-                                        props.colSpan = row.cells.length - 1;
-                                        props.style = {...props.style, fontWeight: "bold", cursor: "pointer"};
-                                        props.onClick = () => dispatchModal("EditKategorieModal", cell, row);
-                                    } else {
-                                        props.onClick = () => dispatchModal("EditProduktModal", cell, row);
-                                        props.style = {...props.style, cursor: "pointer"};
-
-                                    }
-
                                     return (
                                         <td {...props}>
                                             {cell.render('Cell')}
@@ -77,4 +67,6 @@ export function LagerTable({columns, data, updateMyData, skipPageReset, dispatch
             </tbody>
         </BTable>
     )
+
+
 }

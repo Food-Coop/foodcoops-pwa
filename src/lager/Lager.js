@@ -47,6 +47,7 @@ export function Lager() {
     const [einheiten, setEinheiten] = React.useState([]);
     const [kategorien, setKategorien] = React.useState([]);
     const [skipPageReset, setSkipPageReset] = React.useState(false);
+    const [reducerValue, forceUpdate] = React.useReducer(x => x+1, 0);
 
 
 
@@ -82,7 +83,7 @@ export function Lager() {
                         return n === undefined ? old : n;
                     });
                 });
-        }, []
+        }, [reducerValue]
     )
 
     //alert(typeof(kategorien));
@@ -90,6 +91,7 @@ export function Lager() {
     // the rowIndex, columnId and new value to update the
     // original data
     const updateMyData = (rowId, columnId, value) => {
+        console.log("rowId, columnId, value " + rowId + "," + columnId + "," + value);
         // We also turn on the flag to not reset the page
         setSkipPageReset(true)
         setData(old => {
@@ -107,30 +109,13 @@ export function Lager() {
     }
 
     const persistProdukt = (rowId, patch) => {
-        // const [kategorieId, produktId] = rowId.split('.').map(e => parseInt(e));
-        // const {produkte, id: kategorie} = data[kategorieId];
-        // const produkt = produkte[produktId];
-        // const changedData = {...deepClone(produkt), kategorie};
-        // for (const [accessor, {value}] of Object.entries(patch)) {
-        //     deepAssign(accessor, changedData, value);
-        // }
-        //
-        // api.updateProdukt(produkt.id, changedData);
-
-        console.log("DataRowId: " + JSON.stringify(data[rowId]))
-        console.log("Patch: " + JSON.stringify(patch));
 
         const produkt = data[rowId]
         const changedData = {...deepClone(produkt)};
 
-        console.log("CD: " + JSON.stringify(changedData));
-
         for (const [accessor, {value}] of Object.entries(patch)) {
             deepAssign(accessor, changedData, value);
         }
-
-        console.log("CD After: " + JSON.stringify(changedData));
-        console.log("Produkt.id: " + produkt.id)
 
         api.updateProdukt(produkt.id, changedData);
     };
@@ -194,6 +179,7 @@ export function Lager() {
                 const newProdukt = await response.json();
                     setSkipPageReset(true);
                     setData(old => deepClone([...old, newProdukt]));
+                    forceUpdate();
             }
         })();
     };

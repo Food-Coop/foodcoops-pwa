@@ -50,6 +50,8 @@ export function FrischBestandManagement() {
     const [skipPageReset, setSkipPageReset] = React.useState(false);
     const [einheiten, setEinheiten] = React.useState([]);
     const [kategorien, setKategorien] = React.useState([]);
+    const [reducerValue, forceUpdate] = React.useReducer(x => x+1, 0);
+
 
     const api = useApi();
 
@@ -82,7 +84,7 @@ export function FrischBestandManagement() {
                         return n === undefined ? old : n;
                     });
                 });
-        }, []
+        }, [reducerValue]
     )
 
     const updateMyData = (rowId, columnId, value) => {
@@ -133,6 +135,7 @@ export function FrischBestandManagement() {
                 const newFrischBestand = await response.json();
                     setSkipPageReset(true);
                     setData(old => deepClone([...old, newFrischBestand]));
+                    forceUpdate();
             }
         })();
     };

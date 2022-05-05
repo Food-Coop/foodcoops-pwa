@@ -30,6 +30,7 @@ export function Deadline(){
     const [isLoading, setIsLoading] = React.useState(true);
     const [skipPageReset, setSkipPageReset] = React.useState(false);
     const [modal, setModal] = React.useState({type: null, state: {}});
+    const [reducerValue, forceUpdate] = React.useReducer(x => x+1, 0);
 
     const api = useApi();
     
@@ -57,7 +58,7 @@ export function Deadline(){
                     setIsLoading(false);
                 }
             );
-        }, []
+        }, [reducerValue]
     );
 
     const newDeadline = (data1) => {
@@ -69,6 +70,7 @@ export function Deadline(){
                 const newDeadline = await response.json();
                     setSkipPageReset(true);
                     setData(old => deepClone([...old, newDeadline]));
+                forceUpdate();
             }
         })();
     };

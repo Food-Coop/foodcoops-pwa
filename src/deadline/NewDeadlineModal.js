@@ -82,11 +82,6 @@ export function NewDeadlineModal(props) {
                 </div>
             );
         }
-        if (accessor === "datum") {
-            edit = (
-                <div></div>
-            );
-        }
 
         return <tr key={accessor}>
             <td>
@@ -98,7 +93,9 @@ export function NewDeadlineModal(props) {
         </tr>;
     };
     const body = Object.entries(initial)
+        .filter(([a, {}])=> a !== "datum")
         .map(mapper);
+
 
     const footer = <>
         <Button onClick={close}>Änderungen verwerfen</Button>

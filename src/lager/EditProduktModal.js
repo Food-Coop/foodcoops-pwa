@@ -15,25 +15,21 @@ export function EditProduktModal(props) {
 
 
     const save = () => {
-        //console.log("Kategorieprops: " + JSON.stringify(props));
-        let idVisited = false;
         for (const [accessor, {value}] of Object.entries(newData)) {
             if (accessor === "lagerbestand.einheit.id") {
-                idVisited = true;
                 const find = props.einheiten.find(item => item.id === value);
                 props.updateMyData(props.rowId, "lagerbestand.einheit.name", find.name);
+                continue;
+            }
+            if (accessor === "kategorie.id") {
+                const find = props.kategorien.find(item => item.id === value);
+                console.log("FInd: " + find);
+                props.updateMyData(props.rowId, "kategorie.name", find.name);
                 continue;
             }
             props.updateMyData(props.rowId, accessor, value);
         }
 
-        if (!idVisited) {
-            const find = props.einheiten[0];
-            props.updateMyData(props.rowId, "lagerbestand.einheit.name", find.name);
-            newData["lagerbestand.einheit.id"] = {name:"Id", value: find.id};
-        }
-
-        //console.log("newData: " + JSON.stringify(new
         props.persist(props.rowId, newData);
 
         close();
@@ -46,7 +42,6 @@ export function EditProduktModal(props) {
 
     const merged = {
         ...Object.fromEntries(rowData
-            .slice(1)
             .map(({column: {Header: name, id: accessor}, value}) => [accessor, {name, value}])),
         ...newData
     };
@@ -55,6 +50,7 @@ export function EditProduktModal(props) {
 
     const mapper = ([accessor, {name, value}]) => {
         if (accessor === "lagerbestand.einheit.name") {
+            const selectedEinheit = value;
             const onChange = function ({target: {value}}) {
                 const changed = {};
                 changed["lagerbestand.einheit.id"] = {name, value};
@@ -67,13 +63,19 @@ export function EditProduktModal(props) {
                 <td>
                     <div>
                         <select onChange={onChange} style={{width: "100%"}}>
-                            {props.einheiten.map(({name, id}, i) => <option key={i} value={id}>{name}</option>)}
+                            {props.einheiten.map(function({name, id}, i){
+                                if (selectedEinheit== name){
+                                    return (<option key={i} selected="selected" value={id}>{name}</option>)
+                                }
+                                return ((<option key={i} value={id}>{name}</option>));
+                            },selectedEinheit)}
                         </select>
                     </div>
                 </td>
             </tr>
         }
         if (accessor === "kategorie.name") {
+            const selectedKategorie = value;
             const onChange = function ({target: {value}}) {
                 const changed = {};
                 changed["kategorie.id"] = {name, value};
@@ -86,7 +88,12 @@ export function EditProduktModal(props) {
                 <td>
                     <div>
                         <select onChange={onChange} style={{width: "100%"}}>
-                            {props.kategorien.map(({name, id}, i) => <option key={i} value={id}>{name}</option>)}
+                            {props.kategorien.map(function({name, id}, i){
+                                if (selectedKategorie == name){
+                                    return (<option key={i} selected="selected" value={id}>{name}</option>)
+                                }
+                                return ((<option key={i} value={id}>{name}</option>));
+                            },selectedKategorie)}
                         </select>
                     </div>
                 </td>

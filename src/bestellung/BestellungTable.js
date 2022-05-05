@@ -67,8 +67,6 @@ export function BestellungTable({columns, data, updateMyData, skipPageReset, dis
                             (row.original.hasOwnProperty("produkte") ? row.cells.slice(0, 2) : row.cells)
                                 .map((cell, i) => {
                                     const props = cell.getCellProps();
-                                    props.onClick = () => dispatchModal("EditFrischBestandModal", cell, row);
-                                    props.style = {...props.style, cursor: "pointer"};
                                     if(cell.column.Header == "ProduktID"){
                                         let id = "ProduktId" + row.index;
                                         if(data[row.index].verfuegbarkeit == true){

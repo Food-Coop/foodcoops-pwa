@@ -270,7 +270,7 @@ export function Lager() {
                 <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("KategorienModal")}>Kategorie erstellen</Button>
                 <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("NewProduktModal")}>Produkt erstellen</Button>
                 <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("EinheitenModal")}>Einheiten erstellen</Button>
-                <Button style={{margin:"0.25rem"}} variant="success" onClick={() => window.open("https://foodcoops-backend.herokuapp.com/externeliste")}>Externe Einkaufsliste</Button>
+                <Button style={{margin:"0.25rem"}} variant="success" onClick={() => window.open("http://localhost:8080/externeliste")}>Externe Einkaufsliste</Button>
             </Row>
             <div style={{overflowX: "auto", width: "100%"}}>
                 {content()}

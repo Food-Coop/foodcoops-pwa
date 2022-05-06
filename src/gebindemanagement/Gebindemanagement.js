@@ -4,6 +4,8 @@ import {deepAssign, deepClone} from '../util'
 import {useApi} from '../ApiService';
 import {GebindemanagementTable} from "./GebindemanagementTable";
 import { Deadline } from '../deadline/Deadline';
+import Button from "react-bootstrap/Button";
+import Row from "react-bootstrap/Row";
 
 export function Gebindemanagement(){
     const columns = React.useMemo(
@@ -86,6 +88,9 @@ export function Gebindemanagement(){
 
     return(
         <div style={{overflowX: "auto", width: "100%"}}>
+        <Row style={{margin: "1rem"}}>
+            <Button style={{margin:"0.25rem"}} variant="success" onClick={() => window.open("http://localhost:8080/externeliste/gebinde")}>Externe Einkaufsliste</Button>
+        </Row>
             {content()}
         </div>
     );

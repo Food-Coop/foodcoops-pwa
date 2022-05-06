@@ -10,20 +10,32 @@ import Row from "react-bootstrap/Row";
 export function Gebindemanagement(){
     const columns = React.useMemo(
         () => [
-            {   Header: 'Frischbestellung-ID',
-                accessor: 'id'
-            },
+            // {   Header: 'Frischbestellung-ID',
+            //     accessor: 'id'
+            // },
             {
                 Header: 'Produkt',
-                accessor: 'produkt',
+                accessor: 'frischbestand.name',
             },
             {
-                Header: 'Gesamtpreis',
-                accessor: 'gesamtpreis',
+                Header: 'Kategorie',
+                accessor: 'frischbestand.kategorie.name',
+            },
+            {
+                Header: 'Preis',
+                accessor: 'frischbestand.preis',
             },
             {
                 Header: 'Bestellmenge',
                 accessor: 'bestellmenge',
+            },
+            {
+                Header: 'Einheit',
+                accessor: 'frischbestand.einheit.name',
+            },
+            {
+                Header: 'Gebindegröße',
+                accessor: 'frischbestand.gebindegroesse',
             },
         ]
     );

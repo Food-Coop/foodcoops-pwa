@@ -50,16 +50,25 @@ export function GebindemanagementTable({columns, data, updateMyData, skipPageRes
                 return (
                     <tr {...row.getRowProps()}>
                         {
-                            // canExpand is true for the kategorien header row
-                            // make the kategorien name span multiple columns for these rows
-                            (row.original.hasOwnProperty("produkte") ? row.cells.slice(0, 2) : row.cells)
+                            row.cells
                                 .map((cell, i) => {
                                     const props = cell.getCellProps();
-                                    return (
-                                        <td {...props}>
-                                            {cell.render('Cell')}
-                                        </td>
-                                    )
+                                    if(cell.column.Header == "Preis") {
+
+                                        return (
+                                            <td {...props}>
+                                                {cell.render('Cell')}€
+                                            </td>
+                                        )
+                                    }
+                                    else{
+                                        return (
+                                            <td {...props}>
+                                                {cell.render('Cell')}
+                                            </td>
+                                        )
+                                    }
+
                                 })}
                     </tr>
                 )

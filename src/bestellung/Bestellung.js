@@ -144,10 +144,10 @@ export function Bestellung(){
         }
         else{
             let datum = new Date();
-            var heute = new Date(datum.getFullYear(), datum.getMonth(), datum.getDate());
+            let heute = new Date(datum.getFullYear(), datum.getMonth(), datum.getDate());
             switch(lastdeadline[0].weekday) {
                 case "Montag":
-                    if(heute.getDay() < 1){
+                    if(heute.getDay() == 1){
                         n = n + 1 - 7;
                     }
                     else{
@@ -155,7 +155,7 @@ export function Bestellung(){
                     }
                     break;
                 case "Dienstag":
-                    if(heute.getDay() < 2){
+                    if(heute.getDay() == 2){
                         n = n + 2 - 7;
                     }
                     else{
@@ -202,6 +202,19 @@ export function Bestellung(){
                         n = n + 7;
                     }
                     break;
+            }
+            let timeNow = datum.getHours() + ":" + datum.getMinutes() + ":" + datum.getSeconds()
+         
+            let wochentag = datum.getDay();
+            if(wochentag == 1){wochentag = "Montag";}
+            else if(wochentag == 2){wochentag = "Dienstag";}
+            else if(wochentag == 3){wochentag = "Mittwoch";}
+            else if(wochentag == 4){wochentag = "Donnerstag";}
+            else if(wochentag == 5){wochentag = "Freitag";}
+            else if(wochentag == 6){wochentag = "Samstag";}
+            else{wochentag = "Sonntag";}
+            if(lastdeadline[0].time < timeNow && lastdeadline[0].weekday == wochentag){
+               n = n + 7;
             }
             
             var deadline = new Date(heute.setDate(heute.getDate()-heute.getDay() + n));

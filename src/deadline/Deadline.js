@@ -18,10 +18,6 @@ export function Deadline(){
             {
                 Header: 'Uhrzeit',
                 accessor: 'time',
-            },
-            {
-                Header: 'Datum',
-                accessor: 'datum',
             }
         ]
     );

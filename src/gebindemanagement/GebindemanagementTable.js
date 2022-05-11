@@ -54,10 +54,18 @@ export function GebindemanagementTable({columns, data, updateMyData, skipPageRes
                                 .map((cell, i) => {
                                     const props = cell.getCellProps();
                                     if(cell.column.Header == "Preis") {
-
                                         return (
                                             <td {...props}>
                                                 {cell.render('Cell')}€
+                                            </td>
+                                        )
+                                    }
+                                    else if(cell.column.Header == "Bestellmenge"){
+                                        data[row.index].bestellmenge = parseFloat(data[row.index].bestellmenge);
+                                        data[row.index].bestellmenge = data[row.index].bestellmenge.toFixed(2);
+                                        return (
+                                            <td {...props}>
+                                                {cell.render('Cell')}
                                             </td>
                                         )
                                     }

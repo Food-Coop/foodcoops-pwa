@@ -74,7 +74,6 @@ export function Gebindemanagement(){
 
                 // walk the old data object using the accessor of the table columns
                 deepAssign(columnId, old[kategorieId].produkte[produktId], value);
-
                 return deepClone(old);
             }
         )

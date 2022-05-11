@@ -244,11 +244,12 @@ export function Bestellung(){
             let datum = new Date();
             let bestellId = "Inputfield" + i;
             let bestellmenge = document.getElementById(bestellId).value;
-
+            
             //Check if Bestellmenge is valid
             if (bestellmenge == "") {
             } 
             else {
+                //bestellmenge = bestellmenge.toFixed
                 const {_links, ...supported} = data[i];
                 deepAssign("person_id", result, personId);
                 deepAssign("frischbestand", result, supported);

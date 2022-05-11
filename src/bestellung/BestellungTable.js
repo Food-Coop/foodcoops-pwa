@@ -40,6 +40,7 @@ export function BestellungTable({columns, data, updateMyData, skipPageReset, dis
             let preisId = "PreisId" + i;
             preis += document.getElementById(preisId).innerText * bestellmenge;
         }
+        preis = preis.toFixed(2);
         document.getElementById("preis").innerHTML = "Preis: " + preis + "€";
     }
 
@@ -122,16 +123,21 @@ export function BestellungTable({columns, data, updateMyData, skipPageReset, dis
                                         let id = "Inputfield" + row.index;
                                         let vorwoche = data[row.index].bestellmengeAlt;
                                         let woche = data[row.index].bestellmengeNeu;
+                                        
                                         if(woche == undefined){
                                             if(vorwoche === undefined){
                                                 vorwoche = 0;
                                             }
                                             if(data[row.index].verfuegbarkeit == true){
+                                                vorwoche = parseFloat(vorwoche);
+                                                vorwoche = vorwoche.toFixed(2);
                                                 return(
                                                     <input type="text" placeholder={"Bestellung Vorwoche: " + vorwoche} id={id} onChange={() => calculatePrice()}></input>
                                                 )
                                             }
                                             else{
+                                                vorwoche = parseFloat(vorwoche);
+                                                vorwoche = vorwoche.toFixed(2);
                                                 return(
                                                     <input type="text" placeholder={"Bestellung Vorwoche: " + vorwoche} id={id} onChange={() => calculatePrice()} disabled></input>
                                                 )
@@ -139,11 +145,15 @@ export function BestellungTable({columns, data, updateMyData, skipPageReset, dis
                                         }
                                         else{
                                             if(data[row.index].verfuegbarkeit == true){
+                                                woche = parseFloat(woche);
+                                                woche = woche.toFixed(2);
                                                 return(
                                                     <input type="text" placeholder={"Bestellung Aktuell: " + woche} id={id} onChange={() => calculatePrice()}></input>
                                                 )
                                             }
                                             else{
+                                                woche = parseFloat(woche);
+                                                woche = woche.toFixed(2);
                                                 return(
                                                     <input type="text" placeholder={"Bestellung Aktuell: " + woche} id={id} onChange={() => calculatePrice()} disabled></input>
                                                 )

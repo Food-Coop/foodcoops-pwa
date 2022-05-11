@@ -107,6 +107,24 @@ export function EditFrischBestandModal(props) {
                 </td>
             </tr>
         }
+        if (accessor === "verfuegbarkeit") {
+            return <tr key={accessor}>
+            <td>
+                <label style={{margin: 0}}>{name}:</label>
+            </td>
+            <td>
+                <input
+                    name={name}
+                    placeholder="true/false"
+                    value={value}
+                    onChange={function ({target: {value}}) {
+                        const changed = {};
+                        changed[accessor] = {name, value};
+                        return setNewData(prev => ({...prev, ...changed}));
+                    }}/>
+            </td>
+        </tr>;
+        }
         return <tr key={accessor}>
             <td>
                 <label style={{margin: 0}}>{name}:</label>

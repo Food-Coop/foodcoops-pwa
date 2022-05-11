@@ -15,19 +15,9 @@ export function BestellungTable({columns, data, updateMyData, skipPageReset, dis
         {
             columns,
             data,
-            //initialState: { hiddenColumns: ['id'] },
-            // show produkte as sub rows
             getSubRows: row => row.produkte,
-            // use the skipPageReset option to disable page resetting temporarily
-            autoResetPage: !skipPageReset,
-            // useExpanded resets the expanded state of all rows when data changes
+           autoResetPage: !skipPageReset,
             autoResetExpanded: !skipPageReset,
-            // updateMyData isn't part of the API, but
-            // anything we put into these options will
-            // automatically be available on the instance.
-            // That way we can call this function from our
-            // cell renderer!
-            updateMyData,
         },
         useExpanded
     )
@@ -40,6 +30,7 @@ export function BestellungTable({columns, data, updateMyData, skipPageReset, dis
             let preisId = "PreisId" + i;
             preis += document.getElementById(preisId).innerText * bestellmenge;
         }
+        preis = preis.toFixed(2);
         document.getElementById("preis").innerHTML = "Preis: " + preis + "€";
     }
 
@@ -122,16 +113,21 @@ export function BestellungTable({columns, data, updateMyData, skipPageReset, dis
                                         let id = "Inputfield" + row.index;
                                         let vorwoche = data[row.index].bestellmengeAlt;
                                         let woche = data[row.index].bestellmengeNeu;
+                                        
                                         if(woche == undefined){
                                             if(vorwoche === undefined){
                                                 vorwoche = 0;
                                             }
                                             if(data[row.index].verfuegbarkeit == true){
+                                                vorwoche = parseFloat(vorwoche);
+                                                vorwoche = vorwoche.toFixed(2);
                                                 return(
                                                     <input type="text" placeholder={"Bestellung Vorwoche: " + vorwoche} id={id} onChange={() => calculatePrice()}></input>
                                                 )
                                             }
                                             else{
+                                                vorwoche = parseFloat(vorwoche);
+                                                vorwoche = vorwoche.toFixed(2);
                                                 return(
                                                     <input type="text" placeholder={"Bestellung Vorwoche: " + vorwoche} id={id} onChange={() => calculatePrice()} disabled></input>
                                                 )
@@ -139,11 +135,15 @@ export function BestellungTable({columns, data, updateMyData, skipPageReset, dis
                                         }
                                         else{
                                             if(data[row.index].verfuegbarkeit == true){
+                                                woche = parseFloat(woche);
+                                                woche = woche.toFixed(2);
                                                 return(
                                                     <input type="text" placeholder={"Bestellung Aktuell: " + woche} id={id} onChange={() => calculatePrice()}></input>
                                                 )
                                             }
                                             else{
+                                                woche = parseFloat(woche);
+                                                woche = woche.toFixed(2);
                                                 return(
                                                     <input type="text" placeholder={"Bestellung Aktuell: " + woche} id={id} onChange={() => calculatePrice()} disabled></input>
                                                 )

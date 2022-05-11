@@ -124,14 +124,6 @@ export function Bestellung(){
         return null;
     }
 
-    // const getDeadline = (n) => {
-    //     //n = 7 => nächste Deadline, n = 0 => letzte Deadline, n = -7 => vorletzte Deadline, ...
-    //     let datum = new Date();
-    //     var heute = new Date(datum.getFullYear(), datum.getMonth(), datum.getDate());
-    //     var deadline = new Date(heute.setDate(heute.getDate()-heute.getDay() + n));
-    //     return deadline;
-    // }
-
     const getDeadline = () => {
         let n = 7;
         //n = 7 => nächste Deadline, n = 0 => letzte Deadline, n = -7 => vorletzte Deadline, ...
@@ -244,7 +236,7 @@ export function Bestellung(){
             let datum = new Date();
             let bestellId = "Inputfield" + i;
             let bestellmenge = document.getElementById(bestellId).value;
-
+            
             //Check if Bestellmenge is valid
             if (bestellmenge == "") {
             } 
@@ -260,13 +252,29 @@ export function Bestellung(){
                 if(check != null){
                     //Bestellung updaten
                     if (bestellmenge <= 10) {
-                        api.updateFrischBestellung(result, check);
+                        (async function () {
+                            const response = await api.updateFrischBestellung(result, check);
+                            if(response.ok) {
+                                forceUpdate();
+                            }
+                            else{
+                                alert("Das Updaten einer Frischbestellung war aufgrund eines Fehlers nicht erfolgreich. Bitte versuchen Sie es erneut.");
+                            }
+                        })();
                     }
                     else {
                         let artikel = "ProduktName" + i;
                         let artikelname = document.getElementById(artikel).innerText;
                         if(window.confirm("Möchten Sie wirklich " + bestellmenge + " " + artikelname + " bestellen?")){
-                            api.updateFrischBestellung(result, check);
+                            (async function () {
+                                const response = await api.updateFrischBestellung(result, check);
+                                if(response.ok) {
+                                    forceUpdate();
+                                }
+                                else{
+                                    alert("Das Updaten einer Frischbestellung war aufgrund eines Fehlers nicht erfolgreich. Bitte versuchen Sie es erneut.");
+                                }
+                            })();
                         }
                         else{
                             alert("Okay, dieses Produkt wird nicht bestellt. Alle anderen schon.");
@@ -277,22 +285,39 @@ export function Bestellung(){
                 else{
                     //Neue Bestellung abgeben
                     if (bestellmenge <= 10) {
-                        api.createFrischBestellung(result);
+                        (async function () {
+                            const response = await api.createFrischBestellung(result);
+                            if(response.ok) {
+                                forceUpdate();
+                            }
+                            else{
+                                alert("Das Abgeben einer Frischbestellung war aufgrund eines Fehlers nicht erfolgreich. Bitte versuchen Sie es erneut.");
+                            }
+                        })();
                     }
                     else {
                         let artikel = "ProduktName" + i;
                         let artikelname = document.getElementById(artikel).innerText;
                         if(window.confirm("Möchten Sie wirklich " + bestellmenge + " " + artikelname + " bestellen?")){
-                            api.createFrischBestellung(result);
+                            (async function () {
+                                const response = await api.createFrischBestellung(result);
+                                if(response.ok) {
+                                    forceUpdate();
+                                }
+                                else{
+                                    alert("Das Abgeben einer Frischbestellung war aufgrund eines Fehlers nicht erfolgreich. Bitte versuchen Sie es erneut.");
+                                }
+                            })();
                         }
                         else{
                             alert("Okay, dieses Produkt wird nicht bestellt. Alle anderen schon.");
                         }
                     }
                 }
-                forceUpdate();
+                
             }
         }
+        forceUpdate();
         document.getElementById("preis").innerHTML = "Preis: " + preis + "€";
         alert("Ihre Bestellung wurde übermittelt. Vielen Dank!");
     };
@@ -305,24 +330,22 @@ export function Bestellung(){
                 </div>
             );
         }
-
         for(let i = 0; i < data.length; i++){
             for(let j = 0; j < frischBestellungSumme.length; j++){
-                if(data[j].id === frischBestellungSumme[j].frischbestand.id){
-                    deepAssign("bestellsumme", data[j], frischBestellungSumme[j].bestellmenge);
+                if(data[i].id === frischBestellungSumme[j].frischbestand.id){
+                    let bestellmenge = frischBestellungSumme[j].bestellmenge;
+                    bestellmenge = bestellmenge.toFixed(2);
+                    deepAssign("bestellsumme", data[i], bestellmenge);
                 }
-                else{
-                    deepAssign("bestellsumme", data[j], 0);
-                } 
             }
             for(let j = 0; j < frischBestellungBetweenDatesProPerson.length; j++){
-                if(data[j].id === frischBestellungBetweenDatesProPerson[j].frischbestand.id){
-                    deepAssign("bestellmengeAlt", data[j], frischBestellungBetweenDatesProPerson[j].bestellmenge);
+                if(data[i].id === frischBestellungBetweenDatesProPerson[j].frischbestand.id){
+                    deepAssign("bestellmengeAlt", data[i], frischBestellungBetweenDatesProPerson[j].bestellmenge);
                 }    
             }
             for(let j = 0; j < frischBestellung.length; j++){
-                if(checkAlreadyOrdered(data[j].id)){
-                    deepAssign("bestellmengeNeu", data[j], frischBestellung[j].bestellmenge);
+                if(checkAlreadyOrdered(data[i].id) && data[i].id === frischBestellung[j].frischbestand.id){
+                    deepAssign("bestellmengeNeu", data[i], frischBestellung[j].bestellmenge);
                 }   
             }
             

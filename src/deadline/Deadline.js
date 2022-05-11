@@ -89,23 +89,6 @@ export function Deadline(){
         })
     }
 
-    const updateMyData = (rowId, columnId, value) => {
-        // We also turn on the flag to not reset the page
-        setSkipPageReset(true)
-        setData(old => {
-                const [kategorieId, produktId] = rowId.split('.').map(e => parseInt(e));
-                if (produktId === undefined) {
-                    deepAssign(columnId, old[kategorieId], value);
-                    return deepClone(old);
-                }
-                // walk the old data object using the accessor of the table columns
-                deepAssign(columnId, old[kategorieId].produkte[produktId], value);
-
-                return deepClone(old);
-            }
-        )
-    }
-
     const content = () => {
         if (isLoading) {
             return (
@@ -118,7 +101,6 @@ export function Deadline(){
             <DeadlineTable
                 columns={columns}
                 data={data}
-                updateMyData={updateMyData}
                 skipPageReset={skipPageReset}
                 dispatchModal={dispatchModal}/>
         );

@@ -14,19 +14,9 @@ export function DeadlineTable({columns, data, updateMyData, skipPageReset, dispa
         {
             columns,
             data,
-            //initialState: { hiddenColumns: ['id'] },
-            // show produkte as sub rows
             getSubRows: row => row.produkte,
-            // use the skipPageReset option to disable page resetting temporarily
             autoResetPage: !skipPageReset,
-            // useExpanded resets the expanded state of all rows when data changes
             autoResetExpanded: !skipPageReset,
-            // updateMyData isn't part of the API, but
-            // anything we put into these options will
-            // automatically be available on the instance.
-            // That way we can call this function from our
-            // cell renderer!
-            updateMyData,
         },
         useExpanded
     )
@@ -63,18 +53,14 @@ export function DeadlineTable({columns, data, updateMyData, skipPageReset, dispa
                 return (
                     <tr {...row.getRowProps()}>
                         {
-                            // canExpand is true for the kategorien header row
-                            // make the kategorien name span multiple columns for these rows
-                            (row.original.hasOwnProperty("produkte") ? row.cells.slice(0, 2) : row.cells)
+                              row.cells
                                 .map((cell, i) => {
                                     const props = cell.getCellProps();
-                                    //if(row.index === getLastDeadline()){
-                                        return(
-                                            <td{...props}>
-                                                {cell.render('Cell')}
-                                            </td>
-                                        );
-                                    //}
+                                    return(
+                                        <td{...props}>
+                                            {cell.render('Cell')}
+                                        </td>
+                                    );
                                 })
                         }
                     </tr>

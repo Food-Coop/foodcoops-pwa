@@ -41,7 +41,6 @@ export function Lager() {
         []
     );
 
-    //states with their update function
     const [isLoading, setIsLoading] = React.useState(true);
     const [data, setData] = React.useState([]);
     const [einheiten, setEinheiten] = React.useState([]);
@@ -49,11 +48,8 @@ export function Lager() {
     const [skipPageReset, setSkipPageReset] = React.useState(false);
     const [reducerValue, forceUpdate] = React.useReducer(x => x+1, 0);
 
-
-
     const api = useApi();
 
-    // TODO: use something like https://github.com/rally25rs/react-use-timeout#useinterval or https://react-table.tanstack.com/docs/faq#how-can-i-use-the-table-state-to-fetch-new-data to update the data
     React.useEffect(
         () => {
             api.readProdukt()
@@ -85,59 +81,31 @@ export function Lager() {
         }, [reducerValue]
     )
 
-    //alert(typeof(kategorien));
-    // When our cell renderer calls updateMyData, we'll use
-    // the rowIndex, columnId and new value to update the
-    // original data
-    const updateMyData = (rowId, columnId, value) => {
-        console.log("rowId, columnId, value " + rowId + "," + columnId + "," + value);
-        // We also turn on the flag to not reset the page
-        setSkipPageReset(true)
-        setData(old => {
-                const [kategorieId, produktId] = rowId.split('.').map(e => parseInt(e));
-                if (produktId === undefined) {
-                    deepAssign(columnId, old[kategorieId], value);
-                    return deepClone(old);
-                }
-                // walk the old data object using the accessor of the table columns
-                deepAssign(columnId, old[kategorieId].produkte[produktId], value);
-
-                return deepClone(old);
-            }
-        )
-    }
-
     const persistProdukt = (rowId, patch) => {
-
         const produkt = data[rowId]
         const changedData = {...deepClone(produkt)};
-
         for (const [accessor, {value}] of Object.entries(patch)) {
             deepAssign(accessor, changedData, value);
         }
-
-        api.updateProdukt(produkt.id, changedData);
-    };
-
-    const persistKategorie = (rowId, patch) => {
-        const [kategorieId, produktId] = rowId.split('.').map(e => parseInt(e));
-        const kategorie = data[kategorieId];
-
-        const {name} = patch;
-        if (name) {
-            api.updateKategorie(kategorie.id, name);
-        }
+        (async function () {
+            const response = await api.updateProdukt(produkt.id, changedData);
+            if(response.ok){
+                forceUpdate();
+            }
+            else{alert("Das Updaten des Produktes war aufgrund einer fehlerhaften Eingabe nicht erfolgreich.");}
+        })();
     };
 
     const newKategorie = ({icon, name}) => {
         (async function () {
             const response = await api.createKategorie(name, icon);
-            //alert(JSON.stringify(response));
             if(response.ok) {
                 setSkipPageReset(true);
                 const newKategorie = await response.json();
                 setKategorien(old => [newKategorie, ...old]);
+                forceUpdate();
             }
+            else{alert("Das Erstellen einer Kategorie war nicht erfolgreich. Bitte versuchen Sie es erneut!");}
         })();
     };
 
@@ -146,29 +114,33 @@ export function Lager() {
             const response = await api.deleteKategorie(id);
             if(response.ok) {
                 setKategorien(old => old.filter(e => e.id !== id));
+                forceUpdate();
             }
+            else{alert("Das Löschen der Kategorie war nicht erfolgreich. Möglicherweise wird sie noch von einem FrischBestand oder einem Produkt verwendet.");}
         })();
     };
 
-    /**
-     * Deletes the item on a given row
-     */
     const deleteProdukt = (rowId) => {
         const old = data;
-        // const [kategorieId, produktId] = rowId.split('.').map(e => parseInt(e));
-        // const kategorie = old[kategorieId];
-        api.deleteProdukt(old[rowId].id)
-            .then(r => {
-                if (r.ok) {
-                    //const [produkt] = kategorie.produkte.splice(produktId, 1);
-                    setSkipPageReset(true);
-                    setData(deepClone(old));
-                } else {
-                    r.text().then(text => console.log(`unable to delete: ${text}`));
-                }
-            }, console.log);
+        (async function () {
+            const response = await api.deleteProdukt(old[rowId].id)
+                .then(r => {
+                    if (r.ok) {
+                        //const [produkt] = kategorie.produkte.splice(produktId, 1);
+                        setSkipPageReset(true);
+                        setData(deepClone(old));
+                    } else {
+                        r.text().then(text => console.log(`unable to delete: ${text}`));
+                    }
+                }, console.log);
+            if(response.ok) {
+                forceUpdate();
+            }
+            else{
+                alert("Das Löschen des Frischbestandes war nicht erfolgreich. Möglicherweise gibt es Bestellungen.");
+            }
+        })();
     }
-
 
     const newProdukt = (data1) => {
         console.log("Data1: " + JSON.stringify(data1));
@@ -180,6 +152,7 @@ export function Lager() {
                     setData(old => deepClone([...old, newProdukt]));
                     forceUpdate();
             }
+            else{alert("Das Erstellen eines Produktes war nicht erfolgreich. Bitte versuchen Sie es erneut!")}
         })();
     };
 
@@ -191,6 +164,7 @@ export function Lager() {
                 const newEinheit = await response.json();
                 setEinheiten(old => [newEinheit, ...old]);
             }
+            else{alert("Das Erstellen einer Einheit war nicht erfolgreich. Bitte versuchen Sie es erneut!");}
         })();
     };
 
@@ -200,12 +174,10 @@ export function Lager() {
             if(response.ok) {
                 setEinheiten(old => old.filter(e => e.id !== id));
             }
+            else{alert("Das Löschen der Einheit war nicht erfolgreich. Möglicherweise wird sie noch von einem FrischBestand oder einem Produkt verwendet.");}
         })();
     };
 
-    // After data chagnes, we turn the flag back off
-    // so that if data actually changes when we're not
-    // editing it, the page is reset
     React.useEffect(() => {
         setSkipPageReset(false)
     }, [data]);
@@ -258,7 +230,6 @@ export function Lager() {
             <LagerTable
                 columns={columns}
                 data={data}
-                updateMyData={updateMyData}
                 skipPageReset={skipPageReset}
                 dispatchModal={dispatchModal}/>
         );
@@ -279,7 +250,6 @@ export function Lager() {
             <EditProduktModal
                 show={modal.type === "EditProduktModal"}
                 close={() => dispatchModal(null)}
-                updateMyData={updateMyData}
                 persist={persistProdukt}
                 deleteProdukt={deleteProdukt}
                 einheiten={einheiten}

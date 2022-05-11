@@ -7,11 +7,9 @@ function defaultData(columns) {
     const capitalize = word => word.replace(/^\w/, c => c.toUpperCase());
     const getName = (accessor, humanName) => typeof humanName === "string" ? humanName : capitalize(accessor);
 
-    //console.log("table columns: " + JSON.stringify(tableColumns));
     const convert = ({Header: humanName, accessor}) => [accessor, {name: getName(accessor, humanName), value: ""}];
     const initial = Object.fromEntries(columns.map(convert));
-    //console.log("table columns after: " + JSON.stringify(initial));
-
+    
     initial["weekday"].value = "Montag";
     initial["time"].value = "23:59:59";
 
@@ -20,6 +18,7 @@ function defaultData(columns) {
 
 export function NewDeadlineModal(props) {
     const [newData, setNewData] = React.useState({});
+    const [reducerValue, forceUpdate] = React.useReducer(x => x+1, 0);
 
     const initial = {
         ...defaultData(props.columns),
@@ -39,10 +38,8 @@ export function NewDeadlineModal(props) {
         for (const [accessor, {value}] of Object.entries(newData)) {
             deepAssign(accessor, result, value);
         }
-        if (!result.weekday) {
-            //Diese if-Bedingung wird benötigt, damit das Ergebnis des Select mit in die Datenbank übernommen wird!!!
-        }
         props.create(result);
+        forceUpdate();
         close();
     };
 

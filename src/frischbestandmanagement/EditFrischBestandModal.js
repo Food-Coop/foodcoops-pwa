@@ -6,6 +6,7 @@ import {FrischBestandModal} from "./FrischBestandModal";
 export function EditFrischBestandModal(props) {
     const rowData = props.rowData || [];
     const [newData, setNewData] = React.useState({});
+    const [reducerValue, forceUpdate] = React.useReducer(x => x+1, 0);
 
     const close = () => {
         props.close();
@@ -13,30 +14,12 @@ export function EditFrischBestandModal(props) {
     };
 
     const save = () => {
-        let idVisited = false;
-        for (const [accessor, {value}] of Object.entries(newData)) {
-            if (accessor === "einheit.id") {
-                idVisited = true;
-                const find = props.einheiten.find(item => item.id === value);
-                props.updateMyData(props.rowId, "einheit.name", find.name);
-                continue;
-            }
-            if (accessor === "kategorie.id") {
-                idVisited = true;
-                const find = props.kategorien.find(item => item.id === value);
-                props.updateMyData(props.rowId, "kategorie.name", find.name);
-                continue;
-            }
-            props.updateMyData(props.rowId, accessor, value);
-        }
-
         props.persist(props.rowId, newData);
-
+        forceUpdate();
         close();
     };
 
     const remove = () => {
-        console.log("Remove: " + props.rowId);
         props.deleteFrischBestand(props.rowId);
         close();
     };
@@ -46,13 +29,6 @@ export function EditFrischBestandModal(props) {
             .map(({column: {Header: name, id: accessor}, value}) => [accessor, {name, value}])),
         ...newData
     };
-
-
-//{props.einheiten.map(({name, id}, i) => (<option key={i} value={id}>{name}</option>))}
-//     const testfunc = (name, id, i) => {
-//         console.log("This: " + this);
-//         return(<option key={i} value={id}>{name}</option>)
-//     }
 
     const title = "FrischBestand bearbeiten";
 
@@ -106,6 +82,46 @@ export function EditFrischBestandModal(props) {
                     </div>
                 </td>
             </tr>
+        }
+        if (accessor === "verfuegbarkeit") {
+            if(value === 1){
+                return <tr key={accessor}>
+                    <td>
+                        <label style={{margin: 0}}>{name}:</label>
+                    </td>
+                    <td>
+                        <input
+                            name={name}
+                            type="checkbox"
+                            checked
+                            onClick={function ({target: {value}}) {
+                                value = false;
+                                const changed = {};
+                                changed[accessor] = {name, value};
+                                return setNewData(prev => ({...prev, ...changed}));
+                            }}/>
+                    </td>
+                </tr>;
+            }
+            else{
+                return <tr key={accessor}>
+                    <td>
+                        <label style={{margin: 0}}>{name}:</label>
+                    </td>
+                    <td>
+                        <input
+                            name={name}
+                            type="checkbox"
+                            onChange={function ({target: {value}}) {
+                                value = true;
+                                const changed = {};
+                                changed[accessor] = {name, value};
+                                return setNewData(prev => ({...prev, ...changed}));
+                            }}/>
+                    </td>
+                </tr>;
+            }
+            
         }
         return <tr key={accessor}>
             <td>

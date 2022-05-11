@@ -27,6 +27,14 @@ export function EditFrischBestandModal(props) {
                 props.updateMyData(props.rowId, "kategorie.name", find.name);
                 continue;
             }
+            if (accessor === "verfuegbarkeit"){
+                console.log(JSON.stringify(newData))
+                const find = newData.verfuegbarkeit.value;
+                if(find != true || find != false){
+                    alert("Bitte die Verfügbarkeit mit true oder false angeben");
+                }
+                break;
+            }
             props.updateMyData(props.rowId, accessor, value);
         }
 

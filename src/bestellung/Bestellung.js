@@ -309,12 +309,14 @@ export function Bestellung(){
 
         for(let i = 0; i < data.length; i++){
             for(let j = 0; j < frischBestellungSumme.length; j++){
-                if(data[j].id === frischBestellungSumme[j].frischbestand.id){
-                    deepAssign("bestellsumme", data[j], frischBestellungSumme[j].bestellmenge);
+                if(data[i].id === frischBestellungSumme[j].frischbestand.id){
+                    let bestellmenge = frischBestellungSumme[j].bestellmenge;
+                    bestellmenge = bestellmenge.toFixed(2);
+                    deepAssign("bestellsumme", data[i], bestellmenge);
                 }
-                else{
-                    deepAssign("bestellsumme", data[j], 0);
-                } 
+                // else{
+                //     deepAssign("bestellsumme", data[j], 0);
+                // } 
             }
             for(let j = 0; j < frischBestellungBetweenDatesProPerson.length; j++){
                 if(data[j].id === frischBestellungBetweenDatesProPerson[j].frischbestand.id){

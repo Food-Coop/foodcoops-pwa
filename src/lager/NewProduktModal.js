@@ -34,15 +34,11 @@ export function NewProduktModal(props) {
     };
 
     const save = () => {
-        //console.log("save " + Object.entries(initial));
-        //console.log("save " + JSON.stringify(initial));
         const result = {};
         for (const [accessor, {value}] of Object.entries(initial)) {
-            //console.log("Intital Accesor, value: " + accessor + " / " + value);
             deepAssign(accessor, result, value);
         }
         for (const [accessor, {value}] of Object.entries(newData)) {
-            //console.log("newdata Accesor, value: " + accessor + " / " + value);
             deepAssign(accessor, result, value);
         }
 
@@ -57,10 +53,7 @@ export function NewProduktModal(props) {
             deepAssign("id", kategorie, find.id);
             deepAssign("name", kategorie, find.name);
             deepAssign("kategorie", result, kategorie);
-            //result.kategorie = find.id;
         }
-
-        console.log("Supported: " + JSON.stringify(result));
         props.create(result);
         close();
     };

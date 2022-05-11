@@ -15,19 +15,9 @@ export function BestellungTable({columns, data, updateMyData, skipPageReset, dis
         {
             columns,
             data,
-            //initialState: { hiddenColumns: ['id'] },
-            // show produkte as sub rows
             getSubRows: row => row.produkte,
-            // use the skipPageReset option to disable page resetting temporarily
-            autoResetPage: !skipPageReset,
-            // useExpanded resets the expanded state of all rows when data changes
+           autoResetPage: !skipPageReset,
             autoResetExpanded: !skipPageReset,
-            // updateMyData isn't part of the API, but
-            // anything we put into these options will
-            // automatically be available on the instance.
-            // That way we can call this function from our
-            // cell renderer!
-            updateMyData,
         },
         useExpanded
     )

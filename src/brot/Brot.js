@@ -118,7 +118,8 @@ export function Brot(){
             let datum = new Date();
             let bestellId = "Inputfield" + i;
             let bestellmenge = document.getElementById(bestellId).value;
-
+            console.log(bestellId)
+            console.log("1: " + document.getElementById(bestellId));
             //Check if Bestellmenge is valid
             if (bestellmenge == "") {
             } 
@@ -133,14 +134,34 @@ export function Brot(){
                 let check = checkAlreadyOrdered(brotBestandId);
                 if(check != null){
                     //Bestellung updaten
+                    console.log(bestellId)
+                    console.log("2: " + bestellmenge <= 10);
                     if (bestellmenge <= 10) {
-                        api.updateBrotBestellung(result, check);
+                        console.log("3: " + bestellmenge);
+                        (async function () {
+                            const response = await api.updateBrotBestellung(result, check);
+                            if(response.ok) {
+                                forceUpdate();
+                            }
+                            else{
+                                alert("Das Updaten einer Brotbestellung war aufgrund eines Fehlers nicht erfolgreich. Bitte versuchen Sie es erneut.");
+                            }
+                        })();
+                        
                     }
                     else {
                         let artikel = "ProduktName" + i;
                         let artikelname = document.getElementById(artikel).innerText;
                         if(window.confirm("Möchten Sie wirklich " + bestellmenge + " " + artikelname + " bestellen?")){
-                            api.updateBrotBestellung(result, check);
+                            (async function () {
+                                const response = await api.updateBrotBestellung(result, check);
+                                if(response.ok) {
+                                    forceUpdate();
+                                }
+                                else{
+                                    alert("Das Updaten einer Brotbestellung war aufgrund eines Fehlers nicht erfolgreich. Bitte versuchen Sie es erneut.");
+                                }
+                            })();
                         }
                         else{
                             alert("Okay, dieses Produkt wird nicht bestellt. Alle anderen schon.");
@@ -151,22 +172,39 @@ export function Brot(){
                 else{
                     //Neue Bestellung abgeben
                     if (bestellmenge <= 10) {
-                        api.createBrotBestellung(result);
+                        (async function () {
+                            const response = await api.createBrotBestellung(result);
+                            if(response.ok) {
+                                forceUpdate();
+                            }
+                            else{
+                                alert("Das Abgeben einer Brotbestellung war aufgrund eines Fehlers nicht erfolgreich. Bitte versuchen Sie es erneut.");
+                            }
+                        })();
                     }
                     else {
                         let artikel = "ProduktName" + i;
                         let artikelname = document.getElementById(artikel).innerText;
                         if(window.confirm("Möchten Sie wirklich " + bestellmenge + " " + artikelname + " bestellen?")){
-                            api.createBrotBestellung(result);
+                            (async function () {
+                                const response = await api.createBrotBestellung(result);
+                                if(response.ok) {
+                                    forceUpdate();
+                                }
+                                else{
+                                    alert("Das Abgeben einer Brotbestellung war aufgrund eines Fehlers nicht erfolgreich. Bitte versuchen Sie es erneut.");
+                                }
+                            })();
                         }
                         else{
                             alert("Okay, dieses Produkt wird nicht bestellt. Alle anderen schon.");
                         }
                     }
                 }
-                forceUpdate();
+                
             }
         }
+        forceUpdate();
         document.getElementById("preis").innerHTML = "Preis: " + preis + "€";
         alert("Ihre Bestellung wurde übermittelt. Vielen Dank!");
     };

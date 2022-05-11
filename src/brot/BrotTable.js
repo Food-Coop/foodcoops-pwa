@@ -2,7 +2,7 @@ import {useExpanded, useTable} from "react-table";
 import BTable from "react-bootstrap/Table";
 import React from "react";
 
-export function BrotTable({columns, data, updateMyData, skipPageReset, dispatchModal}) {
+export function BrotTable({columns, data, skipPageReset, dispatchModal}) {
     const {
         getTableProps,
         getTableBodyProps,
@@ -14,19 +14,9 @@ export function BrotTable({columns, data, updateMyData, skipPageReset, dispatchM
         {
             columns,
             data,
-            //initialState: { hiddenColumns: ['id'] },
-            // show produkte as sub rows
             getSubRows: row => row.produkte,
-            // use the skipPageReset option to disable page resetting temporarily
             autoResetPage: !skipPageReset,
-            // useExpanded resets the expanded state of all rows when data changes
             autoResetExpanded: !skipPageReset,
-            // updateMyData isn't part of the API, but
-            // anything we put into these options will
-            // automatically be available on the instance.
-            // That way we can call this function from our
-            // cell renderer!
-            updateMyData,
         },
         useExpanded
     )
@@ -83,7 +73,7 @@ export function BrotTable({columns, data, updateMyData, skipPageReset, dispatchM
                                             );
                                         }
                                     }
-                                    else if(cell.column.Header == "Produkt"){
+                                    else if(cell.column.Header == "Brotname"){
                                         let id = "ProduktName" + row.index;
                                         if(data[row.index].verfuegbarkeit == true){
                                             return(

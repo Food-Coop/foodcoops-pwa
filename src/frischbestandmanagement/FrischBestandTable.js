@@ -5,7 +5,7 @@ import { EditFrischBestandModal } from "./EditFrischBestandModal";
 
 
 
-export function FrischBestandTable({columns, data, updateMyData, skipPageReset, dispatchModal}) {
+export function FrischBestandTable({columns, data, skipPageReset, dispatchModal}) {
     const {
         getTableProps,
         getTableBodyProps,
@@ -17,18 +17,9 @@ export function FrischBestandTable({columns, data, updateMyData, skipPageReset, 
         {
             columns,
             data,
-            //initialState: { hiddenColumns: ['id'] },
-            // show produkte as sub rows
             getSubRows: row => row.produkte,
-            // use the skipPageReset option to disable page resetting temporarily
             autoResetPage: !skipPageReset,
-            // useExpanded resets the expanded state of all rows when data changes
             autoResetExpanded: !skipPageReset,
-            // updateMyData isn't part of the API, but
-            // anything we put into these options will
-            // automatically be available on the instance.
-            // That way we can call this function from our
-            // cell renderer!
         },
         useExpanded
     )

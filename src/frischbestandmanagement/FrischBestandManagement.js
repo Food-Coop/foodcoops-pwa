@@ -52,7 +52,6 @@ export function FrischBestandManagement() {
     const [kategorien, setKategorien] = React.useState([]);
     const [reducerValue, forceUpdate] = React.useReducer(x => x+1, 0);
 
-
     const api = useApi();
 
     React.useEffect(
@@ -87,45 +86,43 @@ export function FrischBestandManagement() {
         }, [reducerValue]
     )
 
-    const updateMyData = (rowId, columnId, value) => {
-        // We also turn on the flag to not reset the page
-        setSkipPageReset(true)
-        setData(old => {
-                const [kategorieId, produktId] = rowId.split('.').map(e => parseInt(e));
-                if (produktId === undefined) {
-                    deepAssign(columnId, old[kategorieId], value);
-                    return deepClone(old);
-                }
-                // walk the old data object using the accessor of the table columns
-                deepAssign(columnId, old[kategorieId].produkte[produktId], value);
-
-                return deepClone(old);
-            }
-        )
-    }
-
     const persistFrischBestand = (rowId, patch) => {
         const frischBestand = data[rowId];
         const changedData = {...deepClone(frischBestand)};
         for (const [accessor, {value}] of Object.entries(patch)) {
             deepAssign(accessor, changedData, value);
         }
-        console.log("CD:  " + JSON.stringify(changedData))
-        api.updateFrischBestand(frischBestand.id, changedData);
-    };
+        (async function () {
+            const response = await api.updateFrischBestand(frischBestand.id, changedData)
+            if(response.ok) {
+                forceUpdate();
+            }
+            else{
+                alert("Das Updaten des Frischbestandes war aufgrund einer fehlerhaften Eingabe nicht erfolgreich.");
+            }
+        })();
+    }
 
     const deleteFrischBestand = (rowId) => {
         const old = data;
-        api.deleteFrischBestand(old[rowId].id)
-            .then(r => {
-                if (r.ok) {
-                   // const [produkt] = kategorie.produkte.splice(produktId, 1);
-                    setSkipPageReset(true);
-                    setData(deepClone(old));
-                } else {
-                    r.text().then(text => console.log(`unable to delete: ${text}`));
-                }
-            }, console.log);
+        (async function () {
+            const response = await api.deleteFrischBestand(old[rowId].id)
+                .then(r => {
+                    if (r.ok) {
+                    // const [produkt] = kategorie.produkte.splice(produktId, 1);
+                        setSkipPageReset(true);
+                        setData(deepClone(old));
+                    } else {
+                        r.text().then(text => console.log(`unable to delete: ${text}`));
+                    }
+                }, console.log);
+            if(response.ok) {
+                forceUpdate();
+            }
+            else{
+                alert("Das Löschen des Frischbestandes war nicht erfolgreich. Möglicherweise gibt es Bestellungen.");
+            }
+        })();
     }
 
     const newFrischBestand = (data1) => {
@@ -137,17 +134,8 @@ export function FrischBestandManagement() {
                     setData(old => deepClone([...old, newFrischBestand]));
                     forceUpdate();
             }
+            else{alert("Das Erstellen eines FrischBestandes war nicht erfolgreich. Bitte versuchen Sie es erneut!")}
         })();
-    };
-
-    const persistKategorie = (rowId, patch) => {
-        const [kategorieId, produktId] = rowId.split('.').map(e => parseInt(e));
-        const kategorie = data[kategorieId];
-
-        const {name} = patch;
-        if (name) {
-            api.updateKategorie(kategorie.id, name);
-        }
     };
 
     const newKategorie = ({icon, name}) => {
@@ -158,7 +146,9 @@ export function FrischBestandManagement() {
                 setSkipPageReset(true);
                 const newKategorie = await response.json();
                 setKategorien(old => [newKategorie, ...old]);
+                forceUpdate();
             }
+            else{alert("Das Erstellen einer Kategorie war nicht erfolgreich. Bitte versuchen Sie es erneut!");}
         })();
     };
 
@@ -167,7 +157,9 @@ export function FrischBestandManagement() {
             const response = await api.deleteKategorie(id);
             if(response.ok) {
                 setKategorien(old => old.filter(e => e.id !== id));
+                forceUpdate();
             }
+            else{alert("Das Löschen der Kategorie war nicht erfolgreich. Möglicherweise wird sie noch von einem FrischBestand oder einem Produkt verwendet.");}
         })();
     };
 
@@ -178,7 +170,9 @@ export function FrischBestandManagement() {
             if(response.ok) {
                 const newEinheit = await response.json();
                 setEinheiten(old => [newEinheit, ...old]);
+                forceUpdate();
             }
+            else{alert("Das Erstellen einer Einheit war nicht erfolgreich. Bitte versuchen Sie es erneut!");}
         })();
     };
 
@@ -187,7 +181,9 @@ export function FrischBestandManagement() {
             const response = await api.deleteEinheit(id);
             if(response.ok) {
                 setEinheiten(old => old.filter(e => e.id !== id));
+                forceUpdate();
             }
+            else{alert("Das Löschen der Einheit war nicht erfolgreich. Möglicherweise wird sie noch von einem FrischBestand oder einem Produkt verwendet.");}
         })();
     };
 
@@ -243,7 +239,6 @@ export function FrischBestandManagement() {
             <FrischBestandTable
                 columns={columns}
                 data={data}
-                updateMyData={updateMyData}
                 skipPageReset={skipPageReset}
                 dispatchModal={dispatchModal}/>
         );
@@ -264,7 +259,6 @@ export function FrischBestandManagement() {
             <EditFrischBestandModal
                 show={modal.type === "EditFrischBestandModal"}
                 close={() => dispatchModal(null)}
-                updateMyData={updateMyData}
                 persist={persistFrischBestand}
                 deleteFrischBestand={deleteFrischBestand}
                 einheiten={einheiten}

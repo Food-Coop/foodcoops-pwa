@@ -4,24 +4,38 @@ import {deepAssign, deepClone} from '../util'
 import {useApi} from '../ApiService';
 import {GebindemanagementTable} from "./GebindemanagementTable";
 import { Deadline } from '../deadline/Deadline';
+import Button from "react-bootstrap/Button";
+import Row from "react-bootstrap/Row";
 
 export function Gebindemanagement(){
     const columns = React.useMemo(
         () => [
-            {   Header: 'Frischbestellung-ID',
-                accessor: 'id'
-            },
+            // {   Header: 'Frischbestellung-ID',
+            //     accessor: 'id'
+            // },
             {
                 Header: 'Produkt',
-                accessor: 'produkt',
+                accessor: 'frischbestand.name',
             },
             {
-                Header: 'Gesamtpreis',
-                accessor: 'gesamtpreis',
+                Header: 'Kategorie',
+                accessor: 'frischbestand.kategorie.name',
+            },
+            {
+                Header: 'Preis',
+                accessor: 'frischbestand.preis',
             },
             {
                 Header: 'Bestellmenge',
                 accessor: 'bestellmenge',
+            },
+            {
+                Header: 'Einheit',
+                accessor: 'frischbestand.einheit.name',
+            },
+            {
+                Header: 'Gebindegröße',
+                accessor: 'frischbestand.gebindegroesse',
             },
         ]
     );
@@ -29,6 +43,7 @@ export function Gebindemanagement(){
     const [isLoading, setIsLoading] = React.useState(true);
     const [data, setData] = React.useState([]);
     const [skipPageReset, setSkipPageReset] = React.useState(false);
+    const [reducerValue, forceUpdate] = React.useReducer(x => x+1, 0);
 
     const api = useApi();
 
@@ -45,26 +60,8 @@ export function Gebindemanagement(){
                     setIsLoading(false);
                 }
             );
-        }, []
+        }, [reducerValue]
     )
-
-    const updateMyData = (rowId, columnId, value) => {
-        // We also turn on the flag to not reset the page
-        setSkipPageReset(true)
-        setData(old => {
-                const [kategorieId, produktId] = rowId.split('.').map(e => parseInt(e));
-                if (produktId === undefined) {
-                    deepAssign(columnId, old[kategorieId], value);
-                    return deepClone(old);
-                }
-
-                // walk the old data object using the accessor of the table columns
-                deepAssign(columnId, old[kategorieId].produkte[produktId], value);
-
-                return deepClone(old);
-            }
-        )
-    }
 
     const content = () => {
         if (isLoading) {
@@ -79,13 +76,15 @@ export function Gebindemanagement(){
             <GebindemanagementTable
                 columns={columns}
                 data={data}
-                updateMyData={updateMyData}
                 skipPageReset={skipPageReset}/>
         );
     }
 
     return(
         <div style={{overflowX: "auto", width: "100%"}}>
+        <Row style={{margin: "1rem"}}>
+            <Button style={{margin:"0.25rem"}} variant="success" onClick={() => window.open("http://localhost:8080/externeliste/gebinde")}>Externe Einkaufsliste</Button>
+        </Row>
             {content()}
         </div>
     );

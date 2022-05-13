@@ -5,33 +5,17 @@ import {LagerModal} from "./LagerModal";
 
 export function EditProduktModal(props) {
     const rowData = props.rowData || [];
-    const [newData, setNewData] = React.useState({});
+    const [newData, setNewData] = React.useState({});    
+    const [reducerValue, forceUpdate] = React.useReducer(x => x+1, 0);
+
     const close = () => {
         props.close();
         setNewData({});
     };
 
-
-
-
     const save = () => {
-        for (const [accessor, {value}] of Object.entries(newData)) {
-            if (accessor === "lagerbestand.einheit.id") {
-                const find = props.einheiten.find(item => item.id === value);
-                props.updateMyData(props.rowId, "lagerbestand.einheit.name", find.name);
-                continue;
-            }
-            if (accessor === "kategorie.id") {
-                const find = props.kategorien.find(item => item.id === value);
-                console.log("FInd: " + find);
-                props.updateMyData(props.rowId, "kategorie.name", find.name);
-                continue;
-            }
-            props.updateMyData(props.rowId, accessor, value);
-        }
-
         props.persist(props.rowId, newData);
-
+        forceUpdate();
         close();
     };
 

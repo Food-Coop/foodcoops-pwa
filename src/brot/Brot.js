@@ -118,7 +118,8 @@ export function Brot(){
             let datum = new Date();
             let bestellId = "Inputfield" + i;
             let bestellmenge = document.getElementById(bestellId).value;
-
+            console.log(bestellId)
+            console.log("1: " + document.getElementById(bestellId));
             //Check if Bestellmenge is valid
             if (bestellmenge == "") {
             } 
@@ -133,14 +134,34 @@ export function Brot(){
                 let check = checkAlreadyOrdered(brotBestandId);
                 if(check != null){
                     //Bestellung updaten
+                    console.log(bestellId)
+                    console.log("2: " + bestellmenge <= 10);
                     if (bestellmenge <= 10) {
-                        api.updateBrotBestellung(result, check);
+                        console.log("3: " + bestellmenge);
+                        (async function () {
+                            const response = await api.updateBrotBestellung(result, check);
+                            if(response.ok) {
+                                forceUpdate();
+                            }
+                            else{
+                                alert("Das Updaten einer Brotbestellung war aufgrund eines Fehlers nicht erfolgreich. Bitte versuchen Sie es erneut.");
+                            }
+                        })();
+                        
                     }
                     else {
                         let artikel = "ProduktName" + i;
                         let artikelname = document.getElementById(artikel).innerText;
                         if(window.confirm("Möchten Sie wirklich " + bestellmenge + " " + artikelname + " bestellen?")){
-                            api.updateBrotBestellung(result, check);
+                            (async function () {
+                                const response = await api.updateBrotBestellung(result, check);
+                                if(response.ok) {
+                                    forceUpdate();
+                                }
+                                else{
+                                    alert("Das Updaten einer Brotbestellung war aufgrund eines Fehlers nicht erfolgreich. Bitte versuchen Sie es erneut.");
+                                }
+                            })();
                         }
                         else{
                             alert("Okay, dieses Produkt wird nicht bestellt. Alle anderen schon.");
@@ -151,22 +172,39 @@ export function Brot(){
                 else{
                     //Neue Bestellung abgeben
                     if (bestellmenge <= 10) {
-                        api.createBrotBestellung(result);
+                        (async function () {
+                            const response = await api.createBrotBestellung(result);
+                            if(response.ok) {
+                                forceUpdate();
+                            }
+                            else{
+                                alert("Das Abgeben einer Brotbestellung war aufgrund eines Fehlers nicht erfolgreich. Bitte versuchen Sie es erneut.");
+                            }
+                        })();
                     }
                     else {
                         let artikel = "ProduktName" + i;
                         let artikelname = document.getElementById(artikel).innerText;
                         if(window.confirm("Möchten Sie wirklich " + bestellmenge + " " + artikelname + " bestellen?")){
-                            api.createBrotBestellung(result);
+                            (async function () {
+                                const response = await api.createBrotBestellung(result);
+                                if(response.ok) {
+                                    forceUpdate();
+                                }
+                                else{
+                                    alert("Das Abgeben einer Brotbestellung war aufgrund eines Fehlers nicht erfolgreich. Bitte versuchen Sie es erneut.");
+                                }
+                            })();
                         }
                         else{
                             alert("Okay, dieses Produkt wird nicht bestellt. Alle anderen schon.");
                         }
                     }
                 }
-                forceUpdate();
+                
             }
         }
+        forceUpdate();
         document.getElementById("preis").innerHTML = "Preis: " + preis + "€";
         alert("Ihre Bestellung wurde übermittelt. Vielen Dank!");
     };
@@ -221,10 +259,10 @@ export function Brot(){
         }
         else{
             let datum = new Date();
-            var heute = new Date(datum.getFullYear(), datum.getMonth(), datum.getDate());
+            let heute = new Date(datum.getFullYear(), datum.getMonth(), datum.getDate());
             switch(lastdeadline[0].weekday) {
                 case "Montag":
-                    if(heute.getDay() < 1){
+                    if(heute.getDay() == 1){
                         n = n + 1 - 7;
                     }
                     else{
@@ -232,7 +270,7 @@ export function Brot(){
                     }
                     break;
                 case "Dienstag":
-                    if(heute.getDay() < 2){
+                    if(heute.getDay() == 2){
                         n = n + 2 - 7;
                     }
                     else{
@@ -280,7 +318,20 @@ export function Brot(){
                     }
                     break;
             }
-        
+            let timeNow = datum.getHours() + ":" + datum.getMinutes() + ":" + datum.getSeconds()
+         
+            let wochentag = datum.getDay();
+            if(wochentag == 1){wochentag = "Montag";}
+            else if(wochentag == 2){wochentag = "Dienstag";}
+            else if(wochentag == 3){wochentag = "Mittwoch";}
+            else if(wochentag == 4){wochentag = "Donnerstag";}
+            else if(wochentag == 5){wochentag = "Freitag";}
+            else if(wochentag == 6){wochentag = "Samstag";}
+            else{wochentag = "Sonntag";}
+            if(lastdeadline[0].time > timeNow && lastdeadline[0].weekday == wochentag){
+                n = n - 7;
+            }
+            
             var deadline = new Date(heute.setDate(heute.getDate()-heute.getDay() + n));
             
             let date = deadline;

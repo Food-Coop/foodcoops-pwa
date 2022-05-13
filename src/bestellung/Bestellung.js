@@ -205,8 +205,8 @@ export function Bestellung(){
             else if(wochentag == 5){wochentag = "Freitag";}
             else if(wochentag == 6){wochentag = "Samstag";}
             else{wochentag = "Sonntag";}
-            if(lastdeadline[0].time < timeNow && lastdeadline[0].weekday == wochentag){
-               n = n + 7;
+            if(lastdeadline[0].time > timeNow && lastdeadline[0].weekday == wochentag){
+                n = n - 7;
             }
             
             var deadline = new Date(heute.setDate(heute.getDate()-heute.getDay() + n));

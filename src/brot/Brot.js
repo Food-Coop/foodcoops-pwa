@@ -259,7 +259,7 @@ export function Brot(){
         }
         else{
             let datum = new Date();
-            var heute = new Date(datum.getFullYear(), datum.getMonth(), datum.getDate());
+            let heute = new Date(datum.getFullYear(), datum.getMonth(), datum.getDate());
             switch(lastdeadline[0].weekday) {
                 case "Montag":
                     if(heute.getDay() == 1){
@@ -278,7 +278,7 @@ export function Brot(){
                     }
                     break;
                 case "Mittwoch":
-                    if(heute.getDay() == 3){
+                    if(heute.getDay() < 3){
                         n = n + 3 - 7;
                     }
                     else{
@@ -286,7 +286,7 @@ export function Brot(){
                     }
                     break;
                 case "Donnerstag":
-                    if(heute.getDay() == 4){
+                    if(heute.getDay() < 4){
                         n = n + 4 - 7;
                     }
                     else{
@@ -294,7 +294,7 @@ export function Brot(){
                     }
                     break;
                 case "Freitag":
-                    if(heute.getDay() == 5){
+                    if(heute.getDay() < 5){
                         n = n + 5 - 7;
                     }
                     else{
@@ -302,7 +302,7 @@ export function Brot(){
                     }
                     break;
                 case "Samstag":
-                    if(heute.getDay() == 6){
+                    if(heute.getDay() < 6){
                         n = n + 6 - 7;
                     }
                     else{
@@ -310,7 +310,7 @@ export function Brot(){
                     }
                     break;
                 case "Sonntag":
-                    if(heute.getDay() == 7){
+                    if(heute.getDay() < 7){
                         n = n + 7 - 7;
                     }
                     else{
@@ -318,7 +318,6 @@ export function Brot(){
                     }
                     break;
             }
-
             let timeNow = datum.getHours() + ":" + datum.getMinutes() + ":" + datum.getSeconds()
          
             let wochentag = datum.getDay();
@@ -329,10 +328,10 @@ export function Brot(){
             else if(wochentag == 5){wochentag = "Freitag";}
             else if(wochentag == 6){wochentag = "Samstag";}
             else{wochentag = "Sonntag";}
-            if(lastdeadline[0].time < timeNow && lastdeadline[0].weekday == wochentag){
-               n = n + 7;
+            if(lastdeadline[0].time > timeNow && lastdeadline[0].weekday == wochentag){
+                n = n - 7;
             }
-        
+            
             var deadline = new Date(heute.setDate(heute.getDate()-heute.getDay() + n));
             
             let date = deadline;

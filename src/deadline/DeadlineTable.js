@@ -2,7 +2,7 @@ import {useExpanded, useTable} from "react-table";
 import BTable from "react-bootstrap/Table";
 import React from "react";
 
-export function DeadlineTable({columns, data, updateMyData, skipPageReset, dispatchModal}) {
+export function DeadlineTable({columns, data, skipPageReset}) {
     const {
         getTableProps,
         getTableBodyProps,
@@ -21,19 +21,6 @@ export function DeadlineTable({columns, data, updateMyData, skipPageReset, dispa
         useExpanded
     )
 
-    const getLastDeadline = () => {
-        let lastDate = data[0].datum;
-        let row = 0;
-        for(let i = 0; i < data.length; i++){
-            if(data[i].datum > lastDate){
-                lastDate = data[i].datum;
-                row = i;
-            }
-            
-        }
-        return row;
-    }
-    
     return (
         <BTable striped bordered hover size="sm" {...getTableProps()}>
             <thead>

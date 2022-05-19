@@ -31,9 +31,9 @@ Specific category of *Produkt*. For example, the warehouse might be sorted into
 meat, vegetables, noodles, grains, etc.
 ### + Frisch
 
-**Lagerbestand**
-The **istLagerbestand** amount of a *Produkt* in the warehouse.
-The **sollLagerbestand** amount of a *Produkt* in the warehouse.
+**Lagerbestand**<br>
+The **istLagerbestand** amount of a *Produkt* in the warehouse.<br>
+The **sollLagerbestand** amount of a *Produkt* in the warehouse.<br>
 
 Frisch -> FrischBestand und FrischBestellung
 

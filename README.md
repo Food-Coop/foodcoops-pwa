@@ -6,7 +6,7 @@ This project was bootstrapped with
 
 ___
 
-##Domain knowledge
+## Domain knowledge
 
 A food-coop warehouse contains defined amounts (**Menge**) of goods (**Produkt**),
 largely foodstuff. Each *Produkt* is of a specific **Kategorie** (literally

@@ -50,7 +50,7 @@ farmers and wholesaler.
 
 ---
 
-###Use cases
+### Use cases
 
 **Ansicht Lagerbestand**<br>
 A complete view of the all stock for the convenience of the buyer (*Einkäufer*).

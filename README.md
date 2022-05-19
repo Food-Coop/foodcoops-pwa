@@ -20,6 +20,7 @@ e.g. kg, liters), new kinds of *Produkt* and new kinds of  *Kategorie* of goods.
 
 **Produkt**<br>
 Product: Individual products of wares in the warehouse.
+### nur vom Lager
 
 **Menge**<br>
 Amount: The specific count, weight or volume (depending on the product in
@@ -28,10 +29,19 @@ question), that the *Produkt* is measured in.
 **Kategorie**<br>
 Specific category of *Produkt*. For example, the warehouse might be sorted into
 meat, vegetables, noodles, grains, etc.
+### + Frisch
 
 **Lagerbestand**<br>
 The **istLagerbestand** amount of a *Produkt* in the warehouse.<br>
 The **sollLagerbestand** amount of a *Produkt* in the warehouse.
+
+Frisch -> FrischBestand und FrischBestellung
+
+Brot
+
+Deadline
+
+
 ---
 
 ### Roles
@@ -65,11 +75,8 @@ levels (*istLagerbestand*) below target stock levels (*sollLagerbestand*),
 and the amount (*Menge*) that is missing. The backend provides the information via 
 JSON. This PWA turns it into a pdf.
 
-**Neues Mitglied**<br>
-Nordstadt food-coop is built on trust. Any member (*Mitglied*) can invite a new member. 
-All it takes is for the current member to log into the site with his user account and sent 
-an invitation email.
- ---
+**Bestellung
+Gebindemanagement**
 
 ## Available Scripts
 

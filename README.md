@@ -34,7 +34,7 @@ The **istLagerbestand** amount of a *Produkt* in the warehouse.<br>
 The **sollLagerbestand** amount of a *Produkt* in the warehouse.
 ---
 
-###Roles
+### Roles
 
 **Rollen**<br>
 Roles of food-coop members. Includes *Mitglied* and *Einkäufer*. Roles currently outside 

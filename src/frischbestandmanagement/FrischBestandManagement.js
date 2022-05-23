@@ -122,6 +122,7 @@ export function FrischBestandManagement() {
             else{
                 alert("Das Löschen des Frischbestandes war nicht erfolgreich. Möglicherweise gibt es Bestellungen.");
             }
+            forceUpdate();
         })();
     }
 

@@ -51,7 +51,7 @@ export function NewFrischBestandModal(props) {
             const find = props.einheiten[0];
             deepAssign("einheit.id", result, find.id);
         }
-        if (!result.kategorie) {
+        if (!result.kategorie?.id) {
             const find = props.kategorien[0];
             console.log("props.kategorien " + JSON.stringify(props.kategorien));
             let kategorie = {};

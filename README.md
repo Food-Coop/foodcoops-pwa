@@ -1,84 +1,12 @@
 # Food-Coop-PWA
 
-Food-coop warehouse management software fronted with react.<br>
+Food-coop warehouse management software.
+
+Fronted with react.<br>
 This project was bootstrapped with 
 [Create React App](https://github.com/facebook/create-react-app).
 
-___
-
-## Domain knowledge
-
-A food-coop warehouse contains defined amounts (**Menge**) of goods (**Produkt**),
-largely foodstuff. Each *Produkt* is of a specific **Kategorie** (literally
-category), e.g. meat or vegetable. The current stock (**istLagerbestand**) of
-each *Produkt* and the current target stock (**sollLagerbestand**) can be set by
-the buyer (**Einkäufer**). The *Einkäufer* can also define new amounts (**Menge**,
-e.g. kg, liters), new kinds of *Produkt* and new kinds of  *Kategorie* of goods.
----
-
-### Ubiquitous language glossary
-
-**Produkt**<br>
-Product: Individual products of wares in the warehouse.
-### nur vom Lager
-
-**Menge**<br>
-Amount: The specific count, weight or volume (depending on the product in
-question), that the *Produkt* is measured in.
-
-**Kategorie**<br>
-Specific category of *Produkt*. For example, the warehouse might be sorted into
-meat, vegetables, noodles, grains, etc.
-### + Frisch
-
-**Lagerbestand**<br>
-The **istLagerbestand** amount of a *Produkt* in the warehouse.<br>
-The **sollLagerbestand** amount of a *Produkt* in the warehouse.<br>
-
-Frisch -> FrischBestand und FrischBestellung
-
-Brot
-
-Deadline
-
-
----
-
-### Roles
-
-**Rollen**<br>
-Roles of food-coop members. Includes *Mitglied* and *Einkäufer*. Roles currently outside 
-project-scope include *Ladendienst*.
-
-**Mitglied**<br>
-Food-coop members. Members or *Mitglieder* get products through the food-coop store. Stock
-is bought collectively from farmers and wholesalers.
-
-**Einkäufer**<br>
-Buyer: Food-coop member that keeps the warehouse stocked by buying from 
-farmers and wholesaler.
-
----
-
-### Use cases
-
-**Ansicht Lagerbestand**<br>
-A complete view of the all stock for the convenience of the buyer (*Einkäufer*).
-This REST-API provides the current stock (*istLagerbestand*) and target stock
-(*sollLagerbestand*) of each product (*Produkt*) sorted by categories
-(*Kategorie*) and product via JSON. This PWA populates the table with this information. 
-Categories can be collapsed to provide simplified browsing. 
-
-**Externe Bestellungsliste**<br>
-Buyer (*Einkäufer*) gets a list of all products(*Produkte*) with current stock
-levels (*istLagerbestand*) below target stock levels (*sollLagerbestand*),
-and the amount (*Menge*) that is missing. The backend provides the information via 
-JSON. This PWA turns it into a pdf.
-
-**Bestellung
-Gebindemanagement**
-
-## Available Scripts
+## Installing, starting and stopping the application
 
 In the project directory, you can run:
 
@@ -115,6 +43,10 @@ Instead, it will copy all the configuration files and the transitive dependencie
 
 You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
 
+### `npm run build` fails to minify
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
 ## Learn More
 
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
@@ -141,6 +73,89 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/a
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
 
-### `npm run build` fails to minify
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## Domain knowledge
+
+A food-coop warehouse contains defined amounts (**Menge**) of goods (**Produkt**),
+largely foodstuff. Each *Produkt* is of a specific **Kategorie** (literally
+category), e.g. meat or vegetable. The current stock (**istLagerbestand**) of
+each *Produkt* and the current target stock (**sollLagerbestand**) can be set by
+the buyer (**Einkäufer**). The *Einkäufer* can also define new amounts (**Menge**,
+e.g. kg, liters), new kinds of *Produkt* and new kinds of  *Kategorie* of goods.
+
+### Ubiquitous language glossary
+
+**Produkt**<br>
+Product: Individual products of wares in the warehouse. Products are always preservable like noodles.
+
+**Frisch**<br>
+Fresh: Perishable products like vegetables, orderd at a local farmer.
+
+***Frischbestand***<br>
+Avaible Fresh
+
+***Frischbestellung***<br>
+Members can order their weekly amount of Fresh ware in a Frischbestellung.
+
+**Brot**<br>
+Bread: Priducts like Baguette, that can be ordered at a local bakery
+
+***Brotbestand***<br>
+Avaible Breads
+
+***Brotbestellung***<br>
+Members can order their weekly amount of Bread in a Brotbestellung.
+
+**Menge**<br>
+Amount: The specific count, weight or volume (depending on the product in
+question), that the *Produkt* is measured in.
+
+**Kategorie**<br>
+Specific category of *Produkt*. For example, the warehouse might be sorted into
+meat, vegetables, noodles, grains, etc.
+
+**Lagerbestand**<br>
+The **istLagerbestand** amount of a *Produkt* in the warehouse.<br>
+The **sollLagerbestand** amount of a *Produkt* in the warehouse.<br>
+
+**Deadline**<br>
+A Deadline borders the window of time in which a Frischbestellung or a Brotbestellung can be ordered.
+
+**Gebinde**<br>
+A local farmer can only deliver products in a determined size. The size is called Gebinde.
+
+---
+
+### Roles
+
+**Rollen**<br>
+Roles of food-coop members. Includes *Mitglied* and *Einkäufer*. Roles currently outside 
+project-scope include *Ladendienst*.
+
+**Mitglied**<br>
+Food-coop members. Members or *Mitglieder* get products through the food-coop store. Stock
+is bought collectively from farmers and wholesalers.
+
+**Einkäufer**<br>
+Buyer: Food-coop member that keeps the warehouse stocked by buying from 
+farmers and wholesaler.
+
+---
+
+### Use cases
+
+**Ansicht Lagerbestand**<br>
+A complete view of the all stock for the convenience of the buyer (*Einkäufer*).
+This REST-API provides the current stock (*istLagerbestand*) and target stock
+(*sollLagerbestand*) of each product (*Produkt*) sorted by categories
+(*Kategorie*) and product via JSON. This PWA populates the table with this information. 
+Categories can be collapsed to provide simplified browsing. 
+
+**Externe Bestellungsliste**<br>
+Buyer (*Einkäufer*) gets a list of all products(*Produkte*) with current stock levels (*istLagerbestand*) below target stock levels (*sollLagerbestand*), and the amount (*Menge*) that is missing. The backend provides the information via JSON. This PWA turns it into a pdf.
+
+**Bestellung**<br>
+Mitglied can order products of a list of Frischbestand or a list of Breadbestand.
+
+**Gebindemanagement**
+The Frischbestellungen of all Mitglieder is summed up and a proposal for possible Gebinde is calculated.

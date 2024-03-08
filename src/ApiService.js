@@ -103,7 +103,7 @@ export const useApi = () => {
 };
 
 //const OLD_BACKEND_URL = "https://foodcoops-backend.herokuapp.com/";
-const BACKEND_URL = "http://kohlrettig.ddns.net:8080/";
+const BACKEND_URL = "http://185.252.235.49:8080/";
 const KATEGORIEN = "kategorien/";
 const PRODUKTE = "produkte/";
 const EINHEITEN = "einheiten/";

@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Link, Route, Switch } from 'react-router-dom';
 import { AuthButton } from '../auth/AuthButton';
 import { About } from '../About';
 import { MainBestellung } from '../bestellung/MainBestellung';
+import { MainEinkauf } from '../einkauf/MainEinkauf';
 import { MainManagement } from '../MainManagement'; 
 import { PrivateRoute } from '../auth/PrivateRoute';
 import { Home } from '../Home';
@@ -35,6 +36,11 @@ export const AppRouter = () => {
               </Link>
             </li>
             <li>
+              <Link to="/mainEinkauf" onClick={toggleMenu}>
+                Einkauf
+              </Link>
+            </li>
+            <li>
               <Link to="/mainManagement" onClick={toggleMenu}>
                 Management
               </Link>
@@ -53,6 +59,7 @@ export const AppRouter = () => {
         <Route exact path="/login" component={AuthButton} />
         <Route exact path="/about" component={About} />
         <PrivateRoute roles={["Einkäufer"]} path="/mainBestellung" component={MainBestellung} />
+        <PrivateRoute roles={["Einkäufer"]} path="/mainEinkauf" component={MainEinkauf} />
         <PrivateRoute roles={["Einkäufer"]} path="/mainManagement" component={MainManagement} />
         <Route path="/" component={Home} />
       </Switch>

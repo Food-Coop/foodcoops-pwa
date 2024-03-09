@@ -8,15 +8,15 @@ export const AuthButton = () => {
     return (
         <>
             {keycloak && !keycloak.authenticated &&
-            <Link><a className="btn-link" onClick={() => keycloak.login()}>Login</a></Link>
+            <div><a className="btn-link" onClick={() => keycloak.login()}>Login</a></div>
             }
 
             {keycloak && keycloak.authenticated &&
-            <Link>
+            <div>
                 <a className="btn-link" onClick={() => keycloak.logout()}>Logout ({
                     keycloak.tokenParsed.preferred_username
                 })</a>
-            </Link>
+            </div>
             }
 
         </>

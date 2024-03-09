@@ -9,6 +9,9 @@ import { deepAssign } from '../util'
 export function Brot(){
     const columns = React.useMemo(
         () => [
+            {   Header: 'BrotID',
+                accessor: 'id'
+            },
             {
                 Header: 'Brotname',
                 accessor: 'name',
@@ -18,7 +21,7 @@ export function Brot(){
                 accessor: 'gewicht',
             },
             {
-                Header: 'Preis in €',
+                Header: 'Preis',
                 accessor: 'preis',
             },
             {

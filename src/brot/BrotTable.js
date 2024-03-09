@@ -56,24 +56,7 @@ export function BrotTable({columns, data, skipPageReset, dispatchModal}) {
                             (row.original.hasOwnProperty("produkte") ? row.cells.slice(0, 2) : row.cells)
                                 .map((cell, i) => {
                                     const props = cell.getCellProps();
-                                    if(cell.column.Header == "BrotID"){
-                                        let id = "ProduktId" + row.index;
-                                        if(data[row.index].verfuegbarkeit == true){
-                                            return(
-                                                <td{...props} id = {id}>
-                                                    {cell.render('Cell')}
-                                                </td>
-                                            );
-                                        }
-                                        else{
-                                            return(
-                                                <td{...props} id = {id} style={{color:'grey'}}>
-                                                    {cell.render('Cell')}
-                                                </td>
-                                            );
-                                        }
-                                    }
-                                    else if(cell.column.Header == "Brotname"){
+                                    if(cell.column.Header == "Brotname"){
                                         let id = "ProduktName" + row.index;
                                         if(data[row.index].verfuegbarkeit == true){
                                             return(

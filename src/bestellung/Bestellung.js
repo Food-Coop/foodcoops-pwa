@@ -9,9 +9,6 @@ import {useKeycloak} from "@react-keycloak/web";
 export function Bestellung(){
     const columns = React.useMemo(
         () => [
-            {   Header: 'ProduktID',
-                accessor: 'id'
-            },
             {
                 Header: 'Produkt',
                 accessor: 'name',
@@ -21,7 +18,7 @@ export function Bestellung(){
                 accessor: 'herkunftsland',
             },
             {
-                Header: 'Preis',
+                Header: 'Preis in €',
                 accessor: 'preis',
             },
             {

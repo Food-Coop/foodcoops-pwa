@@ -338,9 +338,26 @@ export function Brot(){
             let year = date.getFullYear();
             let month = date.getMonth() + 1;
             let day = date.getDate();
-            date = "Deadline: " + day + "." + month + "." + year + " " + lastdeadline[0].time + " Uhr";
+            
+            const timeString = lastdeadline[0].time;
+            const parsedTime = new Date(`2000-01-01T${timeString}`);
+            const formattedTime = parsedTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            date = "Deadline: " + day + "." + month + "." + year + " " + formattedTime + " Uhr";
             return (
-                <div>{date}</div>
+                <div style={{ 
+                    padding: '10px', 
+                    backgroundColor: '#f8d7da', 
+                    color: '#721c24', 
+                    border: '1px solid #f5c6cb', 
+                    borderRadius: '4px', 
+                    textAlign: 'center', 
+                    fontWeight: 'bold',
+                    fontSize: '20px',
+                    marginTop: '10px',
+                    marginBottom: '10px'
+                }}>
+                    {date}
+                </div>
             );
         }
     }

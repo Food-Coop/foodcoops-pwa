@@ -59,6 +59,7 @@ export function Deadline(){
 
     const newDeadline = (data1) => {
         let datum = new Date();
+        data1.time = `${data1.time}:00`;
         deepAssign("datum", data1, datum);
         (async function () {
             const response = await api.createDeadline(data1);

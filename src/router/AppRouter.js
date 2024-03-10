@@ -35,7 +35,7 @@ const AppContent = ({ menuOpen, toggleMenu }) => {
       '/about': 'Impressum',
     };
 
-    return routeToPageName[location.pathname] || 'Current Page Name';
+    return routeToPageName[location.pathname] || 'Home';
   };
 
   return (

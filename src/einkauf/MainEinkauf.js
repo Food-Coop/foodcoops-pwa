@@ -52,28 +52,25 @@ export function MainEinkauf() {
         />
       </div>
       <div style={{ flex: 1, padding: '20px' }}>
-        <div style={{ marginBottom: '10px' }}>
-            <hr style={{ borderTop: '1px solid black', margin: '0' }} />
-        </div>
         {showFrischEinkauf && (
             <div style={{ marginBottom: '10px' }}>
                 <h5 style={{ textAlign: 'left', color: 'darkblue' }}>Frisch-Einkauf</h5>
                 <FrischEinkauf />
-                <hr style={{ borderTop: '1px solid black', margin: '0' }} />
+                <hr style={{ borderTop: '3px solid lightgrey', margin: '0' }} />
             </div>
         )}
         {showBrotEinkauf && (
             <div style={{ marginBottom: '10px' }}>
                 <h5 style={{ textAlign: 'left', color: 'darkblue' }}>Brot-Einkauf</h5>
                 <BrotEinkauf />
-                <hr style={{ borderTop: '1px solid black', margin: '0' }} />
+                <hr style={{ borderTop: '3px solid lightgrey', margin: '0' }} />
             </div>
         )}
         {showLagerwareEinkauf && (
             <div style={{ marginBottom: '10px' }}>
                 <h5 style={{ textAlign: 'left', color: 'darkblue' }}>Lagerware-Einkauf</h5>
                 <LagerwareEinkauf />
-                <hr style={{ borderTop: '1px solid black', margin: '0' }} />
+                <hr style={{ borderTop: '3px solid lightgrey', margin: '0' }} />
             </div>
         )}
       </div>

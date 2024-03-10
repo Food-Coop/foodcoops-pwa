@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Button from 'react-bootstrap/Button';
 import { BrotEinkauf } from './BrotEinkauf';
 import { FrischEinkauf } from './FrischEinkauf';
 import { LagerwareEinkauf } from './LagerwareEinkauf';
@@ -36,7 +37,7 @@ export function MainEinkauf() {
       <div style={{ display: 'flex', height: '100vh' }}>
       <div style={{ marginRight: '20px', borderRight: '5px solid lightgrey', padding: '20px' }}>
         <CollapsibleSection
-          title="Frisch-Einkauf"
+          title="Frischwaren-Einkauf"
           onToggle={() => setShowFrischEinkauf(!showFrischEinkauf)}
           isOpen={showFrischEinkauf}
         />
@@ -54,7 +55,7 @@ export function MainEinkauf() {
       <div style={{ flex: 1, padding: '20px' }}>
         {showFrischEinkauf && (
             <div style={{ marginBottom: '10px' }}>
-                <h5 style={{ textAlign: 'left', color: 'darkblue' }}>Frisch-Einkauf</h5>
+                <h5 style={{ textAlign: 'left', color: 'darkblue' }}>Frischwaren-Einkauf</h5>
                 <FrischEinkauf />
                 <hr style={{ borderTop: '3px solid lightgrey', margin: '0' }} />
             </div>
@@ -73,6 +74,35 @@ export function MainEinkauf() {
                 <hr style={{ borderTop: '3px solid lightgrey', margin: '0' }} />
             </div>
         )}
+        <div>
+            <div style={{ overflowX: "auto", width: "20%", margin: "auto", textAlign: "center" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "10px" }}>
+                    <div>
+                    <h4 style={{ textAlign: "left", margin: "0" }}>Frischware:</h4>
+                    <h4 style={{ textAlign: "left", margin: "0" }}>Brot:</h4>
+                    <h4 style={{ textAlign: "left", margin: "0" }}>Lagerware:</h4>
+                    <h4 style={{ textAlign: "left", margin: "0" }}>5 % Lieferkosten:</h4>
+                    </div>
+                    <div>
+                    <h4 style={{ textAlign: "right", margin: "0" }}>0 €</h4>
+                    <h4 style={{ textAlign: "right", margin: "0" }}>0 €</h4>
+                    <h4 style={{ textAlign: "right", margin: "0" }}>0 €</h4>
+                    <h4 style={{ textAlign: "right", margin: "0" }}>0 €</h4>
+                    </div>
+                </div>
+
+                <hr style={{ borderTop: "1px solid black", margin: "10px 0" }} />
+
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <h4 style={{ textAlign: "left", margin: "0" }}>Insgesamt:</h4>
+                    <h4 style={{ textAlign: "right", margin: "0" }}>0 €</h4>
+                </div>
+
+                <Button style={{ margin: "20px 0.25rem" }} variant="success">
+                    Einkauf bestätigen
+                </Button>
+            </div>
+        </div>
       </div>
     </div>
   );

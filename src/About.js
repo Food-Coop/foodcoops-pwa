@@ -1,8 +1,8 @@
 export function About() {
     return (
         <main>
-            <p>
-                About
+            <p style={{ marginTop: '20px' }}>
+                This still needs to be implemented.
             </p>
         </main>
     );

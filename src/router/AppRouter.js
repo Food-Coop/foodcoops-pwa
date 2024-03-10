@@ -32,6 +32,7 @@ const AppContent = ({ menuOpen, toggleMenu }) => {
       '/mainBestellung': 'Bestellung',
       '/mainEinkauf': 'Einkauf',
       '/mainManagement': 'Management',
+      '/about': 'Impressum',
     };
 
     return routeToPageName[location.pathname] || 'Current Page Name';

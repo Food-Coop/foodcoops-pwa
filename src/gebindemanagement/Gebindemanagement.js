@@ -83,7 +83,7 @@ export function Gebindemanagement(){
     return(
         <div style={{overflowX: "auto", width: "100%"}}>
         <Row style={{margin: "1rem"}}>
-            <Button style={{margin:"0.25rem"}} variant="success" onClick={() => window.open("http://185.252.235.49:8080/externeliste/gebinde")}>Externe Einkaufsliste</Button>
+            <Button style={{margin:"0.25rem"}} variant="success" onClick={() => window.open("http://152.53.32.66:8080/externeliste/gebinde")}>Externe Einkaufsliste</Button>
         </Row>
             {content()}
         </div>

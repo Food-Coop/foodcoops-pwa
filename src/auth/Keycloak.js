@@ -1,7 +1,7 @@
 import Keycloak from "keycloak-js";
 
 const keycloakConfig = {
-    url: "http://185.252.235.49:8089/",
+    url: "http://152.53.32.66:8089/",
     realm: "foodcoop",
     clientId: "foodcoop-pwa"
 }

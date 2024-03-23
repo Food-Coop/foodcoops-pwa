@@ -3,7 +3,7 @@ import { useApi } from '../ApiService';
 import { useKeycloak } from "@react-keycloak/web";
 import BTable from "react-bootstrap/Table";
 
-export function FrischEinkauf() {
+export function FrischEinkauf(props) {
     const [frischBestellung, setFrischBestellung] = useState([]);
     const api = useApi();
     const { keycloak } = useKeycloak();
@@ -30,9 +30,7 @@ export function FrischEinkauf() {
 
     const getStepValue = (einheit) => {
         const lowerCaseEinheit = einheit.toLowerCase();
-        if (lowerCaseEinheit === 'stück') {
-            return 1;
-        } else if (lowerCaseEinheit === 'kg') {
+        if (lowerCaseEinheit === 'kg') {
             return 0.2;
         } else {
             return 1;
@@ -58,6 +56,12 @@ export function FrischEinkauf() {
 
         fetchFrischBestellung();
     }, []);
+
+    useEffect(() => {
+        if (props.onPriceChange) {
+          props.onPriceChange(formattedTotalPrice);
+        }
+      }, [formattedTotalPrice]);
 
     //TODO: reset data
     return (

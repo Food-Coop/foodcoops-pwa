@@ -33,6 +33,11 @@ export function MainEinkauf() {
   const [showFrischEinkauf, setShowFrischEinkauf] = useState(true);
   const [showBrotEinkauf, setShowBrotEinkauf] = useState(true);
   const [showLagerwareEinkauf, setShowLagerwareEinkauf] = useState(true);
+  const [totalPrice, setTotalPrice] = useState(0);
+
+  const handlePriceChange = (price) => {
+    setTotalPrice(price);
+  };
 
   return (
       <div style={{ flex: 1, padding: '20px' }}>
@@ -43,7 +48,7 @@ export function MainEinkauf() {
         />
         {showFrischEinkauf && (
             <div>
-                <FrischEinkauf />
+                <FrischEinkauf onPriceChange={handlePriceChange} />
             </div>
         )}
         <hr style={{ borderTop: '3px solid lightgrey', margin: '10px' }} />
@@ -82,7 +87,7 @@ export function MainEinkauf() {
                     <h4 style={{ textAlign: "left", margin: "0" }}>5 % Lieferkosten:</h4>
                     </div>
                     <div>
-                    <h4 style={{ textAlign: "right", margin: "0" }}>0 €</h4>
+                    <h4 style={{ textAlign: "right", margin: "0" }}>{totalPrice} €</h4>
                     <h4 style={{ textAlign: "right", margin: "0" }}>0 €</h4>
                     <h4 style={{ textAlign: "right", margin: "0" }}>0 €</h4>
                     <h4 style={{ textAlign: "right", margin: "0" }}>0 €</h4>

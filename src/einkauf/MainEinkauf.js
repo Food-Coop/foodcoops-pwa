@@ -1,4 +1,3 @@
-// MainEinkauf.js
 import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import CollapsibleSection from './CollapsibleSection';
@@ -12,10 +11,15 @@ export function MainEinkauf() {
   const [showBrotEinkauf, setShowBrotEinkauf] = useState(true);
   const [showLagerwareEinkauf, setShowLagerwareEinkauf] = useState(true);
   const [totalPrice, setTotalPrice] = useState(0);
+  const [totalBrotPrice, setTotalBrotPrice] = useState(0);
 
   const handlePriceChange = (price) => {
     setTotalPrice(price);
   };
+
+  const handleBrotPriceChange = (price) => {
+    setTotalBrotPrice(price);
+};
 
   return (
     <div className="main-einkauf">
@@ -35,7 +39,7 @@ export function MainEinkauf() {
         isOpen={showBrotEinkauf}
       />
       <div style={{ display: showBrotEinkauf ? 'block' : 'none' }}>
-        <BrotEinkauf />
+        <BrotEinkauf onPriceChange={handleBrotPriceChange} />
       </div>
       <hr className="hr-divider" />
 
@@ -59,7 +63,7 @@ export function MainEinkauf() {
           </div>
           <div className="total-price">
             <h4>{totalPrice} €</h4>
-            <h4>0,00 €</h4>
+            <h4>{totalBrotPrice} €</h4>
             <h4>0,00 €</h4>
             <h4>0,00 €</h4>
           </div>

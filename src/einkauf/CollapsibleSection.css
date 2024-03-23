@@ -1,0 +1,27 @@
+.collapsible-section {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    color: darkblue;
+  }
+  
+  .icon-open {
+    margin-bottom: 8px;
+    margin-right: 5px;
+    margin-left: 15px;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-left: 5px solid darkblue;
+    transform: rotate(90deg);
+    color: yellow;
+  }
+  
+  .icon-closed {
+    margin-right: 3.5px;
+    margin-left: 15px;
+    margin-bottom: 8px;
+    width: 6px;
+    border-top: 3px solid darkblue;
+  }
+  

@@ -1,0 +1,51 @@
+.main-einkauf {
+    flex: 1;
+    padding: 20px;
+  }
+
+  .hr-divider {
+    border-top: 3px solid lightgrey;
+    margin: 10px;
+  }
+  
+  .price-section {
+    overflow-x: auto;
+    width: 20%;
+    margin: auto;
+    text-align: center;
+  }
+  
+  .price-details {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  
+  .price-details h4 {
+    text-align: left;
+    margin: 0;
+  }
+  
+  .total-price-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .total-price-section h4 {
+    text-align: left;
+    margin: 0;
+  }
+  
+  .total-price {
+    text-align: right;
+  }
+  
+  .confirm-button {
+    margin: 20px 0.25rem;
+  }
+
+  #sum-divider {
+    margin: 0px;
+  }
+  

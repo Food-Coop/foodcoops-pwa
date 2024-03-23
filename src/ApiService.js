@@ -108,14 +108,15 @@ const KATEGORIEN = "kategorien/";
 const PRODUKTE = "produkte/";
 const EINHEITEN = "einheiten/";
 const FRISCHBESTELLUNG =  "frischBestellung/";
-const DATUM = "datum/"
-const MENGE = "menge/"
+const DATUM = "datum/";
+const MENGE = "menge/";
 const FRISCHBESTAND = "frischBestand/";
 const PERSON = "person/";
 const BROTBESTAND = "brotBestand/";
 const BROTBESTELLUNG = "brotBestellung/";
-const DEADLINE = "deadline/"
+const DEADLINE = "deadline/";
 const LAST = "last/";
+
 
 // Produkt
 
@@ -207,7 +208,7 @@ const deleteEinheit = (id) =>
 // FrischBestellung
 
 const readFrischBestellung = () => 
-    fetch(BACKEND_URL + FRISCHBESTELLUNG + DATUM);
+    fetch(BACKEND_URL + FRISCHBESTELLUNG);
 
 const createFrischBestellung = (data) =>
     fetch(BACKEND_URL + FRISCHBESTELLUNG, {

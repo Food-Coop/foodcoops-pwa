@@ -32,18 +32,6 @@ export function Deadline(){
     
     React.useEffect(
         () => {
-            // api.readDeadline()
-            //     .then((r) => r.json())
-            //     .then((r) => {
-            //         setData(old => {
-            //             const n = r?._embedded?.deadlineRepresentationList;
-            //             return n === undefined ? old : n;
-                        
-            //         });
-                    
-            //         setIsLoading(false);
-            //     }
-            // );
             api.readLastDeadline()
                 .then((r) => r.json())
                 .then((r) => {
@@ -61,9 +49,11 @@ export function Deadline(){
         let datum = new Date();
         data1.time = `${data1.time}:00`;
         deepAssign("datum", data1, datum);
+        console.log(data1);
         (async function () {
             const response = await api.createDeadline(data1);
             if(response.ok) {
+                console.log("Deadline created");
                 const newDeadline = await response.json();
                     setSkipPageReset(true);
                     setData(old => deepClone([...old, newDeadline]));

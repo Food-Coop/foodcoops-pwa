@@ -46,6 +46,7 @@ export const ApiProvider = (props) => {
 
         readDeadline: props.readDeadline || readDeadline,
         readLastDeadline: props.readLastDeadline || readLastDeadline,
+        readCurrentDeadline: props.readCurrentDeadline || readCurrentDeadline,
         createDeadline: props.createDeadline || createDeadline,
     };
 
@@ -98,6 +99,7 @@ export const useApi = () => {
 
         readDeadline,
         readLastDeadline,
+        readCurrentDeadline,
         createDeadline
     };
 };
@@ -116,6 +118,7 @@ const BROTBESTAND = "brotBestand/";
 const BROTBESTELLUNG = "brotBestellung/";
 const DEADLINE = "deadline/";
 const LAST = "last/";
+const CURRENT = "getEndDateOfDeadline/";
 
 
 // Produkt
@@ -333,7 +336,7 @@ const deleteBrotBestand = (id) =>
         },
     });
 
-// Deadline
+// Deadline plugins/src/main/java/de/dhbw/foodcoop/warehouse/plugins/rest/DeadlineController.java
 
 const readDeadline = (id = undefined) => id ?
     fetch(BACKEND_URL + DEADLINE + id) :
@@ -341,6 +344,9 @@ const readDeadline = (id = undefined) => id ?
 
 const readLastDeadline = () =>
     fetch(BACKEND_URL + DEADLINE + LAST);
+
+const readCurrentDeadline = (id) =>
+    fetch(BACKEND_URL + DEADLINE + CURRENT + id);
 
 const createDeadline = (data) =>
     fetch(BACKEND_URL + DEADLINE, {

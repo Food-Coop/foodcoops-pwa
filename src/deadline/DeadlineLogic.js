@@ -3,7 +3,7 @@ import { useApi } from '../ApiService';
 
 export function DeadlineLogic() {
     const [isLoadingDeadline, setIsLoadingDeadline] = useState(true);
-    const [lastDeadline, setLastDeadline] = useState(null);
+    const [deadline, setDeadline] = useState(null);
 
     const api = useApi();
 
@@ -11,13 +11,27 @@ export function DeadlineLogic() {
         api.readLastDeadline()
             .then(r => r.json())
             .then(r => {
-                setLastDeadline(r);
                 setIsLoadingDeadline(false);
+                if (r && r.id) {
+                    api.readCurrentDeadline(r.id)
+                        .then(r => r.json())
+                        .then(r => {
+                            setDeadline(r);
+                        })
+                        .catch(error => {
+                            console.error('Error fetching deadline:', error);
+                        });
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching last deadline:', error);
             });
-    }, []);
+    },
+    
+    []);
 
     const getDeadline = () => {
-        if (isLoadingDeadline) {
+        if (isLoadingDeadline || !deadline) {
             return (
                 <div className="spinner-border" role="status" style={{ margin: "5rem" }}>
                     <span className="sr-only">Loading...</span>
@@ -25,19 +39,19 @@ export function DeadlineLogic() {
             );
         } else {
 
-            const dateString = lastDeadline.datum;
-            let date = new Date(dateString); 
-            const day = String(date.getDate()).padStart(2, '0'); 
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const year = date.getFullYear();
+            const dateString = deadline;
+            const dateObj = new Date(dateString);
+
+            const day = String(dateObj.getDate()).padStart(2, '0'); 
+            const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+            const year = dateObj.getFullYear();
             const formattedDate = `${day}.${month}.${year}`;
 
-            
-            const timeString = lastDeadline.time;
-            const [hours, minutes, _] = timeString.split(":");
+            const hours = String(dateObj.getHours()).padStart(2, '0');
+            const minutes = String(dateObj.getMinutes()).padStart(2, '0');
             const formattedTime = `${hours}:${minutes}`;
 
-            date = "Deadline: " + formattedDate + " " + formattedTime + " Uhr";
+            let date = "Deadline: " + formattedDate + " " + formattedTime + " Uhr";
             return (
                 <div style={{ 
                     padding: '10px', 

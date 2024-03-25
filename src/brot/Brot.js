@@ -210,24 +210,23 @@ export function Brot(){
 
         for(let i = 0; i < data.length; i++){
             for(let j = 0; j < brotBestellungSumme.length; j++){
-                if(data[j].id === brotBestellungSumme[j].brotbestand.id){
-                    deepAssign("bestellsumme", data[j], brotBestellungSumme[j].bestellmenge);
+                if(data[i] && data[i].id === brotBestellungSumme[j].brotbestand.id){
+                    deepAssign("bestellsumme", data[i], brotBestellungSumme[j].bestellmenge);
                 }
-                else{
-                    deepAssign("bestellsumme", data[j], 0);
+                else if(data[i]){
+                    deepAssign("bestellsumme", data[i], 0);
                 } 
             }
             for(let j = 0; j < brotBestellungBetweenDatesProPerson.length; j++){
-                if(data[j].id === brotBestellungBetweenDatesProPerson[j].brotbestand.id){
-                    deepAssign("bestellmengeAlt", data[j], brotBestellungBetweenDatesProPerson[j].bestellmenge);
+                if(data[i] && data[i].id === brotBestellungBetweenDatesProPerson[j].brotbestand.id){
+                    deepAssign("bestellmengeAlt", data[i], brotBestellungBetweenDatesProPerson[j].bestellmenge);
                 }    
             }
             for(let j = 0; j < brotBestellung.length; j++){
-                if(checkAlreadyOrdered(data[j].id)){
-                    deepAssign("bestellmengeNeu", data[j], brotBestellung[j].bestellmenge);
-                }   
+                if(data[i] && checkAlreadyOrdered(data[i].id)){
+                    deepAssign("bestellmengeNeu", data[i], brotBestellung[j].bestellmenge);
+                }
             }
-            
         }
 
         return (

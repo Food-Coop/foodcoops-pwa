@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Button from 'react-bootstrap/Button';
+import Alert from '@mui/material/Alert';
 import CollapsibleSection from './CollapsibleSection';
 import { BrotEinkauf } from './BrotEinkauf';
 import { FrischEinkauf } from './FrischEinkauf';
@@ -33,6 +34,11 @@ export function MainEinkauf() {
     const total = totalFrischPrice + totalBrotPrice + totalProduktPrice + deliveryCost;
     setTotalPrice(total);
   }, [totalFrischPrice, totalBrotPrice, totalProduktPrice, deliveryCost]);
+
+  const submitEinkauf = () => {
+    // forceUpdate();
+    // document.getElementById("preis").innerHTML = "Preis: " + preis + "€";
+};
 
   return (
     <div className="main-einkauf">
@@ -86,10 +92,11 @@ export function MainEinkauf() {
           <h4>Insgesamt:</h4>
           <h4><span className="price">{totalPrice.toFixed(2)}</span> <span className="currency">€</span></h4>
         </div>
-        <Button className="confirm-button" variant="success">
+        <Button className="confirm-button" variant="success" onClick={() => submitEinkauf()}>
           Einkauf bestätigen
         </Button>
       </div>
+      <Alert severity="success">This is a success Alert.</Alert>
     </div>
   );
 }

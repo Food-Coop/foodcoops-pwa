@@ -75,16 +75,16 @@ export function MainEinkauf() {
             <h4>5 % Lieferkosten:</h4>
           </div>
           <div className="total-price">
-            <h4>{totalFrischPrice.toFixed(2)} €</h4>
-            <h4>{totalBrotPrice.toFixed(2)} €</h4>
-            <h4>{totalProduktPrice.toFixed(2)} €</h4>
-            <h4>{deliveryCost.toFixed(2)} €</h4>
+            <h4><span className="price">{totalFrischPrice.toFixed(2)}</span> <span className="currency">€</span></h4>
+            <h4><span className="price">{totalBrotPrice.toFixed(2)}</span> <span className="currency">€</span></h4>
+            <h4><span className="price">{totalProduktPrice.toFixed(2)}</span> <span className="currency">€</span></h4>
+            <h4><span className="price">{deliveryCost.toFixed(2)}</span> <span className="currency">€</span></h4>
           </div>
         </div>
         <hr className="hr-divider" id="sum-divider" />
         <div className="total-price-section">
           <h4>Insgesamt:</h4>
-          <h4>{totalPrice.toFixed(2)} €</h4>
+          <h4><span className="price">{totalPrice.toFixed(2)}</span> <span className="currency">€</span></h4>
         </div>
         <Button className="confirm-button" variant="success">
           Einkauf bestätigen

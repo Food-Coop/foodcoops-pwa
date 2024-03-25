@@ -40,6 +40,18 @@
   .total-price {
     text-align: right;
   }
+
+  .price {
+    display: inline-block;
+    text-align: right;
+    width: 80px; 
+  }
+  
+  .currency {
+    display: inline-block;
+    text-align: left;
+    width: 20px; 
+  }
   
   .confirm-button {
     margin: 20px 0.25rem;

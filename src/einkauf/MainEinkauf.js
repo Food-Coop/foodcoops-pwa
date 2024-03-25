@@ -12,6 +12,7 @@ export function MainEinkauf() {
   const [showLagerwareEinkauf, setShowLagerwareEinkauf] = useState(true);
   const [totalPrice, setTotalPrice] = useState(0);
   const [totalBrotPrice, setTotalBrotPrice] = useState(0);
+  const [totalProduktPrice, setTotalProduktPrice] = useState(0);
 
   const handlePriceChange = (price) => {
     setTotalPrice(price);
@@ -19,7 +20,11 @@ export function MainEinkauf() {
 
   const handleBrotPriceChange = (price) => {
     setTotalBrotPrice(price);
-};
+  };
+
+  const handleProduktPriceChange = (price) => {
+    setTotalProduktPrice(price);
+  };
 
   return (
     <div className="main-einkauf">
@@ -49,7 +54,7 @@ export function MainEinkauf() {
         isOpen={showLagerwareEinkauf}
       />
       <div style={{ display: showLagerwareEinkauf ? 'block' : 'none' }}>
-        <LagerwareEinkauf />
+        <LagerwareEinkauf onPriceChange={handleProduktPriceChange} />
       </div>
       <hr className="hr-divider" />
 
@@ -64,7 +69,7 @@ export function MainEinkauf() {
           <div className="total-price">
             <h4>{totalPrice} €</h4>
             <h4>{totalBrotPrice} €</h4>
-            <h4>0,00 €</h4>
+            <h4>{totalProduktPrice} €</h4>
             <h4>0,00 €</h4>
           </div>
         </div>

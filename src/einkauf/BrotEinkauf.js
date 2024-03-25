@@ -38,12 +38,18 @@ export function BrotEinkauf(props) {
                 let person_id = keycloak.tokenParsed.preferred_username;
                 const response = await api.readBrotBestellungProPerson(person_id);
                 const data = await response.json();
-                console.log("data: " + JSON.stringify(data));
-                setBrotBestellung(data._embedded.brotBestellungRepresentationList);
+                if (data && data._embedded && data._embedded.brotBestellungRepresentationList) {
+                    setBrotBestellung(data._embedded.brotBestellungRepresentationList);
+                    console.log(brotBestellung);
+                } else {
+                    setBrotBestellung([]);
+                    console.log(brotBestellung);
+                }
             } catch (error) {
                 console.error('Error fetching brotBestellung:', error);
             }
         };
+        
 
         fetchBrotBestellung();
     }, []);

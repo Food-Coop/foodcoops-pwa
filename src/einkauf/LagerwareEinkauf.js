@@ -26,9 +26,6 @@ export function LagerwareEinkauf(props) {
         setTotalProduktPrice(newTotalProduktPrice);
     };
 
-    // Format the total price to two decimal places and replace comma with period
-    const formattedTotalProduktPrice = totalProduktPrice.toFixed(2).replace('.', ',');
-
     //mit last deadline
     useEffect(() => {
         const fetchProdukt = async () => {
@@ -46,9 +43,9 @@ export function LagerwareEinkauf(props) {
 
     useEffect(() => {
         if (props.onPriceChange) {
-          props.onPriceChange(formattedTotalProduktPrice);
+          props.onPriceChange(totalProduktPrice);
         }
-      }, [formattedTotalProduktPrice]);
+      }, [totalProduktPrice]);
 
     //TODO: reset data
     return (
@@ -78,7 +75,7 @@ export function LagerwareEinkauf(props) {
                     ))}
                 </tbody>
             </BTable>
-            <h5 id="preis">Lagerwaren-Preis: {formattedTotalProduktPrice} €</h5>
+            <h5 id="preis">Lagerwaren-Preis: {totalProduktPrice} €</h5>
         </div>
     );
 }

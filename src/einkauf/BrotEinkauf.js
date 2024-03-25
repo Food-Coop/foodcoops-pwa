@@ -28,9 +28,6 @@ export function BrotEinkauf(props) {
         setTotalBrotPrice(newTotalBrotPrice);
     };
 
-    // Format the total price to two decimal places and replace comma with period
-    const formattedTotalBrotPrice = totalBrotPrice.toFixed(2).replace('.', ',');
-
     //mit last deadline
     useEffect(() => {
         const fetchBrotBestellung = async () => {
@@ -56,9 +53,9 @@ export function BrotEinkauf(props) {
 
     useEffect(() => {
         if (props.onPriceChange) {
-          props.onPriceChange(formattedTotalBrotPrice);
+          props.onPriceChange(totalBrotPrice);
         }
-      }, [formattedTotalBrotPrice]);
+      }, [totalBrotPrice]);
 
     //TODO: reset data
     return (
@@ -90,7 +87,7 @@ export function BrotEinkauf(props) {
                     ))}
                 </tbody>
             </BTable>
-            <h5 id="preis">Brot-Preis: {formattedTotalBrotPrice} €</h5>
+            <h5 id="preis">Brot-Preis: {totalBrotPrice} €</h5>
         </div>
     );
 }

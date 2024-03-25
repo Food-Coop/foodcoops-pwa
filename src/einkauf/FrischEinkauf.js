@@ -37,9 +37,6 @@ export function FrischEinkauf(props) {
         }
     };
 
-    // Format the total price to two decimal places and replace comma with period
-    const formattedTotalPrice = totalPrice.toFixed(2).replace('.', ',');
-
     //mit last deadline
     useEffect(() => {
         const fetchFrischBestellung = async () => {
@@ -59,9 +56,9 @@ export function FrischEinkauf(props) {
 
     useEffect(() => {
         if (props.onPriceChange) {
-          props.onPriceChange(formattedTotalPrice);
+          props.onPriceChange(totalPrice);
         }
-      }, [formattedTotalPrice]);
+      }, [totalPrice]);
 
     //TODO: reset data
     return (
@@ -97,7 +94,7 @@ export function FrischEinkauf(props) {
                     ))}
                 </tbody>
             </BTable>
-            <h5 id="preis">Frisch-Preis: {formattedTotalPrice} €</h5>
+            <h5 id="preis">Frisch-Preis: {totalPrice} €</h5>
         </div>
     );
 }

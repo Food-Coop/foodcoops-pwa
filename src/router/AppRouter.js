@@ -7,13 +7,28 @@ import { MainEinkauf } from '../einkauf/MainEinkauf';
 import { MainManagement } from '../MainManagement';
 import { PrivateRoute } from '../auth/PrivateRoute';
 import { Home } from '../Home';
+import { Typography } from "@mui/material";
+import Box from "@mui/material/Box";
+import Drawer from "@mui/material/Drawer";
+import Button from "@mui/material/Button";
+import List from "@mui/material/List";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import Divider from '@mui/material/Divider';
+import { styled } from '@mui/material/styles';
+import HomeIcon from '@mui/icons-material/Home';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import InventoryIcon from '@mui/icons-material/Inventory';
+import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
+import InfoIcon from '@mui/icons-material/Info';
 import './AppRouter.css';
 
 export const AppRouter = () => {
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const toggleMenu = () => {
-    setMenuOpen(!menuOpen);
+  const toggleMenu = (newOpen) => () => {
+    setMenuOpen(newOpen);
   };
 
   return (
@@ -38,41 +53,91 @@ const AppContent = ({ menuOpen, toggleMenu }) => {
     return routeToPageName[location.pathname] || 'Home';
   };
 
+  const itemsList = () => (
+      <Box sx={{ width: 350 }} role="presentation" onClick={toggleMenu(false)}>
+        <List>
+          <Link to="/home">
+            <ListItemButton sx={{ color: "grey" }}>
+              <ListItemIcon> 
+                <HomeIcon/>
+              </ListItemIcon>
+              <Typography variant="h6">
+                Home
+              </Typography>
+            </ListItemButton>
+          </Link>
+          <Link to="/mainBestellung">
+            <ListItemButton sx={{ color: "grey" }}>
+              <ListItemIcon> 
+                <AddShoppingCartIcon/>
+              </ListItemIcon>
+              <Typography variant="h6">
+               Bestellung
+              </Typography>
+            </ListItemButton>
+          </Link>
+          <Link to="/mainEinkauf">
+            <ListItemButton sx={{ color: "grey" }}>
+              <ListItemIcon> 
+                <ShoppingCartIcon/>
+              </ListItemIcon>
+              <Typography variant="h6">
+                Einkauf
+              </Typography>
+            </ListItemButton>
+          </Link>
+          <Link to="/mainManagement">
+            <ListItemButton sx={{ color: "grey" }}>
+              <ListItemIcon> 
+                <InventoryIcon/>
+              </ListItemIcon>
+              <Typography variant="h6">
+                Management
+              </Typography>
+            </ListItemButton>
+          </Link>
+          <Divider />
+          <Link to="/about">
+            <ListItemButton sx={{ color: "grey" }}>
+              <ListItemIcon> 
+                <InfoIcon/>
+              </ListItemIcon>
+              <Typography variant="h6">
+                Impressum
+              </Typography>
+            </ListItemButton>
+          </Link>
+        </List>
+        <Typography
+            sx={{
+                backgroundColor: "#333",
+                color: "white",
+                borderRadius: 10,
+                textAlign: "center",
+                padding: 1,
+                margin: 2,
+            }}
+        >
+          <AuthButton/>
+        </Typography>
+    </Box>
+);
+
   return (
     <div>
-      <div className={`Header ${menuOpen ? 'open' : ''}`}>
-        <button className="BurgerButton" onClick={toggleMenu}>
+      <div className={`Header`}>
+        <BurgerMenuButton variant="contained" size="large" disableElevation color='secondary' className="BurgerButton" onClick={toggleMenu(true)}>
           ☰
-        </button>
-        {menuOpen && (
-          <nav className="BurgerMenu">
-            <ul>
-              <li>
-                <Link to="/home" onClick={toggleMenu}>
-                  Home
-                </Link>
-              </li>
-              <li>
-                <Link to="/mainBestellung" onClick={toggleMenu}>
-                  Bestellung
-                </Link>
-              </li>
-              <li>
-                <Link to="/mainEinkauf" onClick={toggleMenu}>
-                  Einkauf
-                </Link>
-              </li>
-              <li>
-                <Link to="/mainManagement" onClick={toggleMenu}>
-                  Management
-                </Link>
-              </li>
-              <li>
-                <AuthButton />
-              </li>
-            </ul>
-          </nav>
-        )}
+        </BurgerMenuButton>
+        <Drawer open={menuOpen} onClose={toggleMenu(false)}>
+          <div
+            role="presentation"
+            onClick={toggleMenu}
+            onKeyDown={toggleMenu}
+          >
+            {itemsList()}
+          </div>
+        </Drawer>
         <h1 className='CurrentSiteName'>{getPageName()}</h1>
         <Link to="/home">
           <img className="LogoImage" src="manifest-icon-512.png" alt="logo" />
@@ -92,3 +157,13 @@ const AppContent = ({ menuOpen, toggleMenu }) => {
     </div>
   );
 };
+
+const BurgerMenuButton = styled(Button)({
+
+  fontSize: '30px',
+  backgroundColor: '#333', 
+  '&:hover': {
+    backgroundColor: '#555',
+    boxShadow: 'none',
+  },
+});

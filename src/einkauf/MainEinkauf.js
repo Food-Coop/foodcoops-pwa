@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import Button from 'react-bootstrap/Button';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Accordion from '@mui/material/Accordion';
@@ -10,12 +9,10 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { BrotEinkauf } from './BrotEinkauf';
 import { FrischEinkauf } from './FrischEinkauf';
 import { LagerwareEinkauf } from './LagerwareEinkauf';
+import { EinkaufsDialog} from './EinkaufsDialog';
 import './MainEinkauf.css';
 
 export function MainEinkauf() {
-  const [showFrischEinkauf, setShowFrischEinkauf] = useState(true);
-  const [showBrotEinkauf, setShowBrotEinkauf] = useState(true);
-  const [showLagerwareEinkauf, setShowLagerwareEinkauf] = useState(true);
   const [totalFrischPrice, setTotalFrischPrice] = useState(0);
   const [totalBrotPrice, setTotalBrotPrice] = useState(0);
   const [totalProduktPrice, setTotalProduktPrice] = useState(0);
@@ -52,6 +49,7 @@ export function MainEinkauf() {
     setTotalPrice(0);
   };
 
+  //TODO
   const submitEinkauf = () => {
     clearInputFields();
     toast.success("Ihr Einkauf wurde übermittelt. Vielen Dank!");
@@ -65,7 +63,7 @@ export function MainEinkauf() {
         </AccordionSummary>
         <AccordionDetails>
           <FrischEinkauf onPriceChange={handleFrischPriceChange} />
-          <h5 style={{ display: showFrischEinkauf ? 'block' : 'none' }}>Frisch-Preis: {totalFrischPrice.toFixed(2)} €</h5>
+          <h5>Frisch-Preis: {totalFrischPrice.toFixed(2)} €</h5>
         </AccordionDetails>
       </Accordion>
       <Accordion defaultExpanded>
@@ -74,7 +72,7 @@ export function MainEinkauf() {
         </AccordionSummary>
         <AccordionDetails>
           <BrotEinkauf onPriceChange={handleBrotPriceChange} />
-          <h5 style={{ display: showBrotEinkauf ? 'block' : 'none' }}>Brot-Preis: {totalBrotPrice.toFixed(2)} €</h5>
+          <h5>Brot-Preis: {totalBrotPrice.toFixed(2)} €</h5>
         </AccordionDetails>
       </Accordion>
       <Accordion defaultExpanded>
@@ -83,7 +81,7 @@ export function MainEinkauf() {
         </AccordionSummary>
         <AccordionDetails>
           <LagerwareEinkauf onPriceChange={handleProduktPriceChange} />
-          <h5 style={{ display: showLagerwareEinkauf ? 'block' : 'none' }}>Lagerwaren-Preis: {totalProduktPrice.toFixed(2)} €</h5>
+          <h5>Lagerwaren-Preis: {totalProduktPrice.toFixed(2)} €</h5>
         </AccordionDetails>
       </Accordion>
 
@@ -107,9 +105,7 @@ export function MainEinkauf() {
           <h4>Insgesamt:</h4>
           <h4><span className="price">{totalPrice.toFixed(2)}</span> <span className="currency">€</span></h4>
         </div>
-        <Button className="confirm-button" variant="success" onClick={submitEinkauf}>
-          Einkauf bestätigen
-        </Button>
+        <EinkaufsDialog submitEinkauf={submitEinkauf} />
         <ToastContainer />
       </div>
     </div>

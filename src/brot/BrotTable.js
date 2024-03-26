@@ -122,7 +122,7 @@ export function BrotTable({columns, data, skipPageReset, dispatchModal}) {
                                             }
                                         }
                                     }
-                                    else if(cell.column.Header == "Preis"){
+                                    else if(cell.column.Header == "Preis in €"){
                                         let id = "PreisId" + row.index;
                                         if(data[row.index].verfuegbarkeit == true){
                                             return(

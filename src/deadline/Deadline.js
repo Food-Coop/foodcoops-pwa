@@ -30,20 +30,29 @@ export function Deadline(){
 
     const api = useApi();
     
-    React.useEffect(
-        () => {
-            api.readLastDeadline()
-                .then((r) => r.json())
-                .then((r) => {
-                    setData(old => {
-                        const n = r?._embedded?.deadlineRepresentationList;
-                        return n === undefined ? old : n;
-                    });
-                    setIsLoading(false);
+    React.useEffect(() => {
+        api.readLastDeadline()
+            .then((response) => {
+                if (response.ok) {
+                    return response.json();
                 }
-            );
-        }, [reducerValue]
-    );
+                throw new Error('Failed to fetch last deadline.');
+            })
+            .then((data) => {
+                const deadline = {
+                    id: data.id,
+                    weekday: data.weekday,
+                    time: data.time
+                };
+                setData([deadline]);
+                setIsLoading(false);
+            })
+            .catch((error) => {
+                console.error('Error fetching last deadline:', error);
+                setIsLoading(false);
+            });
+    }, [reducerValue]);
+    
 
     const newDeadline = (data1) => {
         let datum = new Date();

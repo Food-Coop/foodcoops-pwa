@@ -84,44 +84,23 @@ export function EditFrischBestandModal(props) {
             </tr>
         }
         if (accessor === "verfuegbarkeit") {
-            if(value === 1){
-                return <tr key={accessor}>
-                    <td>
-                        <label style={{margin: 0}}>{name}:</label>
-                    </td>
-                    <td>
-                        <input
-                            name={name}
-                            type="checkbox"
-                            checked
-                            onClick={function ({target: {value}}) {
-                                value = false;
-                                const changed = {};
-                                changed[accessor] = {name, value};
-                                return setNewData(prev => ({...prev, ...changed}));
-                            }}/>
-                    </td>
-                </tr>;
-            }
-            else{
-                return <tr key={accessor}>
-                    <td>
-                        <label style={{margin: 0}}>{name}:</label>
-                    </td>
-                    <td>
-                        <input
-                            name={name}
-                            type="checkbox"
-                            onChange={function ({target: {value}}) {
-                                value = true;
-                                const changed = {};
-                                changed[accessor] = {name, value};
-                                return setNewData(prev => ({...prev, ...changed}));
-                            }}/>
-                    </td>
-                </tr>;
-            }
-            
+            return <tr key={accessor}>
+                <td>
+                    <label style={{margin: 0}}>{name}:</label>
+                </td>
+                <td>
+                    <input
+                        name={name}
+                        type="checkbox"
+                        checked={value}
+                        onChange={({target: {checked}}) => {
+                            const changed = {};
+                            changed[accessor] = {name, value: checked};
+                            setNewData(prev => ({...prev, ...changed}));
+                        }}
+                    />
+                </td>
+            </tr>;
         }
         return <tr key={accessor}>
             <td>

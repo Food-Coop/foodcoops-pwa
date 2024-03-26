@@ -89,8 +89,13 @@ export function NewFrischBestandModal(props) {
                 value={value}
                 onChange={onChange}
                 style={{width: "100%"}}/>;
-
-        if (accessor === "kategorie.name") {
+        if (accessor === "verfuegbarkeit") {
+            edit = <input
+                type="checkbox"
+                checked={value}
+                onChange={e => onChange({ target: { value: e.target.checked } })}
+            />;
+        } else if (accessor === "kategorie.name") {
             edit = (
                 <div>
                     <select onChange={onChange} style={{width: "100%"}}>

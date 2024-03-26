@@ -39,7 +39,7 @@ export function FrischBestandManagement() {
                 accessor: 'kategorie.name',
             },
             {
-                Header: 'Preis',
+                Header: 'Preis in €',
                 accessor: 'preis',
             }
         ],[]

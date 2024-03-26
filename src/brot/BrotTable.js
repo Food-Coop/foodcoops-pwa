@@ -36,13 +36,16 @@ export function BrotTable({columns, data, skipPageReset, dispatchModal}) {
         <BTable striped bordered hover size="sm" {...getTableProps()}>
             <thead>
             {headerGroups.map(headerGroup => (
-                <tr {...headerGroup.getHeaderGroupProps()}>
-                    {headerGroup.headers.map(column => (
-                        <th {...column.getHeaderProps()}>
-                            {column.render('Header')}
-                        </th>
-                    ))}
-                </tr>
+               <tr {...headerGroup.getHeaderGroupProps()}>
+               {headerGroup.headers.map((column) => {
+                 if (column.Header === "BrotID") {
+                   // Hide the 'BrotID' header
+                   return null;
+                 } else {
+                   return <th {...column.getHeaderProps()}>{column.render("Header")}</th>;
+                 }
+               })}
+             </tr>
             ))}
             </thead>
             <tbody  {...getTableBodyProps()}>
@@ -57,21 +60,11 @@ export function BrotTable({columns, data, skipPageReset, dispatchModal}) {
                                 .map((cell, i) => {
                                     const props = cell.getCellProps();
                                     if(cell.column.Header == "BrotID"){
-                                        let id = "ProduktId" + row.index;
-                                        if(data[row.index].verfuegbarkeit == true){
-                                            return(
-                                                <td{...props} id = {id}>
-                                                    {cell.render('Cell')}
-                                                </td>
-                                            );
-                                        }
-                                        else{
-                                            return(
-                                                <td{...props} id = {id} style={{color:'grey'}}>
-                                                    {cell.render('Cell')}
-                                                </td>
-                                            );
-                                        }
+                                        return(
+                                            <span id={`ProduktId${row.index}`} style={{ display: "none" }}>
+                                                {cell.render("Cell")}
+                                          </span>
+                                        );
                                     }
                                     else if(cell.column.Header == "Brotname"){
                                         let id = "ProduktName" + row.index;

@@ -38,12 +38,15 @@ export function BestellungTable({columns, data, skipPageReset}) {
             <thead>
             {headerGroups.map(headerGroup => (
                 <tr {...headerGroup.getHeaderGroupProps()}>
-                    {headerGroup.headers.map(column => (
-                        <th {...column.getHeaderProps()}>
-                            {column.render('Header')}
-                        </th>
-                    ))}
-                </tr>
+                {headerGroup.headers.map((column) => {
+                  if (column.Header === "ProduktID") {
+                    // Hide the 'ProduktID' header
+                    return null;
+                  } else {
+                    return <th {...column.getHeaderProps()}>{column.render("Header")}</th>;
+                  }
+                })}
+              </tr>
             ))}
             </thead>
             <tbody  {...getTableBodyProps()}>
@@ -58,21 +61,11 @@ export function BestellungTable({columns, data, skipPageReset}) {
                                 .map((cell, i) => {
                                     const props = cell.getCellProps();
                                     if(cell.column.Header == "ProduktID"){
-                                        let id = "ProduktId" + row.index;
-                                        if(data[row.index].verfuegbarkeit == true){
                                             return(
-                                                <td{...props} id = {id}>
-                                                    {cell.render('Cell')}
-                                                </td>
+                                                <span id={`ProduktId${row.index}`} style={{ display: "none" }}>
+                                                    {cell.render("Cell")}
+                                              </span>
                                             );
-                                        }
-                                        else{
-                                            return(
-                                                <td{...props} id = {id} style={{color:'grey'}}>
-                                                    {cell.render('Cell')}
-                                                </td>
-                                            );
-                                        }
                                     }
                                     else if(cell.column.Header == "Kategorie"){
                                         let id = "KategorieId" + row.index;

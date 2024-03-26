@@ -7,7 +7,7 @@ export function FrischEinkauf(props) {
     const [frischBestellung, setFrischBestellung] = useState([]);
     const api = useApi();
     const { keycloak } = useKeycloak();
-    const [totalPrice, setTotalPrice] = useState(0);
+    const [totalFrischPrice, setTotalFrischPrice] = useState(0);
 
     const handleChange = (e, orderPrice, orderIndex) => {
         const quantity = e.target.value;
@@ -20,13 +20,14 @@ export function FrischEinkauf(props) {
 
         setFrischBestellung(updatedFrischBestellung);
 
-        const newTotalPrice = updatedFrischBestellung.reduce((total, order) => {
+        const newTotalFrischPrice = updatedFrischBestellung.reduce((total, order) => {
             const orderQuantity = order.genommeneMenge || 0;
             return total + orderQuantity * order.frischbestand.preis;
         }, 0);
 
-        setTotalPrice(newTotalPrice);
+        setTotalFrischPrice(newTotalFrischPrice);
     };
+      
 
     const getStepValue = (einheit) => {
         const lowerCaseEinheit = einheit.toLowerCase();
@@ -37,7 +38,6 @@ export function FrischEinkauf(props) {
         }
     };
 
-    //mit last deadline
     useEffect(() => {
         const fetchFrischBestellung = async () => {
             try {
@@ -56,11 +56,10 @@ export function FrischEinkauf(props) {
 
     useEffect(() => {
         if (props.onPriceChange) {
-          props.onPriceChange(totalPrice);
+          props.onPriceChange(totalFrischPrice);
         }
-      }, [totalPrice]);
+      }, [totalFrischPrice]);
 
-    //TODO: reset data
     return (
         <div>
             <BTable striped bordered hover size="sm">
@@ -69,9 +68,9 @@ export function FrischEinkauf(props) {
                         <th>Produkt</th>
                         <th>Preis in €</th>
                         <th>Gebindegröße</th>
-                        <th>Einheit</th>
                         <th>Bestellmenge</th>
                         <th>genommene Menge</th>
+                        <th>Einheit</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -80,7 +79,6 @@ export function FrischEinkauf(props) {
                             <td>{order.frischbestand.name}</td>
                             <td>{order.frischbestand.preis}</td>
                             <td>{order.frischbestand.gebindegroesse}</td>
-                            <td>{order.frischbestand.einheit.name}</td>
                             <td>{order.bestellmenge}</td>
                             <td>
                                 <input 
@@ -90,11 +88,11 @@ export function FrischEinkauf(props) {
                                     onChange={e => handleChange(e, order.frischbestand.preis, index)} 
                                 />
                             </td>
+                            <td>{order.frischbestand.einheit.name}</td>
                         </tr>
                     ))}
                 </tbody>
             </BTable>
-            <h5 id="preis">Frisch-Preis: {totalPrice} €</h5>
         </div>
     );
 }

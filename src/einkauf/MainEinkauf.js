@@ -36,7 +36,22 @@ export function MainEinkauf() {
     setTotalPrice(total);
   }, [totalFrischPrice, totalBrotPrice, totalProduktPrice, deliveryCost]);
 
-  const submitEinkauf = () => toast.success("Ihr Einkauf wurde übermittelt. Vielen Dank!");
+  const clearInputFields = () => {
+    const inputFields = document.querySelectorAll('input[type="number"]');
+    inputFields.forEach((input) => {
+      input.value = "";
+    });
+    setTotalFrischPrice(0);
+    setTotalBrotPrice(0);
+    setTotalProduktPrice(0);
+    setDeliveryCost(0);
+    setTotalPrice(0);
+  };
+
+  const submitEinkauf = () => {
+    clearInputFields();
+    toast.success("Ihr Einkauf wurde übermittelt. Vielen Dank!");
+  };
 
   return (
     <div className="main-einkauf">
@@ -48,6 +63,7 @@ export function MainEinkauf() {
       <div style={{ display: showFrischEinkauf ? 'block' : 'none' }}>
         <FrischEinkauf onPriceChange={handleFrischPriceChange} />
       </div>
+      <h5 style={{ display: showFrischEinkauf ? 'block' : 'none' }}>Frisch-Preis: {totalFrischPrice.toFixed(2)} €</h5>
       <hr className="hr-divider" />
 
       <CollapsibleSection
@@ -58,6 +74,7 @@ export function MainEinkauf() {
       <div style={{ display: showBrotEinkauf ? 'block' : 'none' }}>
         <BrotEinkauf onPriceChange={handleBrotPriceChange} />
       </div>
+      <h5 style={{ display: showBrotEinkauf ? 'block' : 'none' }}>Brot-Preis: {totalBrotPrice.toFixed(2)} €</h5>
       <hr className="hr-divider" />
 
       <CollapsibleSection
@@ -68,6 +85,7 @@ export function MainEinkauf() {
       <div style={{ display: showLagerwareEinkauf ? 'block' : 'none' }}>
         <LagerwareEinkauf onPriceChange={handleProduktPriceChange} />
       </div>
+      <h5 style={{ display: showLagerwareEinkauf ? 'block' : 'none' }}>Lagerwaren-Preis: {totalProduktPrice.toFixed(2)} €</h5>
       <hr className="hr-divider" />
 
       <div className="price-section">

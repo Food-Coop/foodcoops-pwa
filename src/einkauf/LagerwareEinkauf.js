@@ -26,7 +26,6 @@ export function LagerwareEinkauf(props) {
         setTotalProduktPrice(newTotalProduktPrice);
     };
 
-    //mit last deadline
     useEffect(() => {
         const fetchProdukt = async () => {
             try {
@@ -47,7 +46,6 @@ export function LagerwareEinkauf(props) {
         }
       }, [totalProduktPrice]);
 
-    //TODO: reset data
     return (
         <div>
             <BTable striped bordered hover size="sm">
@@ -75,7 +73,6 @@ export function LagerwareEinkauf(props) {
                     ))}
                 </tbody>
             </BTable>
-            <h5 id="preis">Lagerwaren-Preis: {totalProduktPrice} €</h5>
         </div>
     );
 }

@@ -28,7 +28,6 @@ export function BrotEinkauf(props) {
         setTotalBrotPrice(newTotalBrotPrice);
     };
 
-    //mit last deadline
     useEffect(() => {
         const fetchBrotBestellung = async () => {
             try {
@@ -57,7 +56,6 @@ export function BrotEinkauf(props) {
         }
       }, [totalBrotPrice]);
 
-    //TODO: reset data
     return (
         <div>
             <BTable striped bordered hover size="sm">
@@ -87,7 +85,6 @@ export function BrotEinkauf(props) {
                     ))}
                 </tbody>
             </BTable>
-            <h5 id="preis">Brot-Preis: {totalBrotPrice} €</h5>
         </div>
     );
 }

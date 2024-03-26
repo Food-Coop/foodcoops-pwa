@@ -64,8 +64,8 @@ export function BrotEinkauf(props) {
                 <thead>
                     <tr>
                         <th>Produkt</th>
-                        <th>Bestellmenge</th>
                         <th>Preis in €</th>
+                        <th>Bestellmenge</th>
                         <th>genommene Menge</th>
                     </tr>
                 </thead>
@@ -73,8 +73,8 @@ export function BrotEinkauf(props) {
                     {brotBestellung.map((order, index) => (
                         <tr key={order.id}>
                             <td>{order.brotbestand.name}</td>
-                            <td>{order.bestellmenge}</td>
                             <td>{order.brotbestand.preis}</td>
+                            <td>{order.bestellmenge}</td>
                             <td>
                                 <input 
                                     type="number" 

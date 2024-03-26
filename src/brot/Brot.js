@@ -1,6 +1,8 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Button from 'react-bootstrap/Button';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { useApi } from '../ApiService';
 import {useKeycloak} from "@react-keycloak/web";
 import { BrotTable } from './BrotTable';
@@ -134,7 +136,7 @@ export function Brot(){
                                 forceUpdate();
                             }
                             else{
-                                alert("Das Updaten einer Brotbestellung war aufgrund eines Fehlers nicht erfolgreich. Bitte versuchen Sie es erneut.");
+                                toast.error("Das Updaten einer Brotbestellung war aufgrund eines Fehlers nicht erfolgreich. Bitte versuchen Sie es erneut.");
                             }
                         })();
                         
@@ -149,12 +151,12 @@ export function Brot(){
                                     forceUpdate();
                                 }
                                 else{
-                                    alert("Das Updaten einer Brotbestellung war aufgrund eines Fehlers nicht erfolgreich. Bitte versuchen Sie es erneut.");
+                                    toast.error("Das Updaten einer Brotbestellung war aufgrund eines Fehlers nicht erfolgreich. Bitte versuchen Sie es erneut.");
                                 }
                             })();
                         }
                         else{
-                            alert("Okay, dieses Produkt wird nicht bestellt. Alle anderen schon.");
+                            toast.info("Okay, " + artikelname + " wird nicht bestellt. Alles anderen schon.");
                         }
                     }
                 }
@@ -168,7 +170,7 @@ export function Brot(){
                                 forceUpdate();
                             }
                             else{
-                                alert("Das Abgeben einer Brotbestellung war aufgrund eines Fehlers nicht erfolgreich. Bitte versuchen Sie es erneut.");
+                                toast.error("Das Abgeben einer Brotbestellung war aufgrund eines Fehlers nicht erfolgreich. Bitte versuchen Sie es erneut.");
                             }
                         })();
                     }
@@ -182,12 +184,12 @@ export function Brot(){
                                     forceUpdate();
                                 }
                                 else{
-                                    alert("Das Abgeben einer Brotbestellung war aufgrund eines Fehlers nicht erfolgreich. Bitte versuchen Sie es erneut.");
+                                    toast.error("Das Abgeben einer Brotbestellung war aufgrund eines Fehlers nicht erfolgreich. Bitte versuchen Sie es erneut.");
                                 }
                             })();
                         }
                         else{
-                            alert("Okay, dieses Produkt wird nicht bestellt. Alle anderen schon.");
+                            toast.info("Okay, " + artikelname + " wird nicht bestellt. Alles anderen schon.");
                         }
                     }
                 }
@@ -196,7 +198,7 @@ export function Brot(){
         }
         forceUpdate();
         document.getElementById("preis").innerHTML = "Preis: " + preis + "€";
-        alert("Ihre Bestellung wurde übermittelt. Vielen Dank!");
+        toast.success("Ihre Bestellung wurde übermittelt. Vielen Dank!");
     };
 
     const content = () => {
@@ -245,6 +247,7 @@ export function Brot(){
                 {content()}
                 <h4 id = "preis"></h4>
                 <Button style={{margin:"0.25rem"}} variant="success" onClick={() => submitBestellung()}>Submit Bestellung</Button>
+                <ToastContainer />
             </div>
         </div>
     );

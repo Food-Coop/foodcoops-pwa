@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Switch, Route, Link, Redirect} from 'react-router-dom';
-import Paper from "@material-ui/core/Paper";
-import Tab from "@material-ui/core/Tab";
-import Tabs from "@material-ui/core/Tabs";
+import Paper from '@mui/material/Paper';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
 import { Deadline } from './deadline/Deadline';
 import { Gebindemanagement } from './gebindemanagement/Gebindemanagement';
 import { Lager } from './lager/Lager';

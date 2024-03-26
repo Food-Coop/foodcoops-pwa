@@ -1,6 +1,8 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Button from 'react-bootstrap/Button';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import {BestellungTable} from "./BestellungTable";
 import {deepAssign} from '../util'
 import {useApi} from '../ApiService';
@@ -212,7 +214,7 @@ export function Bestellung(){
         }
         forceUpdate();
         document.getElementById("preis").innerHTML = "Preis: " + preis + "€";
-        alert("Ihre Bestellung wurde übermittelt. Vielen Dank!");
+        toast.success("Ihre Bestellung wurde übermittelt. Vielen Dank!");
     };
 
     const content = () => {
@@ -258,6 +260,7 @@ export function Bestellung(){
                 {content()}
                 <h4 id = "preis"></h4>
                 <Button style={{margin:"0.25rem"}} variant="success" onClick={() => submitBestellung()}>Submit Bestellung</Button>
+                <ToastContainer />
             </div>
         </div>
     );

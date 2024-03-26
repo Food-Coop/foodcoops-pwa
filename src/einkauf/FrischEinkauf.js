@@ -67,10 +67,10 @@ export function FrischEinkauf(props) {
                 <thead>
                     <tr>
                         <th>Produkt</th>
-                        <th>Bestellmenge</th>
                         <th>Preis in €</th>
                         <th>Gebindegröße</th>
                         <th>Einheit</th>
+                        <th>Bestellmenge</th>
                         <th>genommene Menge</th>
                     </tr>
                 </thead>
@@ -78,10 +78,10 @@ export function FrischEinkauf(props) {
                     {frischBestellung.map((order, index) => (
                         <tr key={order.id}>
                             <td>{order.frischbestand.name}</td>
-                            <td>{order.bestellmenge}</td>
                             <td>{order.frischbestand.preis}</td>
                             <td>{order.frischbestand.gebindegroesse}</td>
                             <td>{order.frischbestand.einheit.name}</td>
+                            <td>{order.bestellmenge}</td>
                             <td>
                                 <input 
                                     type="number" 

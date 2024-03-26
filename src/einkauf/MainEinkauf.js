@@ -2,7 +2,11 @@ import React, { useState, useEffect } from 'react';
 import Button from 'react-bootstrap/Button';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import CollapsibleSection from './CollapsibleSection';
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import Typography from '@mui/material/Typography';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { BrotEinkauf } from './BrotEinkauf';
 import { FrischEinkauf } from './FrischEinkauf';
 import { LagerwareEinkauf } from './LagerwareEinkauf';
@@ -55,38 +59,33 @@ export function MainEinkauf() {
 
   return (
     <div className="main-einkauf">
-      <CollapsibleSection
-        title="Frischwaren-Einkauf"
-        onToggle={() => setShowFrischEinkauf(!showFrischEinkauf)}
-        isOpen={showFrischEinkauf}
-      />
-      <div style={{ display: showFrischEinkauf ? 'block' : 'none' }}>
-        <FrischEinkauf onPriceChange={handleFrischPriceChange} />
-      </div>
-      <h5 style={{ display: showFrischEinkauf ? 'block' : 'none' }}>Frisch-Preis: {totalFrischPrice.toFixed(2)} €</h5>
-      <hr className="hr-divider" />
-
-      <CollapsibleSection
-        title="Brot-Einkauf"
-        onToggle={() => setShowBrotEinkauf(!showBrotEinkauf)}
-        isOpen={showBrotEinkauf}
-      />
-      <div style={{ display: showBrotEinkauf ? 'block' : 'none' }}>
-        <BrotEinkauf onPriceChange={handleBrotPriceChange} />
-      </div>
-      <h5 style={{ display: showBrotEinkauf ? 'block' : 'none' }}>Brot-Preis: {totalBrotPrice.toFixed(2)} €</h5>
-      <hr className="hr-divider" />
-
-      <CollapsibleSection
-        title="Lagerware-Einkauf"
-        onToggle={() => setShowLagerwareEinkauf(!showLagerwareEinkauf)}
-        isOpen={showLagerwareEinkauf}
-      />
-      <div style={{ display: showLagerwareEinkauf ? 'block' : 'none' }}>
-        <LagerwareEinkauf onPriceChange={handleProduktPriceChange} />
-      </div>
-      <h5 style={{ display: showLagerwareEinkauf ? 'block' : 'none' }}>Lagerwaren-Preis: {totalProduktPrice.toFixed(2)} €</h5>
-      <hr className="hr-divider" />
+      <Accordion defaultExpanded>
+        <AccordionSummary aria-controls="panel1-content" id="panel1-header" expandIcon={<ExpandMoreIcon />}>
+          <Typography variant="h6" gutterBottom>Frischwaren-Einkauf</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <FrischEinkauf onPriceChange={handleFrischPriceChange} />
+          <h5 style={{ display: showFrischEinkauf ? 'block' : 'none' }}>Frisch-Preis: {totalFrischPrice.toFixed(2)} €</h5>
+        </AccordionDetails>
+      </Accordion>
+      <Accordion defaultExpanded>
+        <AccordionSummary aria-controls="panel1-content" id="panel1-header"  expandIcon={<ExpandMoreIcon />}>
+          <Typography variant="h6" gutterBottom>Brot-Einkauf</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <BrotEinkauf onPriceChange={handleBrotPriceChange} />
+          <h5 style={{ display: showBrotEinkauf ? 'block' : 'none' }}>Brot-Preis: {totalBrotPrice.toFixed(2)} €</h5>
+        </AccordionDetails>
+      </Accordion>
+      <Accordion defaultExpanded>
+        <AccordionSummary aria-controls="panel1-content" id="panel1-header"  expandIcon={<ExpandMoreIcon />}>
+          <Typography variant="h6" gutterBottom>Lagerware-Einkauf</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <LagerwareEinkauf onPriceChange={handleProduktPriceChange} />
+          <h5 style={{ display: showLagerwareEinkauf ? 'block' : 'none' }}>Lagerwaren-Preis: {totalProduktPrice.toFixed(2)} €</h5>
+        </AccordionDetails>
+      </Accordion>
 
       <div className="price-section">
         <div className="price-details">

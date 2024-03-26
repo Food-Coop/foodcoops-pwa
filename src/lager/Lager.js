@@ -37,6 +37,10 @@ export function Lager() {
                 Header: 'Kategorie',
                 accessor: 'kategorie.name',
             },
+            {
+                Header: 'Preis in €',
+                accessor: 'preis',
+            },
         ],
         []
     );

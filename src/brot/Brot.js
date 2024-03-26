@@ -24,7 +24,7 @@ export function Brot(){
                 accessor: 'gewicht',
             },
             {
-                Header: 'Preis',
+                Header: 'Preis in €',
                 accessor: 'preis',
             },
             {
@@ -100,6 +100,13 @@ export function Brot(){
         return null;
     }
 
+    const clearInputFields = () => {
+        for (let i = 0; i < data.length; i++) {
+            let bestellId = "Inputfield" + i;
+            document.getElementById(bestellId).value = "";
+        }
+    }
+
     const submitBestellung = () => {
         const result = {};
         let preis = 0;
@@ -133,6 +140,7 @@ export function Brot(){
                         (async function () {
                             const response = await api.updateBrotBestellung(result, check);
                             if(response.ok) {
+                                clearInputFields();
                                 forceUpdate();
                             }
                             else{
@@ -148,6 +156,7 @@ export function Brot(){
                             (async function () {
                                 const response = await api.updateBrotBestellung(result, check);
                                 if(response.ok) {
+                                    clearInputFields();
                                     forceUpdate();
                                 }
                                 else{
@@ -167,6 +176,7 @@ export function Brot(){
                         (async function () {
                             const response = await api.createBrotBestellung(result);
                             if(response.ok) {
+                                clearInputFields();
                                 forceUpdate();
                             }
                             else{
@@ -181,6 +191,7 @@ export function Brot(){
                             (async function () {
                                 const response = await api.createBrotBestellung(result);
                                 if(response.ok) {
+                                    clearInputFields();
                                     forceUpdate();
                                 }
                                 else{
@@ -196,6 +207,7 @@ export function Brot(){
                 
             }
         }
+        clearInputFields();
         forceUpdate();
         document.getElementById("preis").innerHTML = "Preis: " + preis + "€";
         toast.success("Ihre Bestellung wurde übermittelt. Vielen Dank!");

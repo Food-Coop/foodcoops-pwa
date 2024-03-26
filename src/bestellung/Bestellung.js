@@ -24,7 +24,7 @@ export function Bestellung(){
                 accessor: 'herkunftsland',
             },
             {
-                Header: 'Preis',
+                Header: 'Preis in €',
                 accessor: 'preis',
             },
             {
@@ -121,6 +121,13 @@ export function Bestellung(){
         return new Date(this.getTime() + (24*60*60*1000)*n);
     }
 
+    const clearInputFields = () => {
+        for (let i = 0; i < data.length; i++) {
+            let bestellId = "Inputfield" + i;
+            document.getElementById(bestellId).value = "";
+        }
+    }
+
     const submitBestellung = () => {
         const result = {};
         let preis = 0;
@@ -150,6 +157,7 @@ export function Bestellung(){
                         (async function () {
                             const response = await api.updateFrischBestellung(result, check);
                             if(response.ok) {
+                                clearInputFields();
                                 forceUpdate();
                             }
                             else{
@@ -164,6 +172,7 @@ export function Bestellung(){
                             (async function () {
                                 const response = await api.updateFrischBestellung(result, check);
                                 if(response.ok) {
+                                    clearInputFields();
                                     forceUpdate();
                                 }
                                 else{
@@ -183,6 +192,7 @@ export function Bestellung(){
                         (async function () {
                             const response = await api.createFrischBestellung(result);
                             if(response.ok) {
+                                clearInputFields();
                                 forceUpdate();
                             }
                             else{
@@ -197,6 +207,7 @@ export function Bestellung(){
                             (async function () {
                                 const response = await api.createFrischBestellung(result);
                                 if(response.ok) {
+                                    clearInputFields();
                                     forceUpdate();
                                 }
                                 else{
@@ -212,6 +223,7 @@ export function Bestellung(){
                 
             }
         }
+        clearInputFields();
         forceUpdate();
         document.getElementById("preis").innerHTML = "Preis: " + preis + "€";
         toast.success("Ihre Bestellung wurde übermittelt. Vielen Dank!");

@@ -1,9 +1,5 @@
 import React from 'react';
 
-const {createContext, useContext} = React;
-
-const ApiContext = createContext(null);
-
 export const ApiProvider = (props) => {
     const value = {
         createProdukt: props.createProdukt || createProdukt,
@@ -48,6 +44,10 @@ export const ApiProvider = (props) => {
         readLastDeadline: props.readLastDeadline || readLastDeadline,
         readCurrentDeadline: props.readCurrentDeadline || readCurrentDeadline,
         createDeadline: props.createDeadline || createDeadline,
+
+        readEinkauf: props.readEinkauf || readEinkauf,
+        createEinkauf: props.createEinkauf || createEinkauf,
+        deleteEinkauf: props.deleteEinkauf || deleteEinkauf,
     };
 
     return (
@@ -100,7 +100,11 @@ export const useApi = () => {
         readDeadline,
         readLastDeadline,
         readCurrentDeadline,
-        createDeadline
+        createDeadline,
+
+        readEinkauf,
+        createEinkauf,
+        deleteEinkauf
     };
 };
 
@@ -119,6 +123,7 @@ const BROTBESTELLUNG = "brotBestellung/";
 const DEADLINE = "deadline/";
 const LAST = "last/";
 const CURRENT = "getEndDateOfDeadline/";
+const EINKAUF = "einkauf/";
 
 
 // Produkt
@@ -336,7 +341,7 @@ const deleteBrotBestand = (id) =>
         },
     });
 
-// Deadline plugins/src/main/java/de/dhbw/foodcoop/warehouse/plugins/rest/DeadlineController.java
+// Deadline
 
 const readDeadline = (id = undefined) => id ?
     fetch(BACKEND_URL + DEADLINE + id) :
@@ -355,4 +360,27 @@ const createDeadline = (data) =>
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({...data, id: "undefined"}),
+    });
+
+// Einkauf
+
+const readEinkauf = (id = undefined) => id ?
+    fetch(BACKEND_URL + EINKAUF + id) :
+    fetch(BACKEND_URL + EINKAUF);
+
+const createEinkauf = (data) =>
+    fetch(BACKEND_URL + EINKAUF, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({...data, id: "undefined"}),
+    });
+
+const deleteEinkauf = (id) =>
+    fetch(BACKEND_URL + EINKAUF + id, {
+        method: "DELETE",
+        headers: {
+            'Content-Type': 'application/json',
+        },
     });

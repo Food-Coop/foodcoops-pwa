@@ -1,23 +1,36 @@
 import React from 'react';
-import {useKeycloak} from "@react-keycloak/web";
+import { Typography } from "@mui/material";
+import { useKeycloak } from "@react-keycloak/web";
 
 export const AuthButton = () => {
-    const {keycloak} = useKeycloak();
+    const { keycloak } = useKeycloak();
+
+    const handleLoginClick = () => {
+        if (!keycloak.authenticated) {
+            keycloak.login();
+        }
+    };
+
+    const handleLogoutClick = () => {
+        if (keycloak.authenticated) {
+            keycloak.logout({ redirectUri: "http://localhost:3000" });
+        }
+    };
 
     return (
-        <>
-            {keycloak && !keycloak.authenticated &&
-            <div><a className="btn-link" onClick={() => keycloak.login()} style={{ color: 'white', cursor: 'pointer', textDecoration: 'none', }}>Login</a></div>
-            }
-
-            {keycloak && keycloak.authenticated &&
-            <div >
-                <a className="btn-link" onClick={() => keycloak.logout()} style={{ color: 'white', cursor: 'pointer', textDecoration: 'none', }}>Logout ({
-                    keycloak.tokenParsed.preferred_username
-                })</a>
-            </div>
-            }
-
-        </>
-    )
-}
+        <Typography
+            onClick={keycloak.authenticated ? handleLogoutClick : handleLoginClick}
+            sx={{
+                backgroundColor: "#333",
+                color: "white",
+                borderRadius: 10,
+                textAlign: "center",
+                padding: 1,
+                margin: 2,
+                cursor: 'pointer', 
+            }}
+        >
+            {keycloak.authenticated ? `Logout (${keycloak.tokenParsed.preferred_username})` : 'Login'}
+        </Typography>
+    );
+};

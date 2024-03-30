@@ -108,18 +108,7 @@ const AppContent = ({ menuOpen, toggleMenu }) => {
             </ListItemButton>
           </Link>
         </List>
-        <Typography
-            sx={{
-                backgroundColor: "#333",
-                color: "white",
-                borderRadius: 10,
-                textAlign: "center",
-                padding: 1,
-                margin: 2,
-            }}
-        >
-          <AuthButton/>
-        </Typography>
+        <AuthButton/>
     </Box>
 );
 

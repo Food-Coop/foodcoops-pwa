@@ -2,6 +2,7 @@ import React from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import {FrischBestandModal} from "./FrischBestandModal";
+import NumberFormatComponent from "../logic/NumberFormatComponent";
 
 export function EditFrischBestandModal(props) {
     const rowData = props.rowData || [];
@@ -99,6 +100,42 @@ export function EditFrischBestandModal(props) {
                             setNewData(prev => ({...prev, ...changed}));
                         }}
                     />
+                </td>
+            </tr>;
+        }
+        if (accessor === "preis") {
+            return <tr key={accessor}>
+                <td>
+                    <label style={{margin: 0}}>{name}:</label>
+                </td>
+                <td>
+                    <input
+                        name={name}
+                        type="number"
+                        value={value}
+                        onChange={function ({target: {value}}) {
+                            const changed = {};
+                            changed[accessor] = {name, value};
+                            return setNewData(prev => ({...prev, ...changed}));
+                        }}/>
+                </td>
+            </tr>;
+        }
+        if (accessor === "gebindegroesse") {
+            return <tr key={accessor}>
+                <td>
+                    <label style={{margin: 0}}>{name}:</label>
+                </td>
+                <td>
+                    <input
+                        name={name}
+                        type="number"
+                        value={value}
+                        onChange={function ({target: {value}}) {
+                            const changed = {};
+                            changed[accessor] = {name, value};
+                            return setNewData(prev => ({...prev, ...changed}));
+                        }}/>
                 </td>
             </tr>;
         }

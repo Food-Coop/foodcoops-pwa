@@ -9,6 +9,7 @@ import {EditFrischBestandModal} from "./EditFrischBestandModal";
 import { NewFrischBestandModal } from './NewFrischBestandModal';
 import {EditKategorieModal} from "../lager/EditKategorieModal";
 import {EditEinheitenModal} from "../lager/EditEinheitenModal";
+import NumberFormatComponent from '../logic/NumberFormatComponent';
 
 
 export function FrischBestandManagement() {
@@ -29,6 +30,7 @@ export function FrischBestandManagement() {
             {
                 Header: 'Gebindegröße',
                 accessor: 'gebindegroesse',
+                Cell: ({ value }) => <NumberFormatComponent value={value} includeFractionDigits={false}/>,
             },
             {
                 Header: 'Einheit',
@@ -41,6 +43,7 @@ export function FrischBestandManagement() {
             {
                 Header: 'Preis in €',
                 accessor: 'preis',
+                Cell: ({ value }) => <NumberFormatComponent value={value} />,
             }
         ],[]
     );

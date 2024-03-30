@@ -9,6 +9,7 @@ import {useApi} from '../ApiService';
 import {NewProduktModal} from './NewProduktModal';
 import {deepAssign, deepClone} from '../util';
 import {EditEinheitenModal} from "./EditEinheitenModal";
+import NumberFormatComponent from '../logic/NumberFormatComponent';
 
 export function Lager() {
 
@@ -24,10 +25,12 @@ export function Lager() {
             {
                 Header: 'Ist Lagerbestand',
                 accessor: 'lagerbestand.istLagerbestand',
+                Cell: ({ value }) => <NumberFormatComponent value={value} includeFractionDigits={false}/>,
             },
             {
                 Header: 'Soll Lagerbestand',
                 accessor: 'lagerbestand.sollLagerbestand',
+                Cell: ({ value }) => <NumberFormatComponent value={value} includeFractionDigits={false}/>,
             },
             {
                 Header: 'Einheit',
@@ -40,6 +43,7 @@ export function Lager() {
             {
                 Header: 'Preis in €',
                 accessor: 'preis',
+                Cell: ({ value }) => <NumberFormatComponent value={value}/>,
             },
         ],
         []

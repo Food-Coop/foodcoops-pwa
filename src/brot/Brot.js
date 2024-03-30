@@ -1,4 +1,4 @@
-import React, { useState} from 'react';
+import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Button from 'react-bootstrap/Button';
 import { ToastContainer, toast } from 'react-toastify';
@@ -8,7 +8,6 @@ import {useKeycloak} from "@react-keycloak/web";
 import { BrotTable } from './BrotTable';
 import { deepAssign } from '../util';
 import { DeadlineLogic } from '../deadline/DeadlineLogic';
-import NumberFormatComponent from '../logic/NumberFormatComponent';
 
 export function Brot(){
     const columns = React.useMemo(
@@ -23,17 +22,14 @@ export function Brot(){
             {
                 Header: 'Gewicht',
                 accessor: 'gewicht',
-                Cell: ({ value }) => <NumberFormatComponent value={value}/>,
             },
             {
                 Header: 'Preis in €',
                 accessor: 'preis',
-                Cell: ({ value }) => <NumberFormatComponent value={value}/>,
             },
             {
                 Header: 'Bestellmenge',
                 accessor: 'bestellmenge',
-                Cell: ({ value }) => <NumberFormatComponent value={value}/>,
             }
         ]
     );
@@ -46,14 +42,9 @@ export function Brot(){
     const [data, setData] = React.useState([]);
     const [reducerValue, forceUpdate] = React.useReducer(x => x+1, 0);
     const [brotBestellungSumme, setBrotBestellungSumme] = React.useState([]);
-    const [totalBrotPrice, setTotalBrotPrice] = useState(0);
 
     const api = useApi();
     const {keycloak} = useKeycloak();
-
-    const handleBrotPriceChange = (price) => {
-        setTotalBrotPrice(price);
-    };
 
     React.useEffect(
         () => {
@@ -114,12 +105,11 @@ export function Brot(){
             let bestellId = "Inputfield" + i;
             document.getElementById(bestellId).value = "";
         }
-        setTotalBrotPrice(0);
-        
-    };
+    }
 
     const submitBestellung = () => {
         const result = {};
+        let preis = 0;
         for (let i = 0; i < data.length; i++) {
             let produktId = "ProduktId" + i;
             let brotBestandId = document.getElementById(produktId).innerText;
@@ -217,8 +207,9 @@ export function Brot(){
                 
             }
         }
-        
+        clearInputFields();
         forceUpdate();
+        document.getElementById("preis").innerHTML = "Preis: " + preis + "€";
         toast.success("Ihre Bestellung wurde übermittelt. Vielen Dank!");
     };
 
@@ -255,19 +246,18 @@ export function Brot(){
         return (
             <BrotTable
                 columns={columns}
-                data={data}
-                onPriceChange={handleBrotPriceChange}
-            />
+                data={data}/>
         );
 
     }
+
 
     return(
         <div>
             <div style={{overflowX: "auto", width: "100%"}}>
             <DeadlineLogic />
                 {content()}
-                <h4 id = "preis">Preis: <NumberFormatComponent value={totalBrotPrice.toFixed(2)} /> €</h4>
+                <h4 id = "preis"></h4>
                 <Button style={{margin:"0.25rem"}} variant="success" onClick={() => submitBestellung()}>Submit Bestellung</Button>
                 <ToastContainer />
             </div>

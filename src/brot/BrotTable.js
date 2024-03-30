@@ -1,15 +1,15 @@
 import {useExpanded, useTable} from "react-table";
 import BTable from "react-bootstrap/Table";
-import React, {useState, useEffect} from "react";
-import NumberFormatComponent from "../logic/NumberFormatComponent";
+import React from "react";
 
-export function BrotTable( {columns, data, skipPageReset, onPriceChange}) {
+export function BrotTable({columns, data, skipPageReset, dispatchModal}) {
     const {
         getTableProps,
         getTableBodyProps,
         headerGroups,
         rows,
         prepareRow,
+        state: {expanded},
     } = useTable(
         {
             columns,
@@ -20,28 +20,17 @@ export function BrotTable( {columns, data, skipPageReset, onPriceChange}) {
         },
         useExpanded
     )
-    const [totalBrotPrice, setTotalBrotPrice] = useState(0);
-    const [brotBestellungPrice, setBrotBestellungPrice] = useState([]);
 
-    useEffect(() => {
-        if (onPriceChange) {
-          onPriceChange(totalBrotPrice);
+    const calculatePrice = () => {
+        let preis = 0;
+        for(let i = 0; i < data.length; i++){
+            let bestellId = "Inputfield" + i;
+            let bestellmenge = document.getElementById(bestellId).value;
+            let preisId = "PreisId" + i;
+            preis += document.getElementById(preisId).innerText * bestellmenge;
         }
-      }, [totalBrotPrice]);
-
-    const calculatePrice = (e, orderData, index) => {
-        console.log("Length"+brotBestellungPrice.length);
-        const quantity = parseInt(e.target.value, 10);
-    
-        const itemPrice = quantity * orderData.preis;
-    
-        const updatedBrotBestellung = [...brotBestellungPrice];
-        updatedBrotBestellung[index] = itemPrice;
-        setBrotBestellungPrice(updatedBrotBestellung);
-    
-        const total = updatedBrotBestellung.reduce((acc, curr) => acc + (curr || 0), 0);
-        setTotalBrotPrice(total);
-    };
+        document.getElementById("preis").innerHTML = "Preis: " + preis + "€";
+    }
 
     return (
         <BTable striped bordered hover size="sm" {...getTableProps()}>
@@ -65,6 +54,8 @@ export function BrotTable( {columns, data, skipPageReset, onPriceChange}) {
                 return (
                     <tr {...row.getRowProps()}>
                         {
+                            // canExpand is true for the kategorien header row
+                            // make the kategorien name span multiple columns for these rows
                             (row.original.hasOwnProperty("produkte") ? row.cells.slice(0, 2) : row.cells)
                                 .map((cell, i) => {
                                     const props = cell.getCellProps();
@@ -102,24 +93,24 @@ export function BrotTable( {columns, data, skipPageReset, onPriceChange}) {
                                             }
                                             if(data[row.index].verfuegbarkeit == true){
                                                 return(
-                                                    <input type="number" min="0" placeholder={"Bestellung Vorwoche: " + vorwoche} id={id} onChange={e => calculatePrice(e, data[row.index], row.index)}></input>
+                                                    <input type="text" placeholder={"Bestellung Vorwoche: " + vorwoche} id={id} onChange={() => calculatePrice()}></input>
                                                 )
                                             }
                                             else{
                                                 return(
-                                                    <input type="number" min="0" placeholder={"Bestellung Vorwoche: " + vorwoche} id={id} onChange={e => calculatePrice(e, data[row.index], row.index)} disabled></input>
+                                                    <input type="text" placeholder={"Bestellung Vorwoche: " + vorwoche} id={id} onChange={() => calculatePrice()} disabled></input>
                                                 )
                                             }
                                         }
                                         else{
                                             if(data[row.index].verfuegbarkeit == true){
                                                 return(
-                                                    <input type="number" min="0" placeholder={"Bestellung Aktuell: " + woche} id={id} onChange={e => calculatePrice(e, data[row.index], row.index)}></input>
+                                                    <input type="text" placeholder={"Bestellung Aktuell: " + woche} id={id} onChange={() => calculatePrice()}></input>
                                                 )
                                             }
                                             else{
                                                 return(
-                                                    <input type="number" min="0" placeholder={"Bestellung Aktuell: " + woche} id={id} onChange={e => calculatePrice(e, data[row.index], row.index)} disabled></input>
+                                                    <input type="text" placeholder={"Bestellung Aktuell: " + woche} id={id} onChange={() => calculatePrice()} disabled></input>
                                                 )
                                             }
                                         }
@@ -129,14 +120,14 @@ export function BrotTable( {columns, data, skipPageReset, onPriceChange}) {
                                         if(data[row.index].verfuegbarkeit == true){
                                             return(
                                                 <td{...props} id = {id}>
-                                                    <NumberFormatComponent value={cell.value}/>
+                                                    {cell.render('Cell')}
                                                 </td>
                                             )
                                         }
                                         else{
                                             return(
                                                 <td{...props} id = {id} style={{color:'grey'}}>
-                                                    <NumberFormatComponent value={cell.value}/>
+                                                    {cell.render('Cell')}
                                                 </td>
                                             )
                                         }

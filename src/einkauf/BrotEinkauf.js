@@ -36,10 +36,8 @@ export function BrotEinkauf(props) {
                 const data = await response.json();
                 if (data && data._embedded && data._embedded.brotBestellungRepresentationList) {
                     setBrotBestellung(data._embedded.brotBestellungRepresentationList);
-                    console.log(brotBestellung);
                 } else {
                     setBrotBestellung([]);
-                    console.log(brotBestellung);
                 }
             } catch (error) {
                 console.error('Error fetching brotBestellung:', error);

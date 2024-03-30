@@ -43,8 +43,14 @@ export function LagerwareEinkauf(props) {
     useEffect(() => {
         if (props.onPriceChange) {
           props.onPriceChange(totalProduktPrice);
-        }
+        }     
       }, [totalProduktPrice]);
+
+    useEffect(() => {
+        if (props.handleProdukt) {
+            props.handleProdukt(produkt);
+        }        
+    }, [produkt]);
 
     return (
         <div>

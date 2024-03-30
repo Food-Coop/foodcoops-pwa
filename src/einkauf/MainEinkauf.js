@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useKeycloak } from "@react-keycloak/web";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Accordion from '@mui/material/Accordion';
@@ -10,14 +11,18 @@ import { BrotEinkauf } from './BrotEinkauf';
 import { FrischEinkauf } from './FrischEinkauf';
 import { LagerwareEinkauf } from './LagerwareEinkauf';
 import { EinkaufsDialog} from './EinkaufsDialog';
+import { useApi } from '../ApiService';
 import './MainEinkauf.css';
 
 export function MainEinkauf() {
   const [totalFrischPrice, setTotalFrischPrice] = useState(0);
   const [totalBrotPrice, setTotalBrotPrice] = useState(0);
   const [totalProduktPrice, setTotalProduktPrice] = useState(0);
+  const [produkt, setProdukt] = useState([]);
   const [deliveryCost, setDeliveryCost] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
+  const { keycloak } = useKeycloak();
+  const api = useApi();
 
   const handleFrischPriceChange = (price) => {
     setTotalFrischPrice(price);
@@ -30,6 +35,10 @@ export function MainEinkauf() {
 
   const handleProduktPriceChange = (price) => {
     setTotalProduktPrice(price);
+  };
+
+  const handleProdukt = (produkt) => {
+    setProdukt(produkt);
   };
 
   useEffect(() => {
@@ -50,9 +59,68 @@ export function MainEinkauf() {
   };
 
   //TODO
-  const submitEinkauf = () => {
-    clearInputFields();
-    toast.success("Ihr Einkauf wurde übermittelt. Vielen Dank!");
+  const submitEinkauf = async () => {
+    let person_id = keycloak.tokenParsed.preferred_username;
+
+    // Lagerware
+    let bestandBuyObjects = [];
+    for (let i = 0; i < produkt.length; i++) {
+        let einkaufsmenge = produkt[i].genommeneMenge;
+        if (einkaufsmenge === undefined || einkaufsmenge === '0') {
+        } else {
+          //to get id of bestandEinkauf
+            const newBestandBuyObject = {
+                amount: einkaufsmenge,
+                bestandEntity: {
+                    id: produkt[i].id,
+                    kategorie: {
+                      id: produkt[i].kategorie.id,
+                      mixable: produkt[i].kategorie.mixable,
+                      name: produkt[i].kategorie.name
+                    },
+                    lagerbestand: {
+                      einheit: {
+                        id: produkt[i].lagerbestand.einheit.id,
+                        name: produkt[i].lagerbestand.einheit.name
+                      },
+                      istLagerbestand: produkt[i].lagerbestand.istLagerbestand,
+                      sollLagerbestand: produkt[i].lagerbestand.sollLagerbestand
+                    },
+                    name: produkt[i].name,
+                    preis: produkt[i].preis, 
+                    verfuegbarkeit: produkt[i].verfuegbarkeit
+                },
+            };
+            try {
+              const response = await api.createBestandBuyObject(newBestandBuyObject);
+              const data = await response.json();
+              bestandBuyObjects.push(data);
+            } catch (error) {
+              toast.error("Fehler beim Übermitteln des Einkaufs. Bitte versuchen Sie es erneut.");
+            }   
+        }
+    }
+
+    try {
+      const einkaufData = {
+        //Bestand = Lagerware
+        bestandEinkauf: bestandBuyObjects,
+        // Bestellung = Brot & Frischware
+        bestellungsEinkauf: [],
+        personId: person_id 
+      };
+      const response = await api.createEinkauf(einkaufData);
+
+      if (response.ok) {
+        clearInputFields();
+        toast.success("Ihr Einkauf wurde übermittelt. Vielen Dank!");
+      } else {
+        toast.error("Fehler beim Übermitteln des Einkaufs. Bitte versuchen Sie es erneut.");
+      }
+    } catch (error) {
+      console.error("Fehler beim Übermitteln des Einkaufs:", error);
+      toast.error("Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.");
+    }
   };
 
   return (
@@ -80,7 +148,7 @@ export function MainEinkauf() {
           <Typography variant="h6" gutterBottom>Lagerware-Einkauf</Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <LagerwareEinkauf onPriceChange={handleProduktPriceChange} />
+        <LagerwareEinkauf onPriceChange={handleProduktPriceChange} handleProdukt={handleProdukt} />
           <h5>Lagerwaren-Preis: {totalProduktPrice.toFixed(2)} €</h5>
         </AccordionDetails>
       </Accordion>

@@ -44,7 +44,6 @@ export function FrischEinkauf(props) {
                 let person_id = keycloak.tokenParsed.preferred_username;
                 const response = await api.readFrischBestellungProPerson(person_id);
                 const data = await response.json();
-                console.log("data: " + JSON.stringify(data));
                 setFrischBestellung(data._embedded.frischBestellungRepresentationList);
             } catch (error) {
                 console.error('Error fetching frischBestellung:', error);

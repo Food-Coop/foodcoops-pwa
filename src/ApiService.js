@@ -48,6 +48,7 @@ export const ApiProvider = (props) => {
         readEinkauf: props.readEinkauf || readEinkauf,
         createEinkauf: props.createEinkauf || createEinkauf,
         deleteEinkauf: props.deleteEinkauf || deleteEinkauf,
+        createBestandBuyObject: props.createBestandBuyObject || createBestandBuyObject,
     };
 
     return (
@@ -104,7 +105,8 @@ export const useApi = () => {
 
         readEinkauf,
         createEinkauf,
-        deleteEinkauf
+        deleteEinkauf,
+        createBestandBuyObject
     };
 };
 
@@ -124,6 +126,7 @@ const DEADLINE = "deadline/";
 const LAST = "last/";
 const CURRENT = "getEndDateOfDeadline/";
 const EINKAUF = "einkauf/";
+const BESTANDBUYOBJECT = "einkaufe/create/bestandBuyObject";
 
 
 // Produkt
@@ -383,4 +386,13 @@ const deleteEinkauf = (id) =>
         headers: {
             'Content-Type': 'application/json',
         },
+    });
+
+const createBestandBuyObject = (data) =>
+    fetch(BACKEND_URL + BESTANDBUYOBJECT, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({...data, id: "undefined"}),
     });

@@ -154,9 +154,6 @@ const AppContent = ({ menuOpen, toggleMenu }) => {
         <PrivateRoute roles={["Einkäufer"]} path="/mainManagement" component={MainManagement} />
         <Route path="/" component={Home} />
       </Switch>
-      <footer>
-        <Link to="/about">Impressum - Legal Disclaimer</Link>
-      </footer>
     </div>
   );
 };

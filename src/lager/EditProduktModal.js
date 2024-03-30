@@ -90,6 +90,7 @@ export function EditProduktModal(props) {
                 <td>
                     <input
                         name={name}
+                        min="0"
                         type="number"
                         value={value}
                         onChange={function ({target: {value}}) {
@@ -108,6 +109,7 @@ export function EditProduktModal(props) {
                     <input
                         name={name}
                         type="number"
+                        min="0"
                         value={value}
                         onChange={function ({target: {value}}) {
                             const changed = {};
@@ -125,6 +127,7 @@ export function EditProduktModal(props) {
                     <input
                         name={name}
                         type="number"
+                        min="0"
                         value={value}
                         onChange={function ({target: {value}}) {
                             const changed = {};

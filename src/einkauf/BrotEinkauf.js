@@ -14,6 +14,7 @@ export function BrotEinkauf(props) {
         const quantity = e.target.value;
         const updatedBrotBestellung = brotBestellung.map((order, index) => {
             if (index === orderIndex) {
+                console.log(order);
                 return { ...order, genommeneMenge: quantity };
             }
             return order;

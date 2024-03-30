@@ -112,6 +112,7 @@ export function EditFrischBestandModal(props) {
                     <input
                         name={name}
                         type="number"
+                        min="0"
                         value={value}
                         onChange={function ({target: {value}}) {
                             const changed = {};
@@ -130,6 +131,7 @@ export function EditFrischBestandModal(props) {
                     <input
                         name={name}
                         type="number"
+                        min="0"
                         value={value}
                         onChange={function ({target: {value}}) {
                             const changed = {};

@@ -13,7 +13,7 @@ export const AuthButton = () => {
 
     const handleLogoutClick = () => {
         if (keycloak.authenticated) {
-            keycloak.logout({ redirectUri: "http://localhost:3000" });
+            keycloak.logout({});
         }
     };
 

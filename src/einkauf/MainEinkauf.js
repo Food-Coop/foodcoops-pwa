@@ -12,6 +12,7 @@ import { FrischEinkauf } from './FrischEinkauf';
 import { LagerwareEinkauf } from './LagerwareEinkauf';
 import { EinkaufsDialog} from './EinkaufsDialog';
 import { useApi } from '../ApiService';
+import NumberFormatComponent from '../logic/NumberFormatComponent';
 import './MainEinkauf.css';
 
 export function MainEinkauf() {
@@ -131,7 +132,7 @@ export function MainEinkauf() {
         </AccordionSummary>
         <AccordionDetails>
           <FrischEinkauf onPriceChange={handleFrischPriceChange} />
-          <h5>Frisch-Preis: {totalFrischPrice.toFixed(2)} €</h5>
+          <h5>Frisch-Preis: <NumberFormatComponent value={totalFrischPrice.toFixed(2)} /> €</h5>
         </AccordionDetails>
       </Accordion>
       <Accordion defaultExpanded>
@@ -140,7 +141,7 @@ export function MainEinkauf() {
         </AccordionSummary>
         <AccordionDetails>
           <BrotEinkauf onPriceChange={handleBrotPriceChange} />
-          <h5>Brot-Preis: {totalBrotPrice.toFixed(2)} €</h5>
+          <h5>Brot-Preis: <NumberFormatComponent value={totalBrotPrice.toFixed(2)} /> €</h5>
         </AccordionDetails>
       </Accordion>
       <Accordion defaultExpanded>
@@ -149,7 +150,7 @@ export function MainEinkauf() {
         </AccordionSummary>
         <AccordionDetails>
         <LagerwareEinkauf onPriceChange={handleProduktPriceChange} handleProdukt={handleProdukt} />
-          <h5>Lagerwaren-Preis: {totalProduktPrice.toFixed(2)} €</h5>
+          <h5>Lagerwaren-Preis: <NumberFormatComponent value={totalProduktPrice.toFixed(2)} /> €</h5>
         </AccordionDetails>
       </Accordion>
 
@@ -162,16 +163,16 @@ export function MainEinkauf() {
             <h4>5 % Lieferkosten:</h4>
           </div>
           <div className="total-price">
-            <h4><span className="price">{totalFrischPrice.toFixed(2)}</span> <span className="currency">€</span></h4>
-            <h4><span className="price">{totalBrotPrice.toFixed(2)}</span> <span className="currency">€</span></h4>
-            <h4><span className="price">{totalProduktPrice.toFixed(2)}</span> <span className="currency">€</span></h4>
-            <h4><span className="price">{deliveryCost.toFixed(2)}</span> <span className="currency">€</span></h4>
+            <h4><span className="price"><NumberFormatComponent value={totalFrischPrice.toFixed(2)} /></span> <span className="currency">€</span></h4>
+            <h4><span className="price"><NumberFormatComponent value={totalBrotPrice.toFixed(2)} /></span> <span className="currency">€</span></h4>
+            <h4><span className="price"><NumberFormatComponent value={totalProduktPrice.toFixed(2)} /></span> <span className="currency">€</span></h4>
+            <h4><span className="price"><NumberFormatComponent value={deliveryCost.toFixed(2)} /></span> <span className="currency">€</span></h4>
           </div>
         </div>
         <hr className="hr-divider" id="sum-divider" />
         <div className="total-price-section">
           <h4>Insgesamt:</h4>
-          <h4><span className="price">{totalPrice.toFixed(2)}</span> <span className="currency">€</span></h4>
+          <h4><span className="price"><NumberFormatComponent value={totalPrice.toFixed(2)} /></span> <span className="currency">€</span></h4>
         </div>
         <EinkaufsDialog submitEinkauf={submitEinkauf} />
         <ToastContainer />

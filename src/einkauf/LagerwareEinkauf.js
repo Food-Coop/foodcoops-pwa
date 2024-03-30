@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useApi } from '../ApiService';
 import BTable from "react-bootstrap/Table";
+import NumberFormatComponent from '../logic/NumberFormatComponent';
 
 export function LagerwareEinkauf(props) {
     const [produkt, setProdukt] = useState([]);
@@ -66,7 +67,7 @@ export function LagerwareEinkauf(props) {
                     {produkt.map((order, index) => (
                         <tr key={order.id}>
                             <td>{order.name}</td>
-                            <td>{order.preis}</td>
+                            <td><NumberFormatComponent value={order.preis} /></td>
                             <td>
                                 <input 
                                     type="number" 

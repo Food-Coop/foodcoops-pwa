@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useApi } from '../ApiService';
 import { useKeycloak } from "@react-keycloak/web";
 import BTable from "react-bootstrap/Table";
+import NumberFormatComponent from '../logic/NumberFormatComponent';
 
 export function FrischEinkauf(props) {
     const [frischBestellung, setFrischBestellung] = useState([]);
@@ -76,7 +77,7 @@ export function FrischEinkauf(props) {
                     {frischBestellung.map((order, index) => (
                         <tr key={order.id}>
                             <td>{order.frischbestand.name}</td>
-                            <td>{order.frischbestand.preis}</td>
+                            <td><NumberFormatComponent value={order.frischbestand.preis} /></td>
                             <td>{order.frischbestand.gebindegroesse}</td>
                             <td>{order.bestellmenge}</td>
                             <td>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useApi } from '../ApiService';
 import { useKeycloak } from "@react-keycloak/web";
 import BTable from "react-bootstrap/Table";
+import NumberFormatComponent from '../logic/NumberFormatComponent';
 
 export function BrotEinkauf(props) {
     const [brotBestellung, setBrotBestellung] = useState([]);
@@ -69,7 +70,7 @@ export function BrotEinkauf(props) {
                     {brotBestellung.map((order, index) => (
                         <tr key={order.id}>
                             <td>{order.brotbestand.name}</td>
-                            <td>{order.brotbestand.preis}</td>
+                            <td><NumberFormatComponent value={order.brotbestand.preis} /></td>
                             <td>{order.bestellmenge}</td>
                             <td>
                                 <input 

@@ -117,8 +117,6 @@ export function Brot(){
             let datum = new Date();
             let bestellId = "Inputfield" + i;
             let bestellmenge = document.getElementById(bestellId).value;
-            console.log(bestellId)
-            console.log("1: " + document.getElementById(bestellId));
             //Check if Bestellmenge is valid
             if (bestellmenge == "") {
             } 
@@ -128,15 +126,13 @@ export function Brot(){
                 deepAssign("brotbestand", result, supported);
                 deepAssign("bestellmenge", result, bestellmenge);
                 deepAssign("datum", result, datum);
+                deepAssign("type", result, "brot");
 
                 //Überprüfe ob bereits eine Bestellung in dieser Woche getätigt wurde
                 let check = checkAlreadyOrdered(brotBestandId);
                 if(check != null){
                     //Bestellung updaten
-                    console.log(bestellId)
-                    console.log("2: " + bestellmenge <= 10);
                     if (bestellmenge <= 10) {
-                        console.log("3: " + bestellmenge);
                         (async function () {
                             const response = await api.updateBrotBestellung(result, check);
                             if(response.ok) {

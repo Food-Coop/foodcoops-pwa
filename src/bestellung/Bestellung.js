@@ -108,7 +108,6 @@ export function Bestellung(){
 
     const checkAlreadyOrdered = (frischBestandId) =>{
         for(let j = 0; j < frischBestellung.length; j++){
-            //console.log("FBSD: " + frischBestellung[j].frischbestand.id)
             if(frischBestandId == frischBestellung[j].frischbestand.id){
                 return frischBestellung[j].id;
             }
@@ -148,6 +147,7 @@ export function Bestellung(){
                 deepAssign("frischbestand", result, supported);
                 deepAssign("bestellmenge", result, bestellmenge);
                 deepAssign("datum", result, datum);
+                deepAssign("type", result, "frisch");
 
                 //Überprüfe ob bereits eine Bestellung in dieser Woche getätigt wurde
                 let check = checkAlreadyOrdered(frischBestandId);

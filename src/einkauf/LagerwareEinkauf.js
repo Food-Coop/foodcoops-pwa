@@ -61,6 +61,7 @@ export function LagerwareEinkauf(props) {
                         <th>Produkt</th>
                         <th>Preis in €</th>
                         <th>genommene Menge</th>
+                        <th>Einheit</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -76,6 +77,7 @@ export function LagerwareEinkauf(props) {
                                     onChange={e => handleChange(e, order.preis, index)} 
                                 />
                             </td>
+                            <td>{order.lagerbestand.einheit.name}</td>
                         </tr>
                     ))}
                 </tbody>

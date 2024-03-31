@@ -7,6 +7,7 @@ export function LagerwareEinkauf(props) {
     const [produkt, setProdukt] = useState([]);
     const api = useApi();
     const [totalProduktPrice, setTotalProduktPrice] = useState(0);
+    const NotAvailableColor = '#D3D3D3';
 
     const handleChange = (e, orderPrice, orderIndex) => {
         const quantity = e.target.value;
@@ -67,17 +68,19 @@ export function LagerwareEinkauf(props) {
                 <tbody>
                     {produkt.map((order, index) => (
                         <tr key={order.id}>
-                            <td>{order.name}</td>
-                            <td><NumberFormatComponent value={order.preis} /></td>
+                            <td style={{ color: order.lagerbestand.istLagerbestand === 0 ? NotAvailableColor : 'inherit' }}>{order.name}</td>
+                            <td style={{ color: order.lagerbestand.istLagerbestand === 0 ? NotAvailableColor : 'inherit' }}><NumberFormatComponent value={order.preis} /></td>
                             <td>
                                 <input 
                                     type="number" 
                                     min="0" 
                                     step={1} 
-                                    onChange={e => handleChange(e, order.preis, index)} 
+                                    onChange={e => handleChange(e, order.preis, index)}
+                                    disabled={order.lagerbestand.istLagerbestand === 0}
+                                    style={{ color: order.lagerbestand.istLagerbestand === 0 ? NotAvailableColor : 'inherit' }}
                                 />
                             </td>
-                            <td>{order.lagerbestand.einheit.name}</td>
+                            <td style={{ color: order.lagerbestand.istLagerbestand === 0 ? NotAvailableColor : 'inherit' }}>{order.lagerbestand.einheit.name}</td>
                         </tr>
                     ))}
                 </tbody>

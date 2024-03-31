@@ -3,6 +3,7 @@ import BTable from "react-bootstrap/Table";
 import React from "react";
 
 export function BrotTable({columns, data, skipPageReset, dispatchModal}) {
+    const NotAvailableColor = '#D3D3D3';
     const {
         getTableProps,
         getTableBodyProps,
@@ -77,7 +78,7 @@ export function BrotTable({columns, data, skipPageReset, dispatchModal}) {
                                         }
                                         else{
                                             return(
-                                                <td{...props} id = {id} style={{color:'grey'}}>
+                                                <td{...props} id = {id} style={{color:NotAvailableColor}}>
                                                     {cell.render('Cell')}
                                                 </td>
                                             );
@@ -93,24 +94,24 @@ export function BrotTable({columns, data, skipPageReset, dispatchModal}) {
                                             }
                                             if(data[row.index].verfuegbarkeit == true){
                                                 return(
-                                                    <input type="text" placeholder={"Bestellung Vorwoche: " + vorwoche} id={id} onChange={() => calculatePrice()}></input>
+                                                    <td><input type="number" min="0" placeholder={"Bestellung Vorwoche: " + vorwoche} id={id} onChange={() => calculatePrice()}></input></td>
                                                 )
                                             }
                                             else{
                                                 return(
-                                                    <input type="text" placeholder={"Bestellung Vorwoche: " + vorwoche} id={id} onChange={() => calculatePrice()} disabled></input>
+                                                    <td><input type="number" min="0" placeholder={"Bestellung Vorwoche: " + vorwoche} id={id} onChange={() => calculatePrice()} disabled></input></td>
                                                 )
                                             }
                                         }
                                         else{
                                             if(data[row.index].verfuegbarkeit == true){
                                                 return(
-                                                    <input type="text" placeholder={"Bestellung Aktuell: " + woche} id={id} onChange={() => calculatePrice()}></input>
+                                                    <td><input type="number" min="0" placeholder={"Bestellung Aktuell: " + woche} id={id} onChange={() => calculatePrice()}></input></td>
                                                 )
                                             }
                                             else{
                                                 return(
-                                                    <input type="text" placeholder={"Bestellung Aktuell: " + woche} id={id} onChange={() => calculatePrice()} disabled></input>
+                                                    <td><input type="number" min="0" placeholder={"Bestellung Aktuell: " + woche} id={id} onChange={() => calculatePrice()} disabled></input></td>
                                                 )
                                             }
                                         }
@@ -126,7 +127,7 @@ export function BrotTable({columns, data, skipPageReset, dispatchModal}) {
                                         }
                                         else{
                                             return(
-                                                <td{...props} id = {id} style={{color:'grey'}}>
+                                                <td{...props} id = {id} style={{color:NotAvailableColor}}>
                                                     {cell.render('Cell')}
                                                 </td>
                                             )
@@ -142,7 +143,7 @@ export function BrotTable({columns, data, skipPageReset, dispatchModal}) {
                                         }
                                         else{
                                             return (
-                                                <td {...props} style={{color:'grey'}}>
+                                                <td {...props} style={{color:NotAvailableColor}}>
                                                     {cell.render('Cell')}
                                                 </td>
                                             )

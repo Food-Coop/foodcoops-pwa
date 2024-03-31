@@ -14,6 +14,7 @@ import { EinkaufsDialog} from './EinkaufsDialog';
 import { useApi } from '../ApiService';
 import NumberFormatComponent from '../logic/NumberFormatComponent';
 import './MainEinkauf.css';
+import { FiveKRounded } from '@mui/icons-material';
 
 export function MainEinkauf() {
   const [totalFrischPrice, setTotalFrischPrice] = useState(0);
@@ -112,32 +113,70 @@ export function MainEinkauf() {
     }
 
     // Brot
-    let brotEinkaufe = [];
+    let bestellungsEinkaufe = [];
     for (let i = 0; i < brot.length; i++) {
         let einkaufsmenge = brot[i].genommeneMenge;
         if (einkaufsmenge === undefined || einkaufsmenge === '0') {
         } else {
-          console.log(brot[i].datum);
           const brotEinkauf = {
+              type: "brot",
               bestellmenge: brot[i].bestellmenge,
               datum: brot[i].datum,
               id: brot[i].id,
               personId: brot[i].personId,
-              reeleMenge: einkaufsmenge
+              reeleMenge: einkaufsmenge,
+              brotbestand: {
+                gewicht: brot[i].brotbestand.gewicht,
+                id: brot[i].brotbestand.id,
+                name: brot[i].brotbestand.name,
+                preis: brot[i].brotbestand.preis,
+                verfuegbarkeit: brot[i].brotbestand.verfuegbarkeit
+              },
             };
-            console.log(brotEinkauf);
-              brotEinkaufe.push(brotEinkauf);
+            bestellungsEinkaufe.push(brotEinkauf);
         }
     }
 
-    console.log(brotEinkaufe);
+    // Frisch
+    for (let i = 0; i < frisch.length; i++) {
+        let einkaufsmenge = frisch[i].genommeneMenge;
+        if (einkaufsmenge === undefined || einkaufsmenge === '0') {
+        } else {
+          const frischEinkauf = {
+              type: "frisch",
+              bestellmenge: frisch[i].bestellmenge,
+              datum: frisch[i].datum,
+              id: frisch[i].id,
+              personId: frisch[i].personId,
+              reeleMenge: einkaufsmenge,
+              frischbestand: {
+                einheit: {
+                  id: frisch[i].frischbestand.einheit.id,
+                  name: frisch[i].frischbestand.einheit.name
+                },
+                gebindegroesse: frisch[i].frischbestand.gebindegroesse,
+                herkunftsland: frisch[i].frischbestand.herkunftsland,
+                id: frisch[i].frischbestand.id,
+                kategorie: {
+                  id: frisch[i].frischbestand.kategorie.id,
+                  name: frisch[i].frischbestand.kategorie.name
+                },
+                name: frisch[i].frischbestand.name,
+                preis: frisch[i].frischbestand.preis,
+                verfuegbarkeit: frisch[i].frischbestand.verfuegbarkeit
+              },
+            };
+            bestellungsEinkaufe.push(frischEinkauf);
+        }
+    }
 
+    console.log(bestellungsEinkaufe);
     try {
       const einkaufData = {
         //Bestand = Lagerware
         bestandEinkauf: bestandBuyObjects,
         // Bestellung = Brot & Frischware
-        bestellungsEinkauf: brotEinkaufe,
+        bestellungsEinkauf: bestellungsEinkaufe,
         personId: person_id 
       };
       const response = await api.createEinkauf(einkaufData);

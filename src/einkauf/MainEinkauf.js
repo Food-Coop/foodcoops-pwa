@@ -173,7 +173,6 @@ export function MainEinkauf() {
         }
     }
 
-    console.log(bestellungsEinkaufe);
     try {
       const einkaufData = {
         //Bestand = Lagerware

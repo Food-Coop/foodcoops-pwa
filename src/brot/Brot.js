@@ -8,6 +8,7 @@ import {useKeycloak} from "@react-keycloak/web";
 import { BrotTable } from './BrotTable';
 import { deepAssign } from '../util';
 import { DeadlineLogic } from '../deadline/DeadlineLogic';
+import NumberFormatComponent from '../logic/NumberFormatComponent';
 
 export function Brot(){
     const columns = React.useMemo(
@@ -20,16 +21,20 @@ export function Brot(){
                 accessor: 'name',
             },
             {
-                Header: 'Gewicht',
+                Header: 'Gewicht in kg',
                 accessor: 'gewicht',
+                Cell: ({ value }) => <NumberFormatComponent value={value} />,
             },
             {
                 Header: 'Preis in €',
                 accessor: 'preis',
+                Cell: ({ value }) => <NumberFormatComponent value={value} />,
+                
             },
             {
                 Header: 'Bestellmenge',
                 accessor: 'bestellmenge',
+                Cell: ({ value }) => <NumberFormatComponent value={value} />,
             }
         ]
     );
@@ -205,7 +210,7 @@ export function Brot(){
         }
         clearInputFields();
         forceUpdate();
-        document.getElementById("preis").innerHTML = "Preis: " + preis + "€";
+        document.getElementById("preis").innerHTML = "Preis: " + preis + " €";
         toast.success("Ihre Bestellung wurde übermittelt. Vielen Dank!");
     };
 

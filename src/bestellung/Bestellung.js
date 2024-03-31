@@ -8,6 +8,7 @@ import {deepAssign} from '../util'
 import {useApi} from '../ApiService';
 import {useKeycloak} from "@react-keycloak/web";
 import { DeadlineLogic } from '../deadline/DeadlineLogic';
+import NumberFormatComponent from '../logic/NumberFormatComponent';
 
 export function Bestellung(){
     const columns = React.useMemo(
@@ -30,18 +31,22 @@ export function Bestellung(){
             {
                 Header: 'Preis in €',
                 accessor: 'preis',
+                Cell: ({ value }) => <NumberFormatComponent value={value}/>,
             },
             {
                 Header: 'Gebindegröße',
                 accessor: 'gebindegroesse',
+                Cell: ({ value }) => <NumberFormatComponent value={value} includeFractionDigits={false}/>,
             },
             {
                 Header: 'Gesamtbestellung',
                 accessor: 'bestellsumme',
+                Cell: ({ value }) => <NumberFormatComponent value={value}/>,
             },
             {
                 Header: 'Bestellmenge',
                 accessor: 'bestellmenge',
+                Cell: ({ value }) => <NumberFormatComponent value={value}/>,
             },
             {
                 Header: 'Einheit',
@@ -229,7 +234,7 @@ export function Bestellung(){
         }
         clearInputFields();
         forceUpdate();
-        document.getElementById("preis").innerHTML = "Preis: " + preis + "€";
+        document.getElementById("preis").innerHTML = "Preis: " + preis + " €";
         toast.success("Ihre Bestellung wurde übermittelt. Vielen Dank!");
     };
 

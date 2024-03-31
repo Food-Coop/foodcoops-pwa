@@ -31,9 +31,9 @@ export function BrotTable({ columns, data, skipPageReset }) {
             let bestellId = "Inputfield" + i;
             let bestellmenge = document.getElementById(bestellId).value;
             let preisId = "PreisId" + i;
-            preis += document.getElementById(preisId).innerText * bestellmenge;
+            preis += document.getElementById(preisId).innerText.replace(',', '.') * bestellmenge;
         }
-        document.getElementById("preis").innerHTML = "Preis: " + preis + "€";
+        document.getElementById("preis").innerHTML = "Preis: " + preis.toFixed(2).replace('.', ',') + " €";
     }
 
     return (

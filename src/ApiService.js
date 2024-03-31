@@ -167,14 +167,16 @@ const readKategorie = (id = undefined) => id ?
     fetch(BACKEND_URL + KATEGORIEN + id) :
     fetch(BACKEND_URL + KATEGORIEN);
 
-const createKategorie = (name, icon) =>
-    fetch(BACKEND_URL + KATEGORIEN, {
+const createKategorie = (name, icon, mixable) => {
+    console.log("Kategorie: ", name, icon, mixable);
+    return fetch(BACKEND_URL + KATEGORIEN, {
         method: "POST",
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({id: "", name, icon}),
+        body: JSON.stringify({ id: "", name, icon, mixable }),
     });
+}
 
 const updateKategorie = (id, name) =>
     fetch(BACKEND_URL + KATEGORIEN + id, {

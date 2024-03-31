@@ -84,6 +84,7 @@ export function Lager() {
                         const n = r?._embedded?.kategorieRepresentationList;
                         return n === undefined ? old : n;
                     });
+                    console.log("Kategorien: ", r);
                 });
         }, [reducerValue]
     )
@@ -106,9 +107,10 @@ export function Lager() {
         })();
     };
 
-    const newKategorie = ({icon, name}) => {
+    const newKategorie = ({icon, name, mixable}) => {
+        console.log(icon, name, mixable);
         (async function () {
-            const response = await api.createKategorie(name, icon);
+            const response = await api.createKategorie(name, icon, mixable);
             if(response.ok) {
                 toast.success("Das Erstellen der Kategorie \"" + name + "\" war erfolgreich.");
                 setSkipPageReset(true);

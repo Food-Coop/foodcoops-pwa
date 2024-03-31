@@ -35,11 +35,7 @@ export function BrotEinkauf(props) {
                 let person_id = keycloak.tokenParsed.preferred_username;
                 const response = await api.readBrotBestellungProPerson(person_id);
                 const data = await response.json();
-                if (data && data._embedded && data._embedded.brotBestellungRepresentationList) {
-                    setBrotBestellung(data._embedded.brotBestellungRepresentationList);
-                } else {
-                    setBrotBestellung([]);
-                }
+                setBrotBestellung(data?._embedded?.brotBestellungRepresentationList);
             } catch (error) {
                 console.error('Error fetching brotBestellung:', error);
             }

@@ -146,9 +146,9 @@ export function FrischBestandManagement() {
         })();
     };
 
-    const newKategorie = ({icon, name}) => {
+    const newKategorie = ({icon, name, mixable}) => {
         (async function () {
-            const response = await api.createKategorie(name, icon);
+            const response = await api.createKategorie(name, icon, mixable);
             if(response.ok) {
                 toast.success("Das Erstellen der Kategorie \"" + name + "\" war erfolgreich.");
                 setSkipPageReset(true);

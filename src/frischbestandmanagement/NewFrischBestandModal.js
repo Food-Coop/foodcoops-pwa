@@ -7,10 +7,8 @@ function defaultData(columns) {
     const capitalize = word => word.replace(/^\w/, c => c.toUpperCase());
     const getName = (accessor, humanName) => typeof humanName === "string" ? humanName : capitalize(accessor);
 
-    //console.log("table columns: " + JSON.stringify(tableColumns));
     const convert = ({Header: humanName, accessor}) => [accessor, {name: getName(accessor, humanName), value: ""}];
     const initial = Object.fromEntries(columns.map(convert));
-    //console.log("table columns after: " + JSON.stringify(initial));
 
     initial["name"].value = "Name";
     initial["verfuegbarkeit"].value = 1;
@@ -35,15 +33,11 @@ export function NewFrischBestandModal(props) {
     };
 
     const save = () => {
-        //console.log("save " + Object.entries(initial));
-        //console.log("save " + JSON.stringify(initial));
         const result = {};
         for (const [accessor, {value}] of Object.entries(initial)) {
-            //console.log("Intital Accesor, value: " + accessor + " / " + value);
             deepAssign(accessor, result, value);
         }
         for (const [accessor, {value}] of Object.entries(newData)) {
-            //console.log("newdata Accesor, value: " + accessor + " / " + value);
             deepAssign(accessor, result, value);
         }
 
@@ -53,14 +47,11 @@ export function NewFrischBestandModal(props) {
         }
         if (!result.kategorie?.id) {
             const find = props.kategorien[0];
-            console.log("props.kategorien " + JSON.stringify(props.kategorien));
             let kategorie = {};
             deepAssign("id", kategorie, find.id);
             deepAssign("name", kategorie, find.name);
             deepAssign("kategorie", result, kategorie);
         }
-        // FIXME: support setting icon and kategorie (see added TODO items)
-        //console.log("Supported: " + JSON.stringify(supported));
         props.create(result);
         close();
     };

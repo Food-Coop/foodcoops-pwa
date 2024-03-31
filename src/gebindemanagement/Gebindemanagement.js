@@ -9,9 +9,6 @@ import Row from "react-bootstrap/Row";
 export function Gebindemanagement(){
     const columns = React.useMemo(
         () => [
-            // {   Header: 'Frischbestellung-ID',
-            //     accessor: 'id'
-            // },
             {
                 Header: 'Produkt',
                 accessor: 'frischbestand.name',

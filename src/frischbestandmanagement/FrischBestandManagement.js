@@ -120,7 +120,6 @@ export function FrischBestandManagement() {
                     toast.success("Das Löschen des Frischbestandes \"" + frischBestand.name + "\" war erfolgreich.");
                 } else {
                     const text = await response.text();
-                    console.log(`unable to delete: ${text}`);
                     toast.error("Das Löschen des Frischbestandes \"" + frischBestand.name + "\" war nicht erfolgreich. Möglicherweise gibt es Bestellungen.");
                 }
                 forceUpdate();

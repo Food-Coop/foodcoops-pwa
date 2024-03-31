@@ -2,6 +2,8 @@ import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import {LagerTable} from "./LagerTable";
 import {EditProduktModal} from "./EditProduktModal";
 import {EditKategorieModal} from "./EditKategorieModal";
@@ -13,9 +15,6 @@ import NumberFormatComponent from '../logic/NumberFormatComponent';
 
 export function Lager() {
 
-    /* Creates Columns,
-    first part selects image and displays it
-     */
     const columns = React.useMemo(
         () => [
             {
@@ -98,9 +97,12 @@ export function Lager() {
         (async function () {
             const response = await api.updateProdukt(produkt.id, changedData);
             if(response.ok){
+                toast.success("Das Updaten des Produktes \"" + produkt.name + "\" war erfolgreich.");
                 forceUpdate();
             }
-            else{alert("Das Updaten des Produktes war aufgrund einer fehlerhaften Eingabe nicht erfolgreich.");}
+            else{
+                toast.error("Das Updaten des Produktes \"" + produkt.name + "\" war aufgrund einer fehlerhaften Eingabe nicht erfolgreich.");
+            }
         })();
     };
 
@@ -108,12 +110,15 @@ export function Lager() {
         (async function () {
             const response = await api.createKategorie(name, icon);
             if(response.ok) {
+                toast.success("Das Erstellen der Kategorie \"" + name + "\" war erfolgreich.");
                 setSkipPageReset(true);
                 const newKategorie = await response.json();
                 setKategorien(old => [newKategorie, ...old]);
                 forceUpdate();
             }
-            else{alert("Das Erstellen einer Kategorie war nicht erfolgreich. Bitte versuchen Sie es erneut!");}
+            else{
+                toast.error("Das Erstellen der Kategorie \"" + name + "\" war nicht erfolgreich. Bitte versuchen Sie es erneut!");
+            }
         })();
     };
 
@@ -121,59 +126,63 @@ export function Lager() {
         (async function () {
             const response = await api.deleteKategorie(id);
             if(response.ok) {
+                toast.success("Das Löschen der Kategorie war erfolgreich.");
                 setKategorien(old => old.filter(e => e.id !== id));
                 forceUpdate();
             }
-            else{alert("Das Löschen der Kategorie war nicht erfolgreich. Möglicherweise wird sie noch von einem FrischBestand oder einem Produkt verwendet.");}
+            else{
+                toast.error("Das Löschen der Kategorie war nicht erfolgreich. Möglicherweise wird sie noch von einem FrischBestand oder einem Produkt verwendet.");
+            }
         })();
     };
 
     const deleteProdukt = (rowId) => {
+        const produkt = data[rowId];
         const old = data;
         (async function () {
-            const response = await api.deleteProdukt(old[rowId].id)
-                .then(r => {
-                    if (r.ok) {
-                        //const [produkt] = kategorie.produkte.splice(produktId, 1);
-                        setSkipPageReset(true);
-                        setData(deepClone(old));
-                    } else {
-                        r.text().then(text => console.log(`unable to delete: ${text}`));
-                    }
-                }, console.log);
-            if(response.ok) {
+            try {
+                const response = await api.deleteProdukt(old[rowId].id);
+                if (response.ok) {
+                    setSkipPageReset(true);
+                    setData(deepClone(old));
+                    toast.success("Das Löschen des Produktes \"" + produkt.name + "\" war erfolgreich.");
+                } else {
+                    toast.error("Das Löschen des Produktes \"" + produkt.name + "\" war nicht erfolgreich. Bitte versuchen Sie es erneut.");
+                }
                 forceUpdate();
+            } catch (error) {
+                toast.error("Ein Fehler ist aufgetreten beim Löschen des Produktes \"" + produkt.name + "\"");
             }
-            else{
-                alert("Das Löschen des Frischbestandes war nicht erfolgreich. Möglicherweise gibt es Bestellungen.");
-            }
-            forceUpdate();
-        })();
+        } )();   
     }
 
     const newProdukt = (data1) => {
-        console.log("Data1: " + JSON.stringify(data1));
         (async function () {
             const response = await api.createProdukt(data1);
             if(response.ok) {
+                toast.success("Das Erstellen des Produktes \"" + data1.name + "\" war erfolgreich.");
                 const newProdukt = await response.json();
-                    setSkipPageReset(true);
-                    setData(old => deepClone([...old, newProdukt]));
-                    forceUpdate();
+                setSkipPageReset(true);
+                setData(old => deepClone([...old, newProdukt]));
+                forceUpdate();
             }
-            else{alert("Das Erstellen eines Produktes war nicht erfolgreich. Bitte versuchen Sie es erneut!")}
+            else{
+                toast.error("Das Erstellen des Produktes \"" + data1.name + "\" war nicht erfolgreich. Bitte versuchen Sie es erneut!");
+            }
         })();
     };
 
     const newEinheit = ({name}) => {
         (async function () {
             const response = await api.createEinheit(name);
-            //alert(response);
             if(response.ok) {
+                toast.success("Das Erstellen der Einheit \"" + name + "\" war erfolgreich.");
                 const newEinheit = await response.json();
                 setEinheiten(old => [newEinheit, ...old]);
             }
-            else{alert("Das Erstellen einer Einheit war nicht erfolgreich. Bitte versuchen Sie es erneut!");}
+            else{
+                toast.error("Das Erstellen der Einheit \"" + name + "\" war nicht erfolgreich. Bitte versuchen Sie es erneut.");
+            }
         })();
     };
 
@@ -181,9 +190,12 @@ export function Lager() {
         (async function () {
             const response = await api.deleteEinheit(id);
             if(response.ok) {
+                toast.success("Das Löschen der Einheit war erfolgreich.");
                 setEinheiten(old => old.filter(e => e.id !== id));
             }
-            else{alert("Das Löschen der Einheit war nicht erfolgreich. Möglicherweise wird sie noch von einem FrischBestand oder einem Produkt verwendet.");}
+            else{
+                toast.error("Das Löschen der Einheit war nicht erfolgreich. Möglicherweise wird sie noch von einem FrischBestand oder einem Produkt verwendet.");
+            }
         })();
     };
 
@@ -290,6 +302,7 @@ export function Lager() {
                 remove={deleteKategorie}
                 kategorien={kategorien}
                 {...modal.state} />
+            <ToastContainer />
         </div>
     )
 }

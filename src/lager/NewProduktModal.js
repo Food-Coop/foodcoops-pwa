@@ -64,6 +64,8 @@ export function NewProduktModal(props) {
             // edge case: dropdown value is the id of the einheit but accessor is the name of the einheit
             if (accessor === "lagerbestand.einheit.name") {
                 changed["lagerbestand.einheit.id"] = {name, value};
+            } else if(accessor === "kategorie.name") {
+                changed["kategorie.id"] = {name, value};
             } else {
                 changed[accessor] = {name, value};
             }

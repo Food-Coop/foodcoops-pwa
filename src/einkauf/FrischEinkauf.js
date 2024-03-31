@@ -60,6 +60,12 @@ export function FrischEinkauf(props) {
         }
       }, [totalFrischPrice]);
 
+    useEffect(() => {
+        if (props.handleFrisch) {
+            props.handleFrisch(frischBestellung);
+        }        
+    }, [frischBestellung]);
+
     return (
         <div>
             <BTable striped bordered hover size="sm">

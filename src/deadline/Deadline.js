@@ -6,6 +6,8 @@ import { useApi } from '../ApiService';
 import {deepAssign, deepClone} from '../util';
 import { DeadlineTable } from './DeadlineTable';
 import { NewDeadlineModal } from './NewDeadlineModal';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export function Deadline(){
 
@@ -58,15 +60,16 @@ export function Deadline(){
         let datum = new Date();
         data1.time = `${data1.time}:00`;
         deepAssign("datum", data1, datum);
-        console.log(data1);
         (async function () {
             const response = await api.createDeadline(data1);
             if(response.ok) {
-                console.log("Deadline created");
+                toast.success("Die Deadline wurde erfolgreich erstellt!");
                 const newDeadline = await response.json();
                     setSkipPageReset(true);
                     setData(old => deepClone([...old, newDeadline]));
                 forceUpdate();
+            } else {
+                toast.error("Fehler beim Erstellen der Deadline. Bitte versuchen Sie es erneut.");
             }
         })();
     };
@@ -120,6 +123,7 @@ export function Deadline(){
                 create={newDeadline}
                 columns={columns}
                 {...modal.state} />
+            <ToastContainer />
         </div>
     );
 }

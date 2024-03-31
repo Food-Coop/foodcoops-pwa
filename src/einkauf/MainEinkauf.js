@@ -19,6 +19,8 @@ export function MainEinkauf() {
   const [totalFrischPrice, setTotalFrischPrice] = useState(0);
   const [totalBrotPrice, setTotalBrotPrice] = useState(0);
   const [totalProduktPrice, setTotalProduktPrice] = useState(0);
+  const [frisch, setFrisch] = useState([]);
+  const [brot, setBrot] = useState([]);
   const [produkt, setProdukt] = useState([]);
   const [deliveryCost, setDeliveryCost] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
@@ -36,6 +38,14 @@ export function MainEinkauf() {
 
   const handleProduktPriceChange = (price) => {
     setTotalProduktPrice(price);
+  };
+
+  const handleFrisch = (frisch) => {
+    setFrisch(frisch);
+  };
+
+  const handleBrot = (brot) => {
+    setBrot(brot);
   };
 
   const handleProdukt = (produkt) => {
@@ -59,7 +69,6 @@ export function MainEinkauf() {
     setTotalPrice(0);
   };
 
-  //TODO
   const submitEinkauf = async () => {
     let person_id = keycloak.tokenParsed.preferred_username;
 
@@ -102,15 +111,38 @@ export function MainEinkauf() {
         }
     }
 
+    // Brot
+    let brotEinkaufe = [];
+    for (let i = 0; i < brot.length; i++) {
+        let einkaufsmenge = brot[i].genommeneMenge;
+        if (einkaufsmenge === undefined || einkaufsmenge === '0') {
+        } else {
+          console.log(brot[i].datum);
+          const brotEinkauf = {
+              bestellmenge: brot[i].bestellmenge,
+              datum: brot[i].datum,
+              id: brot[i].id,
+              personId: brot[i].personId,
+              reeleMenge: einkaufsmenge
+            };
+            console.log(brotEinkauf);
+              brotEinkaufe.push(brotEinkauf);
+        }
+    }
+
+    console.log(brotEinkaufe);
+
     try {
       const einkaufData = {
         //Bestand = Lagerware
         bestandEinkauf: bestandBuyObjects,
         // Bestellung = Brot & Frischware
-        bestellungsEinkauf: [],
+        bestellungsEinkauf: brotEinkaufe,
         personId: person_id 
       };
       const response = await api.createEinkauf(einkaufData);
+      console.log(einkaufData);
+      console.log(response);
 
       if (response.ok) {
         clearInputFields();
@@ -131,7 +163,7 @@ export function MainEinkauf() {
           <Typography variant="h6" gutterBottom>Frischwaren-Einkauf</Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <FrischEinkauf onPriceChange={handleFrischPriceChange} />
+          <FrischEinkauf onPriceChange={handleFrischPriceChange} handleFrisch={handleFrisch}/>
           <h5>Frisch-Preis: <NumberFormatComponent value={totalFrischPrice.toFixed(2)} /> €</h5>
         </AccordionDetails>
       </Accordion>
@@ -140,7 +172,7 @@ export function MainEinkauf() {
           <Typography variant="h6" gutterBottom>Brot-Einkauf</Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <BrotEinkauf onPriceChange={handleBrotPriceChange} />
+          <BrotEinkauf onPriceChange={handleBrotPriceChange} handleBrot={handleBrot}/>
           <h5>Brot-Preis: <NumberFormatComponent value={totalBrotPrice.toFixed(2)} /> €</h5>
         </AccordionDetails>
       </Accordion>

@@ -24,6 +24,10 @@ export function Bestellung(){
                 accessor: 'herkunftsland',
             },
             {
+                Header: 'Kategorie',
+                accessor: 'kategorie.name',
+            },
+            {
                 Header: 'Preis in €',
                 accessor: 'preis',
             },

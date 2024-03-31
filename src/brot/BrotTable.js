@@ -1,8 +1,8 @@
-import {useExpanded, useTable} from "react-table";
+import { useExpanded, useTable, useSortBy } from "react-table";
 import BTable from "react-bootstrap/Table";
 import React from "react";
 
-export function BrotTable({columns, data, skipPageReset, dispatchModal}) {
+export function BrotTable({ columns, data, skipPageReset }) {
     const NotAvailableColor = '#D3D3D3';
     const {
         getTableProps,
@@ -10,7 +10,7 @@ export function BrotTable({columns, data, skipPageReset, dispatchModal}) {
         headerGroups,
         rows,
         prepareRow,
-        state: {expanded},
+        state: { expanded },
     } = useTable(
         {
             columns,
@@ -18,9 +18,12 @@ export function BrotTable({columns, data, skipPageReset, dispatchModal}) {
             getSubRows: row => row.produkte,
             autoResetPage: !skipPageReset,
             autoResetExpanded: !skipPageReset,
+            initialState: { sortBy: [{ id: 'name' }] },
         },
+        useSortBy, 
         useExpanded
-    )
+    );
+    
 
     const calculatePrice = () => {
         let preis = 0;
@@ -43,7 +46,12 @@ export function BrotTable({columns, data, skipPageReset, dispatchModal}) {
                    // Hide the 'BrotID' header
                    return null;
                  } else {
-                   return <th {...column.getHeaderProps()}>{column.render("Header")}</th>;
+                   return <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                        {column.render("Header")}
+                        <span>
+                            {column.isSorted ? (column.isSortedDesc ? ' ↓' : ' ↑') : ''}
+                        </span>
+                    </th>;
                  }
                })}
              </tr>

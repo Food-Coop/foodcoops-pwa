@@ -1,4 +1,4 @@
-import {useExpanded, useTable} from "react-table";
+import {useExpanded, useTable, useSortBy} from "react-table";
 import BTable from "react-bootstrap/Table";
 import React from "react";
 import {EditProduktModal} from "./EditProduktModal";
@@ -19,7 +19,9 @@ export function LagerTable({columns, data, skipPageReset, dispatchModal}) {
             getSubRows: row => row.produkte,
             autoResetPage: !skipPageReset,
             autoResetExpanded: !skipPageReset,
+            initialState: { sortBy: [{ id: 'kategorie.name'}] },
         },
+        useSortBy,
         useExpanded
     )
 
@@ -29,8 +31,11 @@ export function LagerTable({columns, data, skipPageReset, dispatchModal}) {
             {headerGroups.map(headerGroup => (
                 <tr {...headerGroup.getHeaderGroupProps()}>
                     {headerGroup.headers.map(column => (
-                        <th {...column.getHeaderProps()}>
+                        <th {...column.getHeaderProps(column.getSortByToggleProps())}>
                             {column.render('Header')}
+                            <span>
+                                {column.isSorted ? (column.isSortedDesc ? ' ↓' : ' ↑') : ''}
+                            </span>
                         </th>
                     ))}
                 </tr>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useApi } from '../ApiService';
 import BTable from "react-bootstrap/Table";
+import { useSortBy } from "react-table";
 import NumberFormatComponent from '../logic/NumberFormatComponent';
 
 export function LagerwareEinkauf(props) {

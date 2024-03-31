@@ -1,8 +1,8 @@
-import {useExpanded, useTable} from "react-table";
+import { useExpanded, useTable, useSortBy } from "react-table";
 import BTable from "react-bootstrap/Table";
 import React from "react";
 
-export function BestellungTable({columns, data, skipPageReset}) {
+export function BestellungTable({ columns, data, skipPageReset }) {
     const NotAvailableColor = '#D3D3D3';
     const {
         getTableProps,
@@ -10,17 +10,19 @@ export function BestellungTable({columns, data, skipPageReset}) {
         headerGroups,
         rows,
         prepareRow,
-        state: {expanded},
+        state: { expanded },
     } = useTable(
         {
             columns,
             data,
             getSubRows: row => row.produkte,
-           autoResetPage: !skipPageReset,
+            autoResetPage: !skipPageReset,
             autoResetExpanded: !skipPageReset,
+            initialState: { sortBy: [{ id: 'kategorie.name' }] },
         },
+        useSortBy,
         useExpanded
-    )
+    );
 
     const calculatePrice = () => {
         let preis = 0;
@@ -44,7 +46,12 @@ export function BestellungTable({columns, data, skipPageReset}) {
                     // Hide the 'ProduktID' header
                     return null;
                   } else {
-                    return <th {...column.getHeaderProps()}>{column.render("Header")}</th>;
+                    return <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                        {column.render("Header")}
+                        <span>
+                            {column.isSorted ? (column.isSortedDesc ? ' ↓' : ' ↑') : ''}
+                        </span>
+                    </th>;
                   }
                 })}
               </tr>
@@ -56,8 +63,6 @@ export function BestellungTable({columns, data, skipPageReset}) {
                 return (
                     <tr {...row.getRowProps()}>
                         {
-                            // canExpand is true for the kategorien header row
-                            // make the kategorien name span multiple columns for these rows
                             (row.original.hasOwnProperty("produkte") ? row.cells.slice(0, 2) : row.cells)
                                 .map((cell, i) => {
                                     const props = cell.getCellProps();
@@ -185,6 +190,4 @@ export function BestellungTable({columns, data, skipPageReset}) {
             </tbody>
         </BTable>
     )
-
-
 }

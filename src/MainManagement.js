@@ -7,6 +7,7 @@ import { Deadline } from './deadline/Deadline';
 import { Gebindemanagement } from './gebindemanagement/Gebindemanagement';
 import { Lager } from './lager/Lager';
 import { FrischBestandManagement } from './frischbestandmanagement/FrischBestandManagement';
+import { BrotBestandManagement } from './brotmanagement/BrotBestandManagement';
 
 export function MainManagement(){
     const [value, setValue] = useState(0);
@@ -28,6 +29,7 @@ export function MainManagement(){
                 <Tab label="Gebinde-Management" component={Link} to="/gebindemanagement" />
                 <Tab label="Lager-Management" component={Link} to="/lager" />
                 <Tab label="Frischbestand-Management" component={Link} to="/frischbestandmanagement" />
+                <Tab label="Brotbestand-Management" component={Link} to="/brotbestandmanagement" />
                 <Tab label="Deadline-Management" component={Link} to="/deadline" />
                 </Tabs>
             </Paper>
@@ -41,6 +43,9 @@ export function MainManagement(){
                 </Route>
                 <Route path="/frischbestandmanagement">
                     <FrischBestandManagement />
+                </Route>
+                <Route path="/brotbestandmanagement">
+                    <BrotBestandManagement />
                 </Route>
                 <Route path="/deadline">
                     <Deadline />

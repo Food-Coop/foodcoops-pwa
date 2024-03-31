@@ -14,7 +14,6 @@ import { EinkaufsDialog} from './EinkaufsDialog';
 import { useApi } from '../ApiService';
 import NumberFormatComponent from '../logic/NumberFormatComponent';
 import './MainEinkauf.css';
-import { FiveKRounded } from '@mui/icons-material';
 
 export function MainEinkauf() {
   const [totalFrischPrice, setTotalFrischPrice] = useState(0);
@@ -119,18 +118,20 @@ export function MainEinkauf() {
         if (einkaufsmenge === undefined || einkaufsmenge === '0') {
         } else {
           const brotEinkauf = {
-              type: "brot",
-              bestellmenge: brot[i].bestellmenge,
-              datum: brot[i].datum,
-              id: brot[i].id,
-              personId: brot[i].personId,
-              reeleMenge: einkaufsmenge,
-              brotbestand: {
-                gewicht: brot[i].brotbestand.gewicht,
-                id: brot[i].brotbestand.id,
-                name: brot[i].brotbestand.name,
-                preis: brot[i].brotbestand.preis,
-                verfuegbarkeit: brot[i].brotbestand.verfuegbarkeit
+              amount: einkaufsmenge,
+              bestellung: {
+                type: "brot",
+                bestellmenge: brot[i].bestellmenge,
+                datum: brot[i].datum,
+                id: brot[i].id,
+                personId: brot[i].personId,
+                brotbestand: {
+                  gewicht: brot[i].brotbestand.gewicht,
+                  id: brot[i].brotbestand.id,
+                  name: brot[i].brotbestand.name,
+                  preis: brot[i].brotbestand.preis,
+                  verfuegbarkeit: brot[i].brotbestand.verfuegbarkeit
+                },
               },
             };
             bestellungsEinkaufe.push(brotEinkauf);
@@ -143,27 +144,29 @@ export function MainEinkauf() {
         if (einkaufsmenge === undefined || einkaufsmenge === '0') {
         } else {
           const frischEinkauf = {
-              type: "frisch",
-              bestellmenge: frisch[i].bestellmenge,
-              datum: frisch[i].datum,
-              id: frisch[i].id,
-              personId: frisch[i].personId,
-              reeleMenge: einkaufsmenge,
-              frischbestand: {
-                einheit: {
-                  id: frisch[i].frischbestand.einheit.id,
-                  name: frisch[i].frischbestand.einheit.name
+              amount: einkaufsmenge,
+              bestellung: {
+                type: "frisch",
+                datum: frisch[i].datum,
+                bestellmenge: frisch[i].bestellmenge,
+                id: frisch[i].id,
+                personId: frisch[i].personId,
+                frischbestand: {
+                  einheit: {
+                    id: frisch[i].frischbestand.einheit.id,
+                    name: frisch[i].frischbestand.einheit.name
+                  },
+                  gebindegroesse: frisch[i].frischbestand.gebindegroesse,
+                  herkunftsland: frisch[i].frischbestand.herkunftsland,
+                  id: frisch[i].frischbestand.id,
+                  kategorie: {
+                    id: frisch[i].frischbestand.kategorie.id,
+                    name: frisch[i].frischbestand.kategorie.name
+                  },
+                  name: frisch[i].frischbestand.name,
+                  preis: frisch[i].frischbestand.preis,
+                  verfuegbarkeit: frisch[i].frischbestand.verfuegbarkeit
                 },
-                gebindegroesse: frisch[i].frischbestand.gebindegroesse,
-                herkunftsland: frisch[i].frischbestand.herkunftsland,
-                id: frisch[i].frischbestand.id,
-                kategorie: {
-                  id: frisch[i].frischbestand.kategorie.id,
-                  name: frisch[i].frischbestand.kategorie.name
-                },
-                name: frisch[i].frischbestand.name,
-                preis: frisch[i].frischbestand.preis,
-                verfuegbarkeit: frisch[i].frischbestand.verfuegbarkeit
               },
             };
             bestellungsEinkaufe.push(frischEinkauf);

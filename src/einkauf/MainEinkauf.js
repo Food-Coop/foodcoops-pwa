@@ -88,6 +88,8 @@ export function MainEinkauf() {
 
   const submitEinkauf = async () => {
     let person_id = keycloak.tokenParsed.preferred_username;
+    let email = keycloak.tokenParsed.email;
+    console.log("Email: " + email);
 
     // Lagerware
     let bestandBuyObjects = [];
@@ -199,15 +201,18 @@ export function MainEinkauf() {
         bestandEinkauf: bestandBuyObjects,
         // Bestellung = Brot & Frischware
         bestellungsEinkauf: bestellungsEinkaufe,
-        personId: person_id 
+        personId: person_id,
       };
       const response = await api.createEinkauf(einkaufData);
       console.log(einkaufData);
-      console.log(response);
 
       if (response.ok) {
+        const responseData = await response.json();
+        console.log("Einkauf ID: ", responseData.id); 
         clearInputFields();
         toast.success("Ihr Einkauf wurde übermittelt. Vielen Dank!");
+        //TODO: Fehler ausgeben, falls es nicht klappt
+        await api.createEinkaufPdf(responseData.id, email);
       } else {
         toast.error("Fehler beim Übermitteln des Einkaufs. Bitte versuchen Sie es erneut.");
       }

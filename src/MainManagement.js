@@ -25,6 +25,7 @@ export function MainManagement(){
                 onChange={handleChange}
                 indicatorColor="primary"
                 textColor="primary"
+                variant="scrollable"
                 >
                 <Tab label="Gebinde-Management" component={Link} to="/gebindemanagement" />
                 <Tab label="Lager-Management" component={Link} to="/lager" />

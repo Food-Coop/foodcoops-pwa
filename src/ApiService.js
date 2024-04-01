@@ -46,6 +46,7 @@ export const ApiProvider = (props) => {
         createDeadline: props.createDeadline || createDeadline,
 
         readEinkauf: props.readEinkauf || readEinkauf,
+        createEinkaufPdf: props.createEinkaufPdf || createEinkaufPdf,
         createEinkauf: props.createEinkauf || createEinkauf,
         deleteEinkauf: props.deleteEinkauf || deleteEinkauf,
         createBestandBuyObject: props.createBestandBuyObject || createBestandBuyObject,
@@ -106,6 +107,7 @@ export const useApi = () => {
         createDeadline,
 
         readEinkauf,
+        createEinkaufPdf,
         createEinkauf,
         deleteEinkauf,
         createBestandBuyObject,
@@ -130,6 +132,7 @@ const DEADLINE = "deadline/";
 const LAST = "last/";
 const CURRENT = "getEndDateOfDeadline/";
 const EINKAUF = "einkauf/";
+const PDF = "pdf/";
 const BESTANDBUYOBJECT = "einkaufe/create/bestandBuyObject";
 const BESTELLUEBERSICHT = "bestellUebersicht/";
 
@@ -377,6 +380,15 @@ const createDeadline = (data) =>
 const readEinkauf = (id = undefined) => id ?
     fetch(BACKEND_URL + EINKAUF + id) :
     fetch(BACKEND_URL + EINKAUF);
+
+const createEinkaufPdf = (id, email) =>
+    fetch(BACKEND_URL + EINKAUF + PDF + id, {
+        method: 'POST', 
+        headers: {
+        'Content-Type': 'application/json',
+        },
+        body: email,
+});
 
 const createEinkauf = (data) =>
     fetch(BACKEND_URL + EINKAUF, {

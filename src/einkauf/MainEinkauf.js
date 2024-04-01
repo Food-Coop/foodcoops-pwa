@@ -75,9 +75,10 @@ export function MainEinkauf() {
     // Lagerware
     let bestandBuyObjects = [];
     for (let i = 0; i < produkt.length; i++) {
-        let einkaufsmenge = produkt[i].genommeneMenge;
-        if (einkaufsmenge === undefined || einkaufsmenge === '0') {
-        } else {
+      let bestellId = "Inputfield" + i;
+      let einkaufsmenge = document.getElementById(bestellId).value;
+      if (einkaufsmenge === undefined || einkaufsmenge === '0' || einkaufsmenge === '') {
+      } else {
           //to get id of bestandEinkauf
             const newBestandBuyObject = {
                 amount: einkaufsmenge,

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTable, useSortBy } from 'react-table';
 import { useApi } from '../ApiService';
 import BTable from "react-bootstrap/Table";
 
@@ -10,23 +11,48 @@ export function LagerwareEinkauf(props) {
     const [totalProduktPrice, setTotalProduktPrice] = useState(0);
     const NotAvailableColor = '#D3D3D3';
 
-    const handleChange = (e, orderPrice, orderIndex) => {
-        const quantity = e.target.value;
-        const updatedProdukt = produkt.map((order, index) => {
-            if (index === orderIndex) {
-                return { ...order, genommeneMenge: quantity };
-            }
-            return order;
-        });
+    const columns = React.useMemo(
+        () => [
+          {
+            Header: 'Produkt',
+            accessor: 'name',
+          },
+          {
+            Header: 'Preis in €',
+            accessor: 'preis',
+            Cell: ({ value }) => <NumberFormatComponent value={value}/>,
+          },
+          {
+            Header: 'genommene Menge',
+            accessor: 'menge',
+            Cell: ({ value }) => <NumberFormatComponent value={value}/>,
+          },
+          {
+            Header: 'Einheit',
+            accessor: 'lagerbestand.einheit.name',
+          },
+        ],
+        []
+    )
 
-        setProdukt(updatedProdukt);
+    const {
+        getTableProps,
+        getTableBodyProps,
+        headerGroups,
+        rows,
+        prepareRow,
+        
+      } = useTable({ columns, data: produkt, initialState: { sortBy: [{ id: 'name' }] }, }, useSortBy)
 
-        const newTotalProduktPrice = updatedProdukt.reduce((total, order) => {
-            const orderQuantity = order.genommeneMenge || 0;
-            return total + orderQuantity * order.preis;
-        }, 0);
-
-        setTotalProduktPrice(newTotalProduktPrice);
+    const handleChange = () => {
+        let preis = 0;
+        for(let i = 0; i < produkt.length; i++){
+            let bestellId = "Inputfield" + i;
+            let bestellmenge = document.getElementById(bestellId).value;
+            let preisId = "PreisId" + i;
+            preis += document.getElementById(preisId).innerText.replace(',', '.') * bestellmenge;
+        }
+        setTotalProduktPrice(preis);
     };
 
     useEffect(() => {
@@ -56,36 +82,48 @@ export function LagerwareEinkauf(props) {
     }, [produkt]);
 
     return (
-        <div>
-            <BTable striped bordered hover size="sm">
-                <thead>
-                    <tr>
-                        <th>Produkt</th>
-                        <th>Preis in €</th>
-                        <th>genommene Menge</th>
-                        <th>Einheit</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {produkt.map((order, index) => (
-                        <tr key={order.id}>
-                            <td style={{ color: order.lagerbestand.istLagerbestand === 0 ? NotAvailableColor : 'inherit' }}>{order.name}</td>
-                            <td style={{ color: order.lagerbestand.istLagerbestand === 0 ? NotAvailableColor : 'inherit' }}><NumberFormatComponent value={order.preis} /></td>
-                            <td>
-                                <input 
-                                    type="number" 
-                                    min="0" 
-                                    step={1} 
-                                    onChange={e => handleChange(e, order.preis, index)}
-                                    disabled={order.lagerbestand.istLagerbestand === 0}
-                                    style={{ color: order.lagerbestand.istLagerbestand === 0 ? NotAvailableColor : 'inherit' }}
-                                />
-                            </td>
-                            <td style={{ color: order.lagerbestand.istLagerbestand === 0 ? NotAvailableColor : 'inherit' }}>{order.lagerbestand.einheit.name}</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </BTable>
-        </div>
+        <BTable striped bordered hover size="sm" {...getTableProps()}>
+          <thead>
+            {headerGroups.map(headerGroup => (
+              <tr {...headerGroup.getHeaderGroupProps()}>
+                {headerGroup.headers.map(column => (
+                  <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                    {column.render('Header')}
+                    <span>
+                        {column.isSorted ? (column.isSortedDesc ? ' ↓' : ' ↑') : ''}
+                    </span>
+                  </th>
+                ))}
+              </tr>
+            ))}
+          </thead>
+          <tbody {...getTableBodyProps()}>
+            {rows.map((row) => {
+              prepareRow(row)
+              return (
+                <tr {...row.getRowProps()}>
+                  {row.cells.map(cell => {
+                    if (cell.column.Header == "Preis in €"){
+                        let id = "PreisId" + row.index;
+                        return(
+                            <td style={{color: row.original.lagerbestand.istLagerbestand === 0 ? NotAvailableColor : ''}} id={id} >{cell.render('Cell')}</td>
+                        );
+                    }
+                    else
+                    if(cell.column.Header == "genommene Menge"){
+                        let id = "Inputfield" + row.index;
+                        return(
+                            <td><input id={id} type="number" min="0" onChange={() => handleChange()} disabled={row.original.lagerbestand.istLagerbestand === 0}></input></td>
+                        );
+                }
+                else {
+                    return <td style={{color: row.original.lagerbestand.istLagerbestand === 0 ? NotAvailableColor : ''}} {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                }
+                  })}
+                </tr>
+              )
+            })}
+          </tbody>
+          </BTable>
     );
 }

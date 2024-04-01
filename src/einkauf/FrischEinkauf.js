@@ -10,6 +10,7 @@ export function FrischEinkauf(props) {
     const api = useApi();
     const { keycloak } = useKeycloak();
     const [totalFrischPrice, setTotalFrischPrice] = useState(0);
+    const NotAvailableColor = '#D3D3D3';
 
     const columns = React.useMemo(
         () => [
@@ -131,18 +132,18 @@ export function FrischEinkauf(props) {
                     if (cell.column.Header == "Preis in €"){
                         let id = "PreisIdFrisch" + row.index;
                         return(
-                            <td id={id} >{cell.render('Cell')}</td>
+                            <td style={{color: row.original.frischbestand.verfuegbarkeit === false ? NotAvailableColor : ''}} id={id} >{cell.render('Cell')}</td>
                         );
                     }
                     else
                     if(cell.column.Header == "genommene Menge"){
                         let id = "InputfieldFrisch" + row.index;
                         return(
-                            <td><input id={id} type="number" min="0" step={getStepValue(row.original.frischbestand.einheit.name)} onChange={() => handleChange()} ></input></td>
+                            <td><input id={id} type="number" min="0" step={getStepValue(row.original.frischbestand.einheit.name)} onChange={() => handleChange()} disabled={row.original.frischbestand.verfuegbarkeit === false} ></input></td>
                         );
                 }
                 else {
-                    return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                    return <td style={{color: row.original.frischbestand.verfuegbarkeit === false ? NotAvailableColor : ''}} {...cell.getCellProps()}>{cell.render('Cell')}</td>
                 }
                   })}
                 </tr>

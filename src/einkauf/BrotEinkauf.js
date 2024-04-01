@@ -10,6 +10,7 @@ export function BrotEinkauf(props) {
     const api = useApi();
     const { keycloak } = useKeycloak();
     const [totalBrotPrice, setTotalBrotPrice] = useState(0);
+    const NotAvailableColor = '#D3D3D3';
 
     const columns = React.useMemo(
         () => [
@@ -109,18 +110,18 @@ export function BrotEinkauf(props) {
                     if (cell.column.Header == "Preis in €"){
                         let id = "PreisIdBrot" + row.index;
                         return(
-                            <td id={id} >{cell.render('Cell')}</td>
+                            <td style={{color: row.original.brotbestand.verfuegbarkeit === false ? NotAvailableColor : ''}} id={id} >{cell.render('Cell')}</td>
                         );
                     }
                     else
                     if(cell.column.Header == "genommene Menge"){
                         let id = "InputfieldBrot" + row.index;
                         return(
-                            <td><input id={id} type="number" min="0" onChange={() => handleChange()} ></input></td>
+                            <td><input id={id} type="number" min="0" onChange={() => handleChange()} disabled={row.original.brotbestand.verfuegbarkeit === false}></input></td>
                         );
                 }
                 else {
-                    return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                    return <td style={{color: row.original.brotbestand.verfuegbarkeit === false ? NotAvailableColor : ''}} {...cell.getCellProps()}>{cell.render('Cell')}</td>
                 }
                   })}
                 </tr>

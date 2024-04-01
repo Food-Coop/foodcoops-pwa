@@ -3,62 +3,93 @@
     padding: 20px;
   }
 
-  .hr-divider {
+.hr-divider {
     border-top: 3px solid lightgrey;
     margin: 10px;
-  }
-  
+}
+
+@media (max-width: 1650px) {
+    .price-section {
+      width: 25%;
+    }
+}
+
+@media (max-width: 1300px) {
   .price-section {
-    overflow-x: auto;
+    width: 30%;
+  }
+}
+
+@media (max-width: 1100px) {
+  .price-section {
+    width: 35%;
+  }
+}
+
+@media (max-width: 930px) {
+  .price-section {
+    width: 40%;
+  }
+}
+
+@media (min-width: 1650px) {
+  .price-section {
     width: 20%;
-    margin: auto;
-    margin-top: 20px;
-    text-align: center;
   }
-  
-  .price-details {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 10px;
-  }
-  
-  .price-details h4 {
-    text-align: left;
-    margin: 0;
-  }
-  
-  .total-price-section {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  .total-price-section h4 {
-    text-align: left;
-    margin: 0;
-  }
-  
-  .total-price {
-    text-align: right;
-  }
+}
 
-  .price {
-    display: inline-block;
-    text-align: right;
-    width: 80px; 
-  }
+.price-section {
+  overflow-x: auto;
+  margin: auto;
+  margin-top: 20px;
+  text-align: center;
+}
+
+.price-details {
+  display: flex;
+  flex-wrap: wrap; 
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.price-details h4 {
+  text-align: left;
+  margin: 0;
+}
+
+.total-price-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.total-price-section h4 {
+  text-align: left;
+  margin: 0;
+}
+
+.total-price {
+  text-align: right;
+}
+
+.price {
+  display: inline-block;
+  text-align: right;
+  width: 80px; 
+}
+
+.currency {
+  display: inline-block;
+  text-align: left;
+  margin-left: 5px;
+  width: 20px; 
+}
   
-  .currency {
-    display: inline-block;
-    text-align: left;
-    width: 20px; 
-  }
-  
-  .confirm-button {
+.confirm-button {
     margin: 20px 0.25rem;
-  }
+}
 
-  .alert-overlay {
+.alert-overlay {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -67,11 +98,11 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
-    z-index: 1000; /* Ensure the overlay is above other elements */
-  }
+    background-color: rgba(0, 0, 0, 0.5); 
+    z-index: 1000; 
+}
 
-  #sum-divider {
+#sum-divider {
     margin: 0px;
-  }
+}
   

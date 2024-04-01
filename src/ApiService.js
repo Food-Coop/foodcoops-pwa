@@ -49,6 +49,8 @@ export const ApiProvider = (props) => {
         createEinkauf: props.createEinkauf || createEinkauf,
         deleteEinkauf: props.deleteEinkauf || deleteEinkauf,
         createBestandBuyObject: props.createBestandBuyObject || createBestandBuyObject,
+
+        readBestellUebersicht: props.readBestellUebersicht || readBestellUebersicht,
     };
 
     return (
@@ -106,7 +108,9 @@ export const useApi = () => {
         readEinkauf,
         createEinkauf,
         deleteEinkauf,
-        createBestandBuyObject
+        createBestandBuyObject,
+
+        readBestellUebersicht,
     };
 };
 
@@ -127,6 +131,7 @@ const LAST = "last/";
 const CURRENT = "getEndDateOfDeadline/";
 const EINKAUF = "einkauf/";
 const BESTANDBUYOBJECT = "einkaufe/create/bestandBuyObject";
+const BESTELLUEBERSICHT = "bestellUebersicht/";
 
 
 // Produkt
@@ -398,3 +403,8 @@ const createBestandBuyObject = (data) =>
         },
         body: JSON.stringify({...data, id: "undefined"}),
     });
+
+
+// Bestellübersicht
+const readBestellUebersicht = () =>
+    fetch(BACKEND_URL + BESTELLUEBERSICHT + LAST);

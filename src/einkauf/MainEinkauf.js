@@ -5,11 +5,12 @@ import 'react-toastify/dist/ReactToastify.css';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
-import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import Typography from '@mui/material/Typography';
 import { BrotEinkauf } from './BrotEinkauf';
 import { FrischEinkauf } from './FrischEinkauf';
 import { LagerwareEinkauf } from './LagerwareEinkauf';
+import { ZuVielZuWenigEinkauf } from './ZuVielZuWenigEinkauf';
 import { EinkaufsDialog} from './EinkaufsDialog';
 import { useApi } from '../ApiService';
 import NumberFormatComponent from '../logic/NumberFormatComponent';
@@ -19,13 +20,20 @@ export function MainEinkauf() {
   const [totalFrischPrice, setTotalFrischPrice] = useState(0);
   const [totalBrotPrice, setTotalBrotPrice] = useState(0);
   const [totalProduktPrice, setTotalProduktPrice] = useState(0);
+  const [totalDiscrepancyPrice, setTotalDiscrepancyPrice] = useState(0);
   const [frisch, setFrisch] = useState([]);
   const [brot, setBrot] = useState([]);
   const [produkt, setProdukt] = useState([]);
+  const [discrepancy, setDiscrepancy] = useState([]);
   const [deliveryCost, setDeliveryCost] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
   const { keycloak } = useKeycloak();
   const api = useApi();
+
+  const zuVielzuWenigTitle = (
+      <Typography variant="h6" gutterBottom>Zu Viel / Zu Wenig-Einkauf 
+      </Typography>
+  );
 
   const handleFrischPriceChange = (price) => {
     setTotalFrischPrice(price);
@@ -40,6 +48,10 @@ export function MainEinkauf() {
     setTotalProduktPrice(price);
   };
 
+  const handleDiscrepancyPriceChange = (price) => {
+    setTotalDiscrepancyPrice(price);
+  };
+
   const handleFrisch = (frisch) => {
     setFrisch(frisch);
   };
@@ -52,10 +64,14 @@ export function MainEinkauf() {
     setProdukt(produkt);
   };
 
+  const handleDiscrepancy = (discrepancy) => {
+    setDiscrepancy(discrepancy);
+  };
+
   useEffect(() => {
-    const total = totalFrischPrice + totalBrotPrice + totalProduktPrice + deliveryCost;
+    const total = totalFrischPrice + totalBrotPrice + totalProduktPrice + deliveryCost + totalDiscrepancyPrice;
     setTotalPrice(total);
-  }, [totalFrischPrice, totalBrotPrice, totalProduktPrice, deliveryCost]);
+  }, [totalFrischPrice, totalBrotPrice, totalProduktPrice, deliveryCost, totalDiscrepancyPrice]);
 
   const clearInputFields = () => {
     const inputFields = document.querySelectorAll('input[type="number"]');
@@ -65,6 +81,7 @@ export function MainEinkauf() {
     setTotalFrischPrice(0);
     setTotalBrotPrice(0);
     setTotalProduktPrice(0);
+    setTotalDiscrepancyPrice(0);
     setDeliveryCost(0);
     setTotalPrice(0);
   };
@@ -212,6 +229,15 @@ export function MainEinkauf() {
         </AccordionDetails>
       </Accordion>
       <Accordion defaultExpanded>
+        <AccordionSummary aria-controls="panel1-content" id="panel1-header" expandIcon={<ExpandMoreIcon />}>
+          {zuVielzuWenigTitle}
+        </AccordionSummary>
+        <AccordionDetails>
+          <ZuVielZuWenigEinkauf onPriceChange={handleDiscrepancyPriceChange} handleDiscrepancy={handleDiscrepancy}/>
+          <h5>Zu Viel / Zu Wenig-Preis: <NumberFormatComponent value={totalDiscrepancyPrice.toFixed(2)} /> €</h5>
+        </AccordionDetails>
+      </Accordion>
+      <Accordion defaultExpanded>
         <AccordionSummary aria-controls="panel1-content" id="panel1-header"  expandIcon={<ExpandMoreIcon />}>
           <Typography variant="h6" gutterBottom>Brot-Einkauf</Typography>
         </AccordionSummary>
@@ -234,12 +260,14 @@ export function MainEinkauf() {
         <div className="price-details">
           <div>
             <h4>Frischware:</h4>
+            <h4>Zu Viel / Zu Wenig:</h4>
             <h4>Brot:</h4>
             <h4>Lagerware:</h4>
             <h4>5 % Lieferkosten:</h4>
           </div>
           <div className="total-price">
             <h4><span className="price"><NumberFormatComponent value={totalFrischPrice.toFixed(2)} /></span> <span className="currency">€</span></h4>
+            <h4><span className="price"><NumberFormatComponent value={totalDiscrepancyPrice.toFixed(2)} /></span> <span className="currency">€</span></h4>
             <h4><span className="price"><NumberFormatComponent value={totalBrotPrice.toFixed(2)} /></span> <span className="currency">€</span></h4>
             <h4><span className="price"><NumberFormatComponent value={totalProduktPrice.toFixed(2)} /></span> <span className="currency">€</span></h4>
             <h4><span className="price"><NumberFormatComponent value={deliveryCost.toFixed(2)} /></span> <span className="currency">€</span></h4>

@@ -25,7 +25,33 @@ export function EditKategorieModal(props) {
     };
 
     const merged = [...props.kategorien];
-    const title = "Kategorien bearbeiten";
+    const title = (
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <span>Kategorien bearbeiten </span>
+          <ClickAwayListener onClickAway={handleTooltipClose}>
+                <div >
+                    <CustomTooltip onClose={handleTooltipClose}
+                        open={open}
+                        disableFocusListener
+                        disableHoverListener
+                        disableTouchListener
+                        title={
+                        <React.Fragment>
+                            <Typography color="inherit"><b>Hinweis Kategorien</b></Typography>
+                            Wenn eine Kategorie als "mischbar" markiert ist, können Produkte innerhalb dieser Kategorie zu einem Gebinde kombiniert werden, falls kein komplettes Gebinde zustande kommt.
+                            <Typography color="inherit"><b>Beispiel</b></Typography>
+                            Es werden 4 Feldsalate und 8 Eichblattsalate bestellt, wobei die Gebindegröße für beide Produkte 12 beträgt. Wenn die Kategorie als mischbar markiert ist, werden 12 Eichblattsalate bestellt.
+                        </React.Fragment>
+                        }
+                        placement="right" arrow>
+                        <IconButton onClick={handleTooltipOpen}>
+                            <HelpOutlineIcon />
+                        </IconButton>
+                    </CustomTooltip>
+                </div>
+            </ClickAwayListener>
+        </div>
+      );
     const style = {
         fontSize: "large",
         float: "right",
@@ -57,28 +83,7 @@ export function EditKategorieModal(props) {
 
     const body = 
         <div>
-            <ClickAwayListener onClickAway={handleTooltipClose}>
-                <div style={{ position: 'absolute', top: '20px', right: '300px' }}>
-                    <CustomTooltip onClose={handleTooltipClose}
-                        open={open}
-                        disableFocusListener
-                        disableHoverListener
-                        disableTouchListener
-                        title={
-                        <React.Fragment>
-                            <Typography color="inherit"><b>Hinweis Kategorien</b></Typography>
-                            Wenn eine Kategorie als "mischbar" markiert ist, können Produkte innerhalb dieser Kategorie zu einem Gebinde kombiniert werden, falls kein komplettes Gebinde zustande kommt.
-                            <Typography color="inherit"><b>Beispiel</b></Typography>
-                            Es werden 4 Feldsalate und 8 Eichblattsalate bestellt, wobei die Gebindegröße für beide Produkte 12 beträgt. Wenn die Kategorie als mischbar markiert ist, werden 12 Eichblattsalate bestellt.
-                        </React.Fragment>
-                        }
-                        placement="right" arrow>
-                        <IconButton onClick={handleTooltipOpen}>
-                            <HelpOutlineIcon />
-                        </IconButton>
-                    </CustomTooltip>
-                </div>
-            </ClickAwayListener>
+            
             <ListGroup as="ul">
                 <ListGroup.Item key="input" as="li">
                     <div style={{ display: 'flex', alignItems: 'center' }}>

@@ -75,8 +75,8 @@ export function MainEinkauf() {
     // Lagerware
     let bestandBuyObjects = [];
     for (let i = 0; i < produkt.length; i++) {
-      let bestellId = "Inputfield" + i;
-      let einkaufsmenge = document.getElementById(bestellId).value;
+      let lagerId = "InputfieldLager" + i;
+      let einkaufsmenge = document.getElementById(lagerId).value;
       if (einkaufsmenge === undefined || einkaufsmenge === '0' || einkaufsmenge === '') {
       } else {
           //to get id of bestandEinkauf
@@ -115,9 +115,10 @@ export function MainEinkauf() {
     // Brot
     let bestellungsEinkaufe = [];
     for (let i = 0; i < brot.length; i++) {
-        let einkaufsmenge = brot[i].genommeneMenge;
-        if (einkaufsmenge === undefined || einkaufsmenge === '0') {
-        } else {
+      let brotBestellId = "InputfieldBrot" + i;
+      let einkaufsmenge = document.getElementById(brotBestellId).value;
+      if (einkaufsmenge === undefined || einkaufsmenge === '0' || einkaufsmenge === '') {
+      } else {
           const brotEinkauf = {
               amount: einkaufsmenge,
               bestellung: {
@@ -141,9 +142,10 @@ export function MainEinkauf() {
 
     // Frisch
     for (let i = 0; i < frisch.length; i++) {
-        let einkaufsmenge = frisch[i].genommeneMenge;
-        if (einkaufsmenge === undefined || einkaufsmenge === '0') {
-        } else {
+      let frischBestellId = "InputfieldFrisch" + i;
+      let einkaufsmenge = document.getElementById(frischBestellId).value;
+      if (einkaufsmenge === undefined || einkaufsmenge === '0' || einkaufsmenge === '') {
+      } else {
           const frischEinkauf = {
               amount: einkaufsmenge,
               bestellung: {

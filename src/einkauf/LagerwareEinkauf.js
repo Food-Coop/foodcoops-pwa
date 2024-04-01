@@ -47,9 +47,9 @@ export function LagerwareEinkauf(props) {
     const handleChange = () => {
         let preis = 0;
         for(let i = 0; i < produkt.length; i++){
-            let bestellId = "Inputfield" + i;
+            let bestellId = "InputfieldLager" + i;
             let bestellmenge = document.getElementById(bestellId).value;
-            let preisId = "PreisId" + i;
+            let preisId = "PreisIdLager" + i;
             preis += document.getElementById(preisId).innerText.replace(',', '.') * bestellmenge;
         }
         setTotalProduktPrice(preis);
@@ -104,14 +104,14 @@ export function LagerwareEinkauf(props) {
                 <tr {...row.getRowProps()}>
                   {row.cells.map(cell => {
                     if (cell.column.Header == "Preis in €"){
-                        let id = "PreisId" + row.index;
+                        let id = "PreisIdLager" + row.index;
                         return(
                             <td style={{color: row.original.lagerbestand.istLagerbestand === 0 ? NotAvailableColor : ''}} id={id} >{cell.render('Cell')}</td>
                         );
                     }
                     else
                     if(cell.column.Header == "genommene Menge"){
-                        let id = "Inputfield" + row.index;
+                        let id = "InputfieldLager" + row.index;
                         return(
                             <td><input id={id} type="number" min="0" onChange={() => handleChange()} disabled={row.original.lagerbestand.istLagerbestand === 0}></input></td>
                         );

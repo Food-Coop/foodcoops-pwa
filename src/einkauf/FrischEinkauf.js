@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useApi } from '../ApiService';
 import { useKeycloak } from "@react-keycloak/web";
 import BTable from "react-bootstrap/Table";
+import { useTable, useSortBy } from 'react-table';
 import NumberFormatComponent from '../logic/NumberFormatComponent';
 
 export function FrischEinkauf(props) {
@@ -10,23 +11,62 @@ export function FrischEinkauf(props) {
     const { keycloak } = useKeycloak();
     const [totalFrischPrice, setTotalFrischPrice] = useState(0);
 
-    const handleChange = (e, orderPrice, orderIndex) => {
-        const quantity = e.target.value;
-        const updatedFrischBestellung = frischBestellung.map((order, index) => {
-            if (index === orderIndex) {
-                return { ...order, genommeneMenge: quantity };
-            }
-            return order;
-        });
+    const columns = React.useMemo(
+        () => [
+          {
+            Header: 'Produkt',
+            accessor: 'frischbestand.name',
+          },
+          {
+            Header: 'Preis in €',
+            accessor: 'frischbestand.preis',
+            Cell: ({ value }) => <NumberFormatComponent value={value}/>,
+          },
+          {
+            Header: 'Gebindegröße',
+            accessor: 'frischbestand.gebindegroesse',
+            Cell: ({ value }) => <NumberFormatComponent value={value} includeFractionDigits={false}/>,
+          },
+          {
+            Header: 'Bestellmenge',
+            accessor: 'bestellmenge',
+            Cell: ({ value }) => <NumberFormatComponent value={value} includeFractionDigits={false}/>,
+          },
+          {
+            Header: 'genommene Menge',
+            accessor: 'menge',
+            Cell: ({ value }) => <NumberFormatComponent value={value}/>,
+          },
+          {
+            Header: 'Einheit',
+            accessor: 'frischbestand.einheit.name',
+          },
+          {
+            Header: 'Kategorie',
+            accessor: 'frischbestand.kategorie.name',
+          },
+        ],
+        []
+    )
 
-        setFrischBestellung(updatedFrischBestellung);
+    const {
+        getTableProps,
+        getTableBodyProps,
+        headerGroups,
+        rows,
+        prepareRow,
+        
+      } = useTable({ columns, data: frischBestellung, initialState: { sortBy: [{ id: 'frischbestand.kategorie.name' }] }, }, useSortBy)
 
-        const newTotalFrischPrice = updatedFrischBestellung.reduce((total, order) => {
-            const orderQuantity = order.genommeneMenge || 0;
-            return total + orderQuantity * order.frischbestand.preis;
-        }, 0);
-
-        setTotalFrischPrice(newTotalFrischPrice);
+    const handleChange = () => {
+        let preis = 0;
+        for(let i = 0; i < frischBestellung.length; i++){
+            let bestellId = "InputfieldFrisch" + i;
+            let bestellmenge = document.getElementById(bestellId).value;
+            let preisId = "PreisIdFrisch" + i;
+            preis += document.getElementById(preisId).innerText.replace(',', '.') * bestellmenge;
+        }
+        setTotalFrischPrice(preis);
     };
       
 
@@ -67,38 +107,48 @@ export function FrischEinkauf(props) {
     }, [frischBestellung]);
 
     return (
-        <div>
-            <BTable striped bordered hover size="sm">
-                <thead>
-                    <tr>
-                        <th>Produkt</th>
-                        <th>Preis in €</th>
-                        <th>Gebindegröße</th>
-                        <th>Bestellmenge</th>
-                        <th>genommene Menge</th>
-                        <th>Einheit</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {frischBestellung.map((order, index) => (
-                        <tr key={order.id}>
-                            <td>{order.frischbestand.name}</td>
-                            <td><NumberFormatComponent value={order.frischbestand.preis} /></td>
-                            <td>{order.frischbestand.gebindegroesse}</td>
-                            <td>{order.bestellmenge}</td>
-                            <td>
-                                <input 
-                                    type="number" 
-                                    min="0" 
-                                    step={getStepValue(order.frischbestand.einheit.name)} 
-                                    onChange={e => handleChange(e, order.frischbestand.preis, index)} 
-                                />
-                            </td>
-                            <td>{order.frischbestand.einheit.name}</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </BTable>
-        </div>
+        <BTable striped bordered hover size="sm" {...getTableProps()}>
+          <thead>
+            {headerGroups.map(headerGroup => (
+              <tr {...headerGroup.getHeaderGroupProps()}>
+                {headerGroup.headers.map(column => (
+                  <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                    {column.render('Header')}
+                    <span>
+                        {column.isSorted ? (column.isSortedDesc ? ' ↓' : ' ↑') : ''}
+                    </span>
+                  </th>
+                ))}
+              </tr>
+            ))}
+          </thead>
+          <tbody {...getTableBodyProps()}>
+            {rows.map((row) => {
+              prepareRow(row)
+              return (
+                <tr {...row.getRowProps()}>
+                  {row.cells.map(cell => {
+                    if (cell.column.Header == "Preis in €"){
+                        let id = "PreisIdFrisch" + row.index;
+                        return(
+                            <td id={id} >{cell.render('Cell')}</td>
+                        );
+                    }
+                    else
+                    if(cell.column.Header == "genommene Menge"){
+                        let id = "InputfieldFrisch" + row.index;
+                        return(
+                            <td><input id={id} type="number" min="0" step={getStepValue(row.original.frischbestand.einheit.name)} onChange={() => handleChange()} ></input></td>
+                        );
+                }
+                else {
+                    return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                }
+                  })}
+                </tr>
+              )
+            })}
+          </tbody>
+          </BTable>
     );
 }

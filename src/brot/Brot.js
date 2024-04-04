@@ -3,6 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Button from 'react-bootstrap/Button';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Alert from '@mui/material/Alert';
 import { useApi } from '../ApiService';
 import {useKeycloak} from "@react-keycloak/web";
 import { BrotTable } from './BrotTable';
@@ -32,6 +33,11 @@ export function Brot(){
                 
             },
             {
+                Header: 'aktuelle eigene Bestellung',
+                accessor: 'bestellmengeNeu',
+                Cell: ({ value }) => <NumberFormatComponent value={isNaN(value) ? 0 : value} includeFractionDigits={false}/>,
+            },
+            {
                 Header: 'Bestellmenge',
                 accessor: 'bestellmenge',
                 Cell: ({ value }) => <NumberFormatComponent value={value} />,
@@ -40,10 +46,8 @@ export function Brot(){
     );
 
     const [brotBestellung, setBrotBestellung] = React.useState([]);
-    const [brotBestellungBetweenDatesProPerson, setBrotBestellungBetweenDatesProPerson] = React.useState([]);
     const [isLoading, setIsLoading] = React.useState(true);
     const [isAlsoLoading, setIsAlsoLoading] = React.useState(true);
-    const [isAlsoLoading2, setIsAlsoLoading2] = React.useState(true);
     const [data, setData] = React.useState([]);
     const [reducerValue, forceUpdate] = React.useReducer(x => x+1, 0);
     const [brotBestellungSumme, setBrotBestellungSumme] = React.useState([]);
@@ -74,16 +78,6 @@ export function Brot(){
                 }
             );
             let person_id = keycloak.tokenParsed.preferred_username;
-            api.readBrotBestellungBetweenDatesProPerson(person_id)
-                .then((r) => r.json())
-                .then((r) => {
-                    setBrotBestellungBetweenDatesProPerson(old => {
-                        let n = r?._embedded?.brotBestellungRepresentationList;
-                        return n === undefined ? old : n;
-                    });
-                    setIsAlsoLoading2(false);
-                }
-            );
             api.readBrotBestellungProPerson(person_id)
                 .then(r => r.json())
                 .then(r => {
@@ -98,7 +92,7 @@ export function Brot(){
 
     const checkAlreadyOrdered = (brotBestandId) =>{
         for(let j = 0; j < brotBestellung.length; j++){
-            if(brotBestandId == brotBestellung[j].brotbestand.id){
+            if(brotBestandId === brotBestellung[j].brotbestand.id){
                 return brotBestellung[j].id;
             }
         }
@@ -112,115 +106,69 @@ export function Brot(){
         }
     }
 
-    const submitBestellung = () => {
+    const submitBestellung = async () => {
         const result = {};
         let preis = 0;
+        let successMessage = "Ihre Bestellung wurde übermittelt. Vielen Dank!";
+        let errorOccurred = false;
+        const apiCalls = [];
+    
         for (let i = 0; i < data.length; i++) {
-            let produktId = "ProduktId" + i;
-            let brotBestandId = document.getElementById(produktId).innerText;
+            let brotBestandId = data[i].id;
             let personId = keycloak.tokenParsed.preferred_username;
             let datum = new Date();
             let bestellId = "Inputfield" + i;
             let bestellmenge = document.getElementById(bestellId).value;
-            //Check if Bestellmenge is valid
-            if (bestellmenge == "") {
-            } 
-            else {
+    
+            // Check if Bestellmenge is valid
+            if (bestellmenge !== "") {
                 const {_links, ...supported} = data[i];
                 deepAssign("person_id", result, personId);
-                deepAssign("brotbestand", result, supported);
+                deepAssign("brotbestand", result, { ...supported, type: "brot" });
                 deepAssign("bestellmenge", result, bestellmenge);
                 deepAssign("datum", result, datum);
                 deepAssign("type", result, "brot");
-
-                //Überprüfe ob bereits eine Bestellung in dieser Woche getätigt wurde
+    
+                // Überprüfe ob bereits eine Bestellung in dieser Woche getätigt wurde
                 let check = checkAlreadyOrdered(brotBestandId);
-                if(check != null){
-                    //Bestellung updaten
-                    if (bestellmenge <= 10) {
-                        (async function () {
-                            const response = await api.updateBrotBestellung(result, check);
-                            if(response.ok) {
-                                clearInputFields();
-                                forceUpdate();
-                            }
-                            else{
-                                toast.error("Das Updaten einer Brotbestellung war aufgrund eines Fehlers nicht erfolgreich. Bitte versuchen Sie es erneut.");
-                            }
-                        })();
-                        
-                    }
-                    else {
-                        let artikel = "ProduktName" + i;
-                        let artikelname = document.getElementById(artikel).innerText;
-                        if(window.confirm("Möchten Sie wirklich " + bestellmenge + " " + artikelname + " bestellen?")){
-                            (async function () {
-                                const response = await api.updateBrotBestellung(result, check);
-                                if(response.ok) {
-                                    clearInputFields();
-                                    forceUpdate();
-                                }
-                                else{
-                                    toast.error("Das Updaten einer Brotbestellung war aufgrund eines Fehlers nicht erfolgreich. Bitte versuchen Sie es erneut.");
-                                }
-                            })();
-                        }
-                        else{
-                            toast.info("Okay, " + artikelname + " wird nicht bestellt. Alles anderen schon.");
-                        }
-                    }
+                if (check != null) {
+                    // Bestellung updaten
+                    apiCalls.push(api.updateBrotBestellung(result, check));
+                } else {
+                    // Neue Bestellung abgeben
+                    apiCalls.push(api.createBrotBestellung(result));
                 }
-
-                else{
-                    //Neue Bestellung abgeben
-                    if (bestellmenge <= 10) {
-                        (async function () {
-                            const response = await api.createBrotBestellung(result);
-                            if(response.ok) {
-                                clearInputFields();
-                                forceUpdate();
-                            }
-                            else{
-                                toast.error("Das Abgeben einer Brotbestellung war aufgrund eines Fehlers nicht erfolgreich. Bitte versuchen Sie es erneut.");
-                            }
-                        })();
-                    }
-                    else {
-                        let artikel = "ProduktName" + i;
-                        let artikelname = document.getElementById(artikel).innerText;
-                        if(window.confirm("Möchten Sie wirklich " + bestellmenge + " " + artikelname + " bestellen?")){
-                            (async function () {
-                                const response = await api.createBrotBestellung(result);
-                                if(response.ok) {
-                                    clearInputFields();
-                                    forceUpdate();
-                                }
-                                else{
-                                    toast.error("Das Abgeben einer Brotbestellung war aufgrund eines Fehlers nicht erfolgreich. Bitte versuchen Sie es erneut.");
-                                }
-                            })();
-                        }
-                        else{
-                            toast.info("Okay, " + artikelname + " wird nicht bestellt. Alles anderen schon.");
-                        }
-                    }
-                }
-                
             }
         }
-        clearInputFields();
-        forceUpdate();
-        document.getElementById("preis").innerHTML = "Preis: " + preis + " €";
-        toast.success("Ihre Bestellung wurde übermittelt. Vielen Dank!");
+    
+        try {
+            const responses = await Promise.all(apiCalls);
+            for (const response of responses) {
+              if (!response.ok) {
+                errorOccurred = true;
+                break;
+              }
+            }
+
+            if (!errorOccurred) {
+              toast.success(successMessage);
+            } else {
+              toast.error("Es gab einen Fehler beim Übermitteln Ihrer Bestellung. Bitte versuchen Sie es erneut.");
+            }
+          } catch (error) {
+            errorOccurred = true;
+            toast.error("Es gab einen Fehler beim Übermitteln Ihrer Bestellung. Bitte versuchen Sie es erneut.");
+          }
+          
+          forceUpdate();
+          clearInputFields();
+          document.getElementById("preis").innerHTML = "Preis: " + preis + " €";
+          window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     const content = () => {
-        if (isLoading || isAlsoLoading || isAlsoLoading2) {
-            return (
-                <div className="spinner-border" role="status" style={{margin: "5rem"}}>
-                    <span className="sr-only">Loading...</span>
-                </div>
-            );
+        if (isLoading || isAlsoLoading) {
+            return null;
         }
 
         for(let i = 0; i < data.length; i++){
@@ -231,11 +179,6 @@ export function Brot(){
                 else if(data[i]){
                     deepAssign("bestellsumme", data[i], 0);
                 } 
-            }
-            for(let j = 0; j < brotBestellungBetweenDatesProPerson.length; j++){
-                if(data[i] && data[i].id === brotBestellungBetweenDatesProPerson[j].brotbestand.id){
-                    deepAssign("bestellmengeAlt", data[i], brotBestellungBetweenDatesProPerson[j].bestellmenge);
-                }    
             }
             for(let j = 0; j < brotBestellung.length; j++){
                 if(data[i] && checkAlreadyOrdered(data[i].id)){
@@ -249,17 +192,18 @@ export function Brot(){
                 columns={columns}
                 data={data}/>
         );
-
     }
-
 
     return(
         <div>
             <div style={{overflowX: "auto", width: "100%"}}>
-            <DeadlineLogic />
+                <DeadlineLogic />
+                <Alert severity="info" style={{margin: "0.5em 1em 0.5em 1em"}}> 
+                    Die aktuelle Bestellmenge eines Produktes kann geändert werden, indem die neue Bestellmenge in das Eingabefeld eingetragen wird und anschließend auf "Bestellung bestätigen" geklickt wird.
+                </Alert>
                 {content()}
                 <h4 id = "preis"></h4>
-                <Button style={{margin:"0.25rem"}} variant="success" onClick={() => submitBestellung()}>Submit Bestellung</Button>
+                <Button style={{margin: "20px 0.25rem 30px 0.25rem"}} variant="success" onClick={() => submitBestellung()}>Bestellung bestätigen</Button>
                 <ToastContainer />
             </div>
         </div>

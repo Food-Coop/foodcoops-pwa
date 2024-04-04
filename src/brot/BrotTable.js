@@ -10,7 +10,6 @@ export function BrotTable({ columns, data, skipPageReset }) {
         headerGroups,
         rows,
         prepareRow,
-        state: { expanded },
     } = useTable(
         {
             columns,
@@ -23,7 +22,6 @@ export function BrotTable({ columns, data, skipPageReset }) {
         useSortBy, 
         useExpanded
     );
-    
 
     const calculatePrice = () => {
         let preis = 0;
@@ -46,7 +44,7 @@ export function BrotTable({ columns, data, skipPageReset }) {
                    // Hide the 'BrotID' header
                    return null;
                  } else {
-                   return <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                   return <th key={headerGroup.id + "Header"} {...column.getHeaderProps(column.getSortByToggleProps())}>
                         {column.render("Header")}
                         <span>
                             {column.isSorted ? (column.isSortedDesc ? ' ↓' : ' ↑') : ''}
@@ -68,94 +66,26 @@ export function BrotTable({ columns, data, skipPageReset }) {
                             (row.original.hasOwnProperty("produkte") ? row.cells.slice(0, 2) : row.cells)
                                 .map((cell, i) => {
                                     const props = cell.getCellProps();
-                                    if(cell.column.Header == "BrotID"){
-                                        return(
-                                            <span id={`ProduktId${row.index}`} style={{ display: "none" }}>
-                                                {cell.render("Cell")}
-                                          </span>
-                                        );
-                                    }
-                                    else if(cell.column.Header == "Brotname"){
-                                        let id = "ProduktName" + row.index;
-                                        if(data[row.index].verfuegbarkeit == true){
-                                            return(
-                                                <td{...props} id = {id}>
-                                                    {cell.render('Cell')}
-                                                </td>
-                                            );
-                                        }
-                                        else{
-                                            return(
-                                                <td{...props} id = {id} style={{color:NotAvailableColor}}>
-                                                    {cell.render('Cell')}
-                                                </td>
-                                            );
-                                        }
-                                    }
-                                    else if(cell.column.Header == "Bestellmenge"){
+                                    if(cell.column.Header === "BrotID"){
+                                        return null;
+                                    } else if(cell.column.Header === "Bestellmenge"){
                                         let id = "Inputfield" + row.index;
-                                        let vorwoche = data[row.index].bestellmengeAlt;
-                                        let woche = data[row.index].bestellmengeNeu;
-                                        if(woche == undefined){
-                                            if(vorwoche === undefined){
-                                                vorwoche = 0;
-                                            }
-                                            if(data[row.index].verfuegbarkeit == true){
-                                                return(
-                                                    <td><input type="number" min="0" placeholder={"Bestellung Vorwoche: " + vorwoche} id={id} onChange={() => calculatePrice()}></input></td>
-                                                )
-                                            }
-                                            else{
-                                                return(
-                                                    <td><input type="number" min="0" placeholder={"Bestellung Vorwoche: " + vorwoche} id={id} onChange={() => calculatePrice()} disabled></input></td>
-                                                )
-                                            }
-                                        }
-                                        else{
-                                            if(data[row.index].verfuegbarkeit == true){
-                                                return(
-                                                    <td><input type="number" min="0" placeholder={"Bestellung Aktuell: " + woche} id={id} onChange={() => calculatePrice()}></input></td>
-                                                )
-                                            }
-                                            else{
-                                                return(
-                                                    <td><input type="number" min="0" placeholder={"Bestellung Aktuell: " + woche} id={id} onChange={() => calculatePrice()} disabled></input></td>
-                                                )
-                                            }
-                                        }
-                                    }
-                                    else if(cell.column.Header == "Preis in €"){
+                                        return(
+                                            <td style={{width: "17em"}} key={row.index}><input type="number" min="0" id={id} onChange={() => calculatePrice()} disabled={data[row.index].verfuegbarkeit === false}></input></td>
+                                        );
+                                    } else if(cell.column.Header === "Preis in €"){
                                         let id = "PreisId" + row.index;
-                                        if(data[row.index].verfuegbarkeit == true){
-                                            return(
-                                                <td{...props} id = {id}>
-                                                    {cell.render('Cell')}
-                                                </td>
-                                            )
-                                        }
-                                        else{
-                                            return(
-                                                <td{...props} id = {id} style={{color:NotAvailableColor}}>
-                                                    {cell.render('Cell')}
-                                                </td>
-                                            )
-                                        }
-                                    }
-                                    else{
-                                        if(data[row.index].verfuegbarkeit == true){
-                                            return (
-                                                <td {...props}>
-                                                    {cell.render('Cell')}
-                                                </td>
-                                            )
-                                        }
-                                        else{
-                                            return (
-                                                <td {...props} style={{color:NotAvailableColor}}>
-                                                    {cell.render('Cell')}
-                                                </td>
-                                            )
-                                        }
+                                        return(
+                                            <td style={{color: data[row.index].verfuegbarkeit === false ? NotAvailableColor : ''}} key={row.index}{...props} id = {id}>{cell.render('Cell')}</td>
+                                        );
+                                    } else if(cell.column.Header === "aktuelle eigene Bestellung" || cell.column.Header === "Gewicht in g"){
+                                        return(
+                                            <td style={{color: data[row.index].verfuegbarkeit === false ? NotAvailableColor : '', width: "15em"}} key={row.index}{...props} >{cell.render('Cell')}</td>
+                                        );
+                                    } else{
+                                        return (
+                                            <td style={{color: data[row.index].verfuegbarkeit === false ? NotAvailableColor : ''}} key={row.index} {...props}>{cell.render('Cell')}</td>
+                                        );
                                     }
                                 })}
                     </tr>

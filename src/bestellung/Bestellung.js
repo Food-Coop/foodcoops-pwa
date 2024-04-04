@@ -45,7 +45,7 @@ export function Bestellung(){
                 Cell: ({ value }) => <NumberFormatComponent value={isNaN(value) ? 0 : value} includeFractionDigits={false}/>,
             },
             {
-                Header: 'aktuelle eigene Bestellung',
+                Header: 'aktuelle Bestellmenge',
                 accessor: 'bestellmengeNeu',
                 Cell: ({ value }) => <NumberFormatComponent value={isNaN(value) ? 0 : value} includeFractionDigits={false}/>,
             },

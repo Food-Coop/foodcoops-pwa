@@ -78,7 +78,7 @@ export function BrotTable({ columns, data, skipPageReset }) {
                                         return(
                                             <td style={{color: data[row.index].verfuegbarkeit === false ? NotAvailableColor : ''}} key={row.index}{...props} id = {id}>{cell.render('Cell')}</td>
                                         );
-                                    } else if(cell.column.Header === "aktuelle eigene Bestellung" || cell.column.Header === "Gewicht in g"){
+                                    } else if(cell.column.Header === "aktuelle Bestellmenge" || cell.column.Header === "Gewicht in g"){
                                         return(
                                             <td style={{color: data[row.index].verfuegbarkeit === false ? NotAvailableColor : '', width: "15em"}} key={row.index}{...props} >{cell.render('Cell')}</td>
                                         );

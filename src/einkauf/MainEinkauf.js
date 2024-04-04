@@ -31,7 +31,7 @@ export function MainEinkauf() {
   const api = useApi();
 
   const zuVielzuWenigTitle = (
-      <Typography variant="h6" gutterBottom>Zu Viel / Zu Wenig-Einkauf 
+      <Typography variant="h6" gutterBottom>Zu Viel-Einkauf 
       </Typography>
   );
 
@@ -210,14 +210,14 @@ export function MainEinkauf() {
         const responseData = await response.json();
         console.log("Einkauf ID: ", responseData.id); 
         clearInputFields();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
         toast.success("Ihr Einkauf wurde übermittelt. Vielen Dank!");
         //TODO: Fehler ausgeben, falls es nicht klappt
-        await api.createEinkaufPdf(responseData.id, email);
+        //await api.createEinkaufPdf(responseData.id, email);
       } else {
         toast.error("Fehler beim Übermitteln des Einkaufs. Bitte versuchen Sie es erneut.");
       }
     } catch (error) {
-      console.error("Fehler beim Übermitteln des Einkaufs:", error);
       toast.error("Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.");
     }
   };
@@ -230,7 +230,11 @@ export function MainEinkauf() {
         </AccordionSummary>
         <AccordionDetails>
           <FrischEinkauf onPriceChange={handleFrischPriceChange} handleFrisch={handleFrisch}/>
-          <h5>Frisch-Preis: <NumberFormatComponent value={totalFrischPrice.toFixed(2)} /> €</h5>
+          {frisch.length === 0 ? (
+            "Sie haben letzte Woche keine Frischbestellung getätigt."
+          ) : (
+            <h5>Frisch-Preis: <NumberFormatComponent value={totalFrischPrice.toFixed(2)} /> €</h5>
+          )}
         </AccordionDetails>
       </Accordion>
       <Accordion defaultExpanded>
@@ -239,7 +243,11 @@ export function MainEinkauf() {
         </AccordionSummary>
         <AccordionDetails>
           <ZuVielZuWenigEinkauf onPriceChange={handleDiscrepancyPriceChange} handleDiscrepancy={handleDiscrepancy}/>
-          <h5>Zu Viel / Zu Wenig-Preis: <NumberFormatComponent value={totalDiscrepancyPrice.toFixed(2)} /> €</h5>
+          {discrepancy.length === 0 ? (
+            "Es gibt diese Woche keine Produkte auf der Zu Viel-Liste."
+          ) : (
+            <h5>Zu Viel-Preis: <NumberFormatComponent value={totalDiscrepancyPrice.toFixed(2)} /> €</h5>
+          )}
         </AccordionDetails>
       </Accordion>
       <Accordion defaultExpanded>
@@ -248,7 +256,11 @@ export function MainEinkauf() {
         </AccordionSummary>
         <AccordionDetails>
           <BrotEinkauf onPriceChange={handleBrotPriceChange} handleBrot={handleBrot}/>
-          <h5>Brot-Preis: <NumberFormatComponent value={totalBrotPrice.toFixed(2)} /> €</h5>
+          {brot.length === 0 ? (
+            "Sie haben letzte Woche keine Brotbestellung getätigt."
+          ) : (
+            <h5>Brot-Preis: <NumberFormatComponent value={totalBrotPrice.toFixed(2)} /> €</h5>
+          )}
         </AccordionDetails>
       </Accordion>
       <Accordion defaultExpanded>
@@ -257,7 +269,11 @@ export function MainEinkauf() {
         </AccordionSummary>
         <AccordionDetails>
         <LagerwareEinkauf onPriceChange={handleProduktPriceChange} handleProdukt={handleProdukt} />
-          <h5>Lagerwaren-Preis: <NumberFormatComponent value={totalProduktPrice.toFixed(2)} /> €</h5>
+          {produkt.length === 0 ? (
+            "Es gibt momentan keine Produkte im Lager."
+          ) : (
+            <h5>Lagerwaren-Preis: <NumberFormatComponent value={totalProduktPrice.toFixed(2)} /> €</h5>
+          )}
         </AccordionDetails>
       </Accordion>
 
@@ -265,7 +281,7 @@ export function MainEinkauf() {
         <div className="price-details">
           <div>
             <h4>Frischware:</h4>
-            <h4>Zu Viel / Zu Wenig:</h4>
+            <h4>Zu Viel:</h4>
             <h4>Brot:</h4>
             <h4>Lagerware:</h4>
             <h4>5 % Lieferkosten:</h4>

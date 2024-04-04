@@ -60,7 +60,11 @@ export function LagerwareEinkauf(props) {
             try {
                 const response = await api.readProdukt();
                 const data = await response.json();
-                setProdukt(data._embedded.produktRepresentationList);
+                if (!data._embedded || data._embedded.produktRepresentationList.length === 0) {
+                  return;
+                } else {
+                  setProdukt(data._embedded.produktRepresentationList);
+                }
             } catch (error) {
                 console.error('Error fetching produkt:', error);
             }
@@ -81,13 +85,17 @@ export function LagerwareEinkauf(props) {
         }        
     }, [produkt]);
 
-    return (
+    const content = () => {
+      if (produkt.length === 0) {
+        return null;
+      } else {
+        return (
         <BTable striped bordered hover size="sm" {...getTableProps()}>
           <thead>
             {headerGroups.map(headerGroup => (
               <tr {...headerGroup.getHeaderGroupProps()}>
                 {headerGroup.headers.map(column => (
-                  <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                  <th key={headerGroup.id + "HeaderLager"} {...column.getHeaderProps(column.getSortByToggleProps())}>
                     {column.render('Header')}
                     <span>
                         {column.isSorted ? (column.isSortedDesc ? ' ↓' : ' ↑') : ''}
@@ -103,22 +111,19 @@ export function LagerwareEinkauf(props) {
               return (
                 <tr {...row.getRowProps()}>
                   {row.cells.map(cell => {
-                    if (cell.column.Header == "Preis in €"){
-                        let id = "PreisIdLager" + row.index;
-                        return(
-                            <td style={{color: row.original.lagerbestand.istLagerbestand === 0 ? NotAvailableColor : ''}} id={id} >{cell.render('Cell')}</td>
-                        );
+                    if (cell.column.Header === "Preis in €"){
+                      let id = "PreisIdLager" + row.index;
+                      return(
+                        <td key={`${row.original.id}-${cell.column.Header}Lager`} style={{color: row.original.lagerbestand.istLagerbestand === 0 ? NotAvailableColor : ''}} id={id} >{cell.render('Cell')}</td>
+                      );
+                    }else if(cell.column.Header === "genommene Menge"){
+                      let id = "InputfieldLager" + row.index;
+                      return(
+                        <td key={`${row.original.id}-${cell.column.Header}Lager`}><input id={id} type="number" min="0" onChange={() => handleChange()} disabled={row.original.lagerbestand.istLagerbestand === 0}></input></td>
+                      );
+                    } else {
+                      return <td key={`${row.original.id}-${cell.column.Header}Lager`} style={{color: row.original.lagerbestand.istLagerbestand === 0 ? NotAvailableColor : ''}} {...cell.getCellProps()}>{cell.render('Cell')}</td>
                     }
-                    else
-                    if(cell.column.Header == "genommene Menge"){
-                        let id = "InputfieldLager" + row.index;
-                        return(
-                            <td><input id={id} type="number" min="0" onChange={() => handleChange()} disabled={row.original.lagerbestand.istLagerbestand === 0}></input></td>
-                        );
-                }
-                else {
-                    return <td style={{color: row.original.lagerbestand.istLagerbestand === 0 ? NotAvailableColor : ''}} {...cell.getCellProps()}>{cell.render('Cell')}</td>
-                }
                   })}
                 </tr>
               )
@@ -126,4 +131,9 @@ export function LagerwareEinkauf(props) {
           </tbody>
           </BTable>
     );
+  }}
+
+  return (
+    content()
+  );
 }

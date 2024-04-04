@@ -27,7 +27,7 @@ export function ZuVielZuWenigEinkauf(props) {
             Cell: ({ value }) => <NumberFormatComponent value={value} includeFractionDigits={false}/>,
           },
           {
-            Header: 'zu Viel / zu Wenig',
+            Header: 'zu Viel',
             accessor: 'zuVielzuWenig',
             Cell: ({ value }) => <NumberFormatComponent value={value} includeFractionDigits={false}/>,
           },
@@ -61,19 +61,26 @@ export function ZuVielZuWenigEinkauf(props) {
     };
 
     useEffect(() => {
-        const fetchBestellUebersicht = async () => {
-            try {
-                const response = await api.readBestellUebersicht();
-                const data = await response.json();
-                setDiscrepancy(data.discrepancy);
-            } catch (error) {
-                console.error('Error fetching discrepancy:', error);
-            }
-        };
-        
-
-        fetchBestellUebersicht();
-    }, []);
+      const fetchBestellUebersicht = async () => {
+          try {
+              const response = await api.readBestellUebersicht();
+              const data = await response.text();
+              if (data) {
+                const json = JSON.parse(data);
+                if (json.discrepancy === 0) {
+                  return;
+                } else {
+                  setDiscrepancy(json.discrepancy);
+                }
+              } else {
+                return;
+              }
+          } catch (error) {
+              console.error('Error fetching discrepancy:', error);
+          }
+      };
+      fetchBestellUebersicht();
+  }, []);
 
     useEffect(() => {
         if (props.onPriceChange) {
@@ -87,13 +94,17 @@ export function ZuVielZuWenigEinkauf(props) {
         }        
     }, [discrepancy]);
 
-    return (
+    const content = () => {
+      if (discrepancy.length === 0) {
+        return null;
+      } else {
+        return (
         <BTable striped bordered hover size="sm" {...getTableProps()}>
           <thead>
             {headerGroups.map(headerGroup => (
               <tr {...headerGroup.getHeaderGroupProps()}>
                 {headerGroup.headers.map(column => (
-                  <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                  <th key={headerGroup.id + "HeaderZuViel"} {...column.getHeaderProps(column.getSortByToggleProps())}>
                     {column.render('Header')}
                     <span>
                         {column.isSorted ? (column.isSortedDesc ? ' ↓' : ' ↑') : ''}
@@ -110,22 +121,21 @@ export function ZuVielZuWenigEinkauf(props) {
                 <tr {...row.getRowProps()}>
                   {row.cells.map(cell => {
                     if (cell.column.Header === "Preis in €"){
-                        let id = "PreisIdDiscrepancy" + row.index;
-                        return(
-                            <td style={{color: row.original.bestand.verfuegbarkeit === false ? NotAvailableColor : ''}} id={id} >{cell.render('Cell')}</td>
-                        );
-                    }
-                    else if(cell.column.Header === "genommene Menge"){
-                        let id = "InputfieldDiscrepancy" + row.index;
-                        return(
-                            <td><input id={id} type="number" min="0" onChange={() => handleChange()} disabled={row.original.bestand.verfuegbarkeit === false}></input></td>
-                        );
-                    } else if(cell.column.Header === "zu Viel / zu Wenig"){
-                        return(
-                            <td style={{color: row.original.bestand.verfuegbarkeit === false ? NotAvailableColor : '', border: row.original.zuVielzuWenig < 0 ? '2px solid red' : row.original.zuVielzuWenig > 0 ? '2px solid green' : ''}} {...cell.getCellProps()}>{cell.render('Cell')}</td>
-                        );
+                      let id = "PreisIdDiscrepancy" + row.index;
+                      return(
+                       <td key={`${row.original.id}-${cell.column.Header}ZuViel`} style={{color: row.original.bestand.verfuegbarkeit === false ? NotAvailableColor : ''}} id={id} >{cell.render('Cell')}</td>
+                      );
+                    } else if(cell.column.Header === "genommene Menge"){
+                      let id = "InputfieldDiscrepancy" + row.index;
+                      return(
+                        <td key={`${row.original.id}-${cell.column.Header}ZuViel`}><input id={id} type="number" min="0" onChange={() => handleChange()} disabled={row.original.bestand.verfuegbarkeit === false}></input></td>
+                      );
+                    } else if(cell.column.Header === "zu Viel"){
+                      return(
+                        <td key={`${row.original.id}-${cell.column.Header}ZuViel`} style={{color: row.original.bestand.verfuegbarkeit === false ? NotAvailableColor : '', border: row.original.zuVielzuWenig < 0 ? '2px solid red' : row.original.zuVielzuWenig > 0 ? '2px solid green' : ''}} {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                      );
                     } else {
-                        return <td style={{color: row.original.bestand.verfuegbarkeit === false ? NotAvailableColor : ''}} {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                      return <td key={`${row.original.id}-${cell.column.Header}ZuViel`} style={{color: row.original.bestand.verfuegbarkeit === false ? NotAvailableColor : ''}} {...cell.getCellProps()}>{cell.render('Cell')}</td>
                     }
                   })}
                 </tr>
@@ -134,4 +144,8 @@ export function ZuVielZuWenigEinkauf(props) {
           </tbody>
           </BTable>
     );
+    }
+  }
+
+  return content();
 }

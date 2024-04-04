@@ -80,18 +80,22 @@ export function FrischEinkauf(props) {
         }
     };
 
+    //TODO. switch to betweenDates
     useEffect(() => {
         const fetchFrischBestellung = async () => {
             try {
-                let person_id = keycloak.tokenParsed.preferred_username;
-                const response = await api.readFrischBestellungProPerson(person_id);
-                const data = await response.json();
+              let person_id = keycloak.tokenParsed.preferred_username;
+              const response = await api.readFrischBestellungProPerson(person_id);
+              const data = await response.json();
+              if (!data._embedded || data._embedded.frischBestellungRepresentationList.length === 0) {
+                return;
+              } else {
                 setFrischBestellung(data._embedded.frischBestellungRepresentationList);
+              }
             } catch (error) {
                 console.error('Error fetching frischBestellung:', error);
             }
         };
-
         fetchFrischBestellung();
     }, []);
 
@@ -107,49 +111,54 @@ export function FrischEinkauf(props) {
         }        
     }, [frischBestellung]);
 
-    return (
-        <BTable striped bordered hover size="sm" {...getTableProps()}>
-          <thead>
-            {headerGroups.map(headerGroup => (
-              <tr {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map(column => (
-                  <th {...column.getHeaderProps(column.getSortByToggleProps())}>
-                    {column.render('Header')}
-                    <span>
-                        {column.isSorted ? (column.isSortedDesc ? ' ↓' : ' ↑') : ''}
-                    </span>
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </thead>
-          <tbody {...getTableBodyProps()}>
-            {rows.map((row) => {
-              prepareRow(row)
-              return (
-                <tr {...row.getRowProps()}>
-                  {row.cells.map(cell => {
-                    if (cell.column.Header == "Preis in €"){
-                        let id = "PreisIdFrisch" + row.index;
-                        return(
-                            <td style={{color: row.original.frischbestand.verfuegbarkeit === false ? NotAvailableColor : ''}} id={id} >{cell.render('Cell')}</td>
-                        );
-                    }
-                    else
-                    if(cell.column.Header == "genommene Menge"){
-                        let id = "InputfieldFrisch" + row.index;
-                        return(
-                            <td><input id={id} type="number" min="0" step={getStepValue(row.original.frischbestand.einheit.name)} onChange={() => handleChange()} disabled={row.original.frischbestand.verfuegbarkeit === false} ></input></td>
-                        );
-                }
-                else {
-                    return <td style={{color: row.original.frischbestand.verfuegbarkeit === false ? NotAvailableColor : ''}} {...cell.getCellProps()}>{cell.render('Cell')}</td>
-                }
-                  })}
+    const content = () => {
+      if (frischBestellung.length === 0) {
+        return null;
+      } else {
+        return (
+          <BTable striped bordered hover size="sm" {...getTableProps()}>
+            <thead>
+              {headerGroups.map(headerGroup => (
+                <tr {...headerGroup.getHeaderGroupProps()}>
+                  {headerGroup.headers.map(column => (
+                    <th key={headerGroup.id + "HeaderFrisch"} {...column.getHeaderProps(column.getSortByToggleProps())}>
+                      {column.render('Header')}
+                      <span>
+                          {column.isSorted ? (column.isSortedDesc ? ' ↓' : ' ↑') : ''}
+                      </span>
+                    </th>
+                  ))}
                 </tr>
-              )
-            })}
-          </tbody>
-          </BTable>
-    );
+              ))}
+            </thead>
+            <tbody {...getTableBodyProps()}>
+              {rows.map((row) => {
+                prepareRow(row)
+                return (
+                  <tr {...row.getRowProps()}>
+                    {row.cells.map(cell => {
+                        if (cell.column.Header === "Preis in €"){
+                          let id = "PreisIdFrisch" + row.index;
+                          return(
+                            <td key={`${row.original.id}-${cell.column.Header}Frisch`} style={{color: row.original.frischbestand.verfuegbarkeit === false ? NotAvailableColor : ''}} id={id} >{cell.render('Cell')}</td>
+                          );
+                        } else if(cell.column.Header === "genommene Menge"){
+                          let id = "InputfieldFrisch" + row.index;
+                          return(
+                            <td key={`${row.original.id}-${cell.column.Header}Frisch`}><input id={id} type="number" min="0" step={getStepValue(row.original.frischbestand.einheit.name)} onChange={() => handleChange()} disabled={row.original.frischbestand.verfuegbarkeit === false} ></input></td>
+                          );
+                        } else {
+                          return <td key={`${row.original.id}-${cell.column.Header}Frisch`} style={{color: row.original.frischbestand.verfuegbarkeit === false ? NotAvailableColor : ''}} {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                        }
+                    })}
+                  </tr>
+                )
+              })}
+            </tbody>
+            </BTable>
+        );
+      }
+    }
+
+  return content();
 }

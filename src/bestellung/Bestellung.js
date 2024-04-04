@@ -40,7 +40,7 @@ export function Bestellung(){
                 Cell: ({ value }) => <NumberFormatComponent value={value} includeFractionDigits={false}/>,
             },
             {
-                Header: 'Bestellung aller Mitglieder',
+                Header: 'Bestellmenge (alle Mitglieder)',
                 accessor: 'bestellsumme',
                 Cell: ({ value }) => <NumberFormatComponent value={isNaN(value) ? 0 : value} includeFractionDigits={false}/>,
             },

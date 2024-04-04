@@ -19,9 +19,9 @@ export function BrotBestandManagement() {
                 accessor: 'name',
             },
             {
-                Header: 'Gewicht in kg',
+                Header: 'Gewicht in g',
                 accessor: 'gewicht',
-                Cell: ({ value }) => <NumberFormatComponent value={value} />,
+                Cell: ({ value }) => <NumberFormatComponent value={value} includeFractionDigits={false}/>,
             },
             {
                 Header: 'Verfügbarkeit',

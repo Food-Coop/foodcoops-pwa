@@ -36,19 +36,26 @@ export function ZuVielZuWenigEinkauf(props) {
             accessor: 'menge',
             Cell: ({ value }) => <NumberFormatComponent value={value}/>,
           },
+          {
+            Header: 'Einheit',
+            accessor: 'bestand.einheit.name',
+          },
+          {
+            Header: 'Kategorie',
+            accessor: 'bestand.kategorie.name',
+          },
         ],
         []
     )
-
     const {
-        getTableProps,
-        getTableBodyProps,
-        headerGroups,
-        rows,
-        prepareRow,
-        
-      } = useTable({ columns, data: discrepancy, initialState: { sortBy: [{ id: 'bestand.name' }] }, }, useSortBy)
-
+      getTableProps,
+      getTableBodyProps,
+      headerGroups,
+      rows,
+      prepareRow,
+      
+    } = useTable({ columns, data: discrepancy, initialState: { sortBy: [{ id: 'bestand.kategorie.name' }] }, }, useSortBy)
+    
     const handleChange = () => {
         let preis = 0;
         for(let i = 0; i < discrepancy.length; i++){

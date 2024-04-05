@@ -263,7 +263,7 @@ export function MainEinkauf() {
           )}
         </AccordionDetails>
       </Accordion>
-      <Accordion defaultExpanded>
+      <Accordion>
         <AccordionSummary aria-controls="panel1-content" id="panel1-header"  expandIcon={<ExpandMoreIcon />}>
           <Typography variant="h6" gutterBottom>Lagerware-Einkauf</Typography>
         </AccordionSummary>

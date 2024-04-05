@@ -61,7 +61,7 @@ export function BrotEinkauf(props) {
         const fetchBrotBestellung = async () => {
           try {
             let person_id = keycloak.tokenParsed.preferred_username;
-            const response = await api.readBrotBestellungProPerson(person_id);
+            const response = await api.readBrotBestellungBetweenDatesProPerson(person_id);
             const data = await response.json();
             if (!data._embedded || data._embedded.brotBestellungRepresentationList.length === 0) {
               return;

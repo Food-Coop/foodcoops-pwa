@@ -85,7 +85,7 @@ export function FrischEinkauf(props) {
         const fetchFrischBestellung = async () => {
             try {
               let person_id = keycloak.tokenParsed.preferred_username;
-              const response = await api.readFrischBestellungProPerson(person_id);
+              const response = await api.readFrischBestellungBetweenDatesProPerson(person_id);
               const data = await response.json();
               if (!data._embedded || data._embedded.frischBestellungRepresentationList.length === 0) {
                 return;

@@ -149,8 +149,14 @@ export function Bestellung(){
                 // Überprüfe ob bereits eine Bestellung in dieser Woche getätigt wurde
                 let check = checkAlreadyOrdered(frischBestandId);
                 if (check != null) {
-                    // Bestellung updaten
-                    apiCalls.push(api.updateFrischBestellung(result, check));
+                    if (bestellmenge === "0") {
+                        // Bestellung löschen
+                        apiCalls.push(api.deleteFrischBestellung(check));
+                    } else {
+                        // Bestellung updaten
+                        console.log(result);
+                        apiCalls.push(api.updateFrischBestellung(result, check));
+                    }
                 } else {
                     // Neue Bestellung abgeben
                     apiCalls.push(api.createFrischBestellung(result));
@@ -161,7 +167,7 @@ export function Bestellung(){
         try {
             const responses = await Promise.all(apiCalls);
             for (const response of responses) {
-              if (!response.ok) {
+              if (!(response.ok || response.status === 201 || response.status === 204)) {
                 errorOccurred = true;
                 break;
             }

@@ -132,8 +132,13 @@ export function Brot(){
                 // Überprüfe ob bereits eine Bestellung in dieser Woche getätigt wurde
                 let check = checkAlreadyOrdered(brotBestandId);
                 if (check != null) {
-                    // Bestellung updaten
-                    apiCalls.push(api.updateBrotBestellung(result, check));
+                    if (bestellmenge === "0") {
+                        // Bestellung löschen
+                        apiCalls.push(api.deleteBrotBestellung(check));
+                    } else {
+                        // Bestellung updaten
+                        apiCalls.push(api.updateBrotBestellung(result, check));
+                    }
                 } else {
                     // Neue Bestellung abgeben
                     apiCalls.push(api.createBrotBestellung(result));
@@ -144,7 +149,8 @@ export function Brot(){
         try {
             const responses = await Promise.all(apiCalls);
             for (const response of responses) {
-              if (!response.ok) {
+              if (!(response.ok || response.status === 201 || response.status === 204)) {
+                console.log(response.status);
                 errorOccurred = true;
                 break;
               }
@@ -158,6 +164,7 @@ export function Brot(){
           } catch (error) {
             errorOccurred = true;
             toast.error("Es gab einen Fehler beim Übermitteln Ihrer Bestellung. Bitte versuchen Sie es erneut.");
+            console.log(error);
           }
           
           forceUpdate();

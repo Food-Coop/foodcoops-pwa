@@ -22,6 +22,7 @@ export const ApiProvider = (props) => {
         readFrischBestellungBetweenDatesProPerson: props.readFrischBestellungBetweenDatesProPerson || readFrischBestellungBetweenDatesProPerson,
         createFrischBestellung: props.createFrischBestellung || createFrischBestellung,
         updateFrischBestellung: props.updateFrischBestellung || updateFrischBestellung,
+        deleteFrischBestellung: props.deleteFrischBestellung || deleteFrischBestellung,
         
         readFrischBestand: props.readFrischBestand || readFrischBestand,
         createFrischBestand: props.createFrischBestand || createFrischBestand,
@@ -39,6 +40,7 @@ export const ApiProvider = (props) => {
         readBrotBestellungBetweenDatesProPerson: props.readBrotBestellungBetweenDatesProPerson || readBrotBestellungBetweenDatesProPerson,
         createBrotBestellung: props.createBrotBestellung || createBrotBestellung,
         updateBrotBestellung: props.updateBrotBestellung || updateBrotBestellung,
+        deleteBrotBestellung: props.deleteBrotBestellung || deleteBrotBestellung,
 
         readDeadline: props.readDeadline || readDeadline,
         readLastDeadline: props.readLastDeadline || readLastDeadline,
@@ -83,6 +85,7 @@ export const useApi = () => {
         readFrischBestellungBetweenDatesProPerson,
         createFrischBestellung,
         updateFrischBestellung,
+        deleteFrischBestellung,
 
         readFrischBestand,
         createFrischBestand,
@@ -100,6 +103,7 @@ export const useApi = () => {
         readBrotBestellungBetweenDatesProPerson,
         createBrotBestellung,
         updateBrotBestellung,
+        deleteBrotBestellung,
 
         readDeadline,
         readLastDeadline,
@@ -258,6 +262,14 @@ const readFrischBestellungProProdukt = () =>
 const readFrischBestellungBetweenDatesProPerson = (person_id) => 
     fetch(BACKEND_URL + FRISCHBESTELLUNG + PERSON + person_id)
 
+const deleteFrischBestellung = (id) =>
+    fetch(BACKEND_URL + FRISCHBESTELLUNG + id, {
+        method: "DELETE",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
+
 // Frischbestand
 
 const readFrischBestand = (id = undefined) => id ?
@@ -321,6 +333,14 @@ const readBrotBestellungProProdukt = () =>
 
 const readBrotBestellungBetweenDatesProPerson = (person_id) => 
     fetch(BACKEND_URL + BROTBESTELLUNG + PERSON + person_id)
+
+const deleteBrotBestellung = (id) =>
+    fetch(BACKEND_URL + BROTBESTELLUNG + id, {
+        method: "DELETE",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
 
 // Brotbestand
 

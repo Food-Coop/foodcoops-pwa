@@ -35,15 +35,14 @@ export function MainManagement(){
                 </Tabs>
             </Paper>
             <Switch>
-
-                <Route path="/gebindemanagement">
-                    <Gebindemanagement />
-                </Route>
                 <Route path="/lager">
                     <Lager />
                 </Route>
                 <Route path="/frischbestandmanagement">
                     <FrischBestandManagement />
+                </Route>
+                <Route path="/gebindemanagement">
+                    <Gebindemanagement />
                 </Route>
                 <Route path="/brotbestandmanagement">
                     <BrotBestandManagement />
@@ -52,7 +51,7 @@ export function MainManagement(){
                     <Deadline />
                 </Route>
                 <Route>
-                    <Redirect to="/gebindemanagement" />
+                    <Redirect to="/lager" />
                 </Route>
             </Switch>
             </div>

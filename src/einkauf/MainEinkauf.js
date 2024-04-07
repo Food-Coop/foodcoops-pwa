@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useKeycloak } from "@react-keycloak/web";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Button from 'react-bootstrap/Button';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
@@ -11,7 +12,6 @@ import { BrotEinkauf } from './BrotEinkauf';
 import { FrischEinkauf } from './FrischEinkauf';
 import { LagerwareEinkauf } from './LagerwareEinkauf';
 import { ZuVielZuWenigEinkauf } from './ZuVielZuWenigEinkauf';
-import { EinkaufsDialog} from './EinkaufsDialog';
 import { useApi } from '../ApiService';
 import NumberFormatComponent from '../logic/NumberFormatComponent';
 import './MainEinkauf.css';
@@ -89,7 +89,6 @@ export function MainEinkauf() {
   const submitEinkauf = async () => {
     let person_id = keycloak.tokenParsed.preferred_username;
     let email = keycloak.tokenParsed.email;
-    console.log("Email: " + email);
 
     // Lagerware
     let bestandBuyObjects = [];
@@ -102,6 +101,7 @@ export function MainEinkauf() {
             const newBestandBuyObject = {
                 amount: einkaufsmenge,
                 bestandEntity: {
+                    type: "lager",
                     id: produkt[i].id,
                     kategorie: {
                       id: produkt[i].kategorie.id,
@@ -147,6 +147,7 @@ export function MainEinkauf() {
                 id: brot[i].id,
                 personId: brot[i].personId,
                 brotbestand: {
+                  type: "brot",
                   gewicht: brot[i].brotbestand.gewicht,
                   id: brot[i].brotbestand.id,
                   name: brot[i].brotbestand.name,
@@ -174,6 +175,7 @@ export function MainEinkauf() {
                 id: frisch[i].id,
                 personId: frisch[i].personId,
                 frischbestand: {
+                  type: "frisch",
                   einheit: {
                     id: frisch[i].frischbestand.einheit.id,
                     name: frisch[i].frischbestand.einheit.name
@@ -204,7 +206,6 @@ export function MainEinkauf() {
         personId: person_id,
       };
       const response = await api.createEinkauf(einkaufData);
-      console.log(einkaufData);
 
       if (response.ok) {
         const responseData = await response.json();
@@ -299,7 +300,9 @@ export function MainEinkauf() {
           <h4>Insgesamt:</h4>
           <h4><span className="price"><NumberFormatComponent value={totalPrice.toFixed(2)} /></span> <span className="currency">€</span></h4>
         </div>
-        <EinkaufsDialog submitEinkauf={submitEinkauf} />
+        <Button className="confirm-button" variant="success" onClick={submitEinkauf}>
+          Einkauf bestätigen	
+        </Button>
         <ToastContainer />
       </div>
     </div>

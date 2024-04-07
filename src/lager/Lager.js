@@ -84,7 +84,6 @@ export function Lager() {
                         const n = r?._embedded?.kategorieRepresentationList;
                         return n === undefined ? old : n;
                     });
-                    console.log("Kategorien: ", r);
                 });
         }, [reducerValue]
     )
@@ -95,6 +94,7 @@ export function Lager() {
         for (const [accessor, {value}] of Object.entries(patch)) {
             deepAssign(accessor, changedData, value);
         }
+        changedData.type = "lager";
         (async function () {
             const response = await api.updateProdukt(produkt.id, changedData);
             if(response.ok){
@@ -108,7 +108,6 @@ export function Lager() {
     };
 
     const newKategorie = ({icon, name, mixable}) => {
-        console.log(icon, name, mixable);
         (async function () {
             const response = await api.createKategorie(name, icon, mixable);
             if(response.ok) {
@@ -160,6 +159,7 @@ export function Lager() {
 
     const newProdukt = (data1) => {
         (async function () {
+            data1.type = "lager";
             const response = await api.createProdukt(data1);
             if(response.ok) {
                 toast.success("Das Erstellen des Produktes \"" + data1.name + "\" war erfolgreich.");

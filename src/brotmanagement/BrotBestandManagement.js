@@ -64,6 +64,7 @@ export function BrotBestandManagement() {
         for (const [accessor, {value}] of Object.entries(patch)) {
             deepAssign(accessor, changedData, value);
         }
+        changedData.type = "brot";
         (async function () {
             const response = await api.updateBrotBestand(brotBestand.id, changedData)
             if(response.ok) {
@@ -100,8 +101,8 @@ export function BrotBestandManagement() {
 
     const newBrotBestand = (data1) => {
         (async function () {
+            data1.type = "brot";
             const response = await api.createBrotBestand(data1);
-            console.log(data1);
             if(response.ok) {
                 const newBrotBestand = await response.json();
                     toast.success("Das Erstellen des Brotbestandes \"" + data1.name + "\" war erfolgreich.");

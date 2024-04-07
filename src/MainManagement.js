@@ -27,11 +27,11 @@ export function MainManagement(){
                 textColor="primary"
                 variant="scrollable"
                 >
-                <Tab label="Gebinde-Management" component={Link} to="/gebindemanagement" />
-                <Tab label="Lager-Management" component={Link} to="/lager" />
-                <Tab label="Frischbestand-Management" component={Link} to="/frischbestandmanagement" />
-                <Tab label="Brotbestand-Management" component={Link} to="/brotbestandmanagement" />
-                <Tab label="Deadline-Management" component={Link} to="/deadline" />
+                <Tab label="Lager" component={Link} to="/lager" />
+                <Tab label="Frisch" component={Link} to="/frischbestandmanagement" />
+                <Tab label="Gebinde" component={Link} to="/gebindemanagement" />
+                <Tab label="Brot" component={Link} to="/brotbestandmanagement" />
+                <Tab label="Deadline" component={Link} to="/deadline" />
                 </Tabs>
             </Paper>
             <Switch>

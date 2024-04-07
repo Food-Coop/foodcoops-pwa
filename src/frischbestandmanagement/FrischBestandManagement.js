@@ -96,6 +96,7 @@ export function FrischBestandManagement() {
         for (const [accessor, {value}] of Object.entries(patch)) {
             deepAssign(accessor, changedData, value);
         }
+        changedData.type = "frisch";
         (async function () {
             const response = await api.updateFrischBestand(frischBestand.id, changedData)
             if(response.ok) {
@@ -132,6 +133,7 @@ export function FrischBestandManagement() {
 
     const newFrischBestand = (data1) => {
         (async function () {
+            data1.type = "frisch";
             const response = await api.createFrischBestand(data1);
             if(response.ok) {
                 const newFrischBestand = await response.json();

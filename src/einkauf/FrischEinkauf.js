@@ -7,6 +7,7 @@ import NumberFormatComponent from '../logic/NumberFormatComponent';
 
 export function FrischEinkauf(props) {
     const [frischBestellung, setFrischBestellung] = useState([]);
+    const [discrepancy, setDiscrepancy] = useState([]);
     const api = useApi();
     const { keycloak } = useKeycloak();
     const [totalFrischPrice, setTotalFrischPrice] = useState(0);
@@ -97,7 +98,32 @@ export function FrischEinkauf(props) {
             }
         };
         fetchFrischBestellung();
+
+        const fetchBestellUebersicht = async () => {
+          try {
+              const response = await api.readBestellUebersicht();
+              const data = await response.text();
+              if (data) {
+                const json = JSON.parse(data);
+                if (json.discrepancy === 0) {
+                  return;
+                } else {
+                  setDiscrepancy(json.discrepancy);
+                }
+              } else {
+                return;
+              }
+          } catch (error) {
+              console.error('Error fetching discrepancy:', error);
+          }
+        };
+        fetchBestellUebersicht();
     }, []);
+
+    const discrepancyObj = discrepancy.reduce((obj, item) => {
+      obj[item.bestand.name] = item;
+      return obj;
+    }, {});
 
     useEffect(() => {
         if (props.onPriceChange) {
@@ -123,6 +149,7 @@ export function FrischEinkauf(props) {
                   {headerGroup.headers.map(column => (
                     <th key={headerGroup.id + "HeaderFrisch"} {...column.getHeaderProps(column.getSortByToggleProps())}>
                       {column.render('Header')}
+                      {column.Header === "Bestellmenge" && rows.some(row => discrepancyObj[row.original.frischbestand.name]?.zuVielzuWenig < 0) ? <span style={{color: 'red'}}> (zu Wenig)</span> : ''}
                       <span>
                           {column.isSorted ? (column.isSortedDesc ? ' ↓' : ' ↑') : ''}
                       </span>
@@ -137,6 +164,7 @@ export function FrischEinkauf(props) {
                 return (
                   <tr {...row.getRowProps()}>
                     {row.cells.map(cell => {
+                        const discrepancy = discrepancyObj[row.original.frischbestand.name];
                         if (cell.column.Header === "Preis in €"){
                           let id = "PreisIdFrisch" + row.index;
                           return(
@@ -146,6 +174,14 @@ export function FrischEinkauf(props) {
                           let id = "InputfieldFrisch" + row.index;
                           return(
                             <td key={`${row.original.id}-${cell.column.Header}Frisch`}><input id={id} type="number" min="0" step={getStepValue(row.original.frischbestand.einheit.name)} onChange={() => handleChange()} disabled={row.original.frischbestand.verfuegbarkeit === false} ></input></td>
+                          );
+                        } else if(cell.column.Header === "Bestellmenge"){
+                          return (
+                            <td key={`${row.original.id}-${cell.column.Header}Frisch`} style={{color: row.original.frischbestand.verfuegbarkeit === false ? NotAvailableColor : ''}} {...cell.getCellProps()}>
+                                {cell.render('Cell')} 
+{discrepancy && discrepancy.zuVielzuWenig < 0 ? <span style={{color: 'red'}}> ( {discrepancy.zuVielzuWenig} )</span> : ''}
+{discrepancy && discrepancy.zuVielzuWenig > 0 ? <span style={{color: 'green'}}> ( {discrepancy.zuVielzuWenig} )</span> : ''}
+                            </td>
                           );
                         } else {
                           return <td key={`${row.original.id}-${cell.column.Header}Frisch`} style={{color: row.original.frischbestand.verfuegbarkeit === false ? NotAvailableColor : ''}} {...cell.getCellProps()}>{cell.render('Cell')}</td>

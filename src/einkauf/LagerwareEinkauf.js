@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useTable, useSortBy } from 'react-table';
 import { useApi } from '../ApiService';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import BTable from "react-bootstrap/Table";
 
 import NumberFormatComponent from '../logic/NumberFormatComponent';
@@ -44,7 +46,14 @@ export function LagerwareEinkauf(props) {
         
       } = useTable({ columns, data: produkt, initialState: { sortBy: [{ id: 'name' }] }, }, useSortBy)
 
-    const handleChange = () => {
+    const handleChange = (e, max, name) => {
+      let value = e.target.value;
+
+      if (value > max) {
+        toast.info("Momentan sind leider nur " + max + " Stück " + name + " verfügbar.");
+        e.target.value = max;
+      }
+
         let preis = 0;
         for(let i = 0; i < produkt.length; i++){
             let bestellId = "InputfieldLager" + i;
@@ -119,7 +128,7 @@ export function LagerwareEinkauf(props) {
                     }else if(cell.column.Header === "genommene Menge"){
                       let id = "InputfieldLager" + row.index;
                       return(
-                        <td key={`${row.original.id}-${cell.column.Header}Lager`}><input id={id} type="number" min="0" onChange={() => handleChange()} disabled={row.original.lagerbestand.istLagerbestand === 0}></input></td>
+                        <td key={`${row.original.id}-${cell.column.Header}Lager`}><input id={id} type="number" min="0" max={row.original.lagerbestand.istLagerbestand} onChange={(e) => handleChange(e, row.original.lagerbestand.istLagerbestand, row.original.name)} disabled={row.original.lagerbestand.istLagerbestand === 0}></input></td>
                       );
                     } else {
                       return <td key={`${row.original.id}-${cell.column.Header}Lager`} style={{color: row.original.lagerbestand.istLagerbestand === 0 ? NotAvailableColor : ''}} {...cell.getCellProps()}>{cell.render('Cell')}</td>
@@ -129,6 +138,7 @@ export function LagerwareEinkauf(props) {
               )
             })}
           </tbody>
+          <ToastContainer />
           </BTable>
     );
   }}

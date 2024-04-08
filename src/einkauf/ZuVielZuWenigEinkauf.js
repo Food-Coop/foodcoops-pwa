@@ -77,7 +77,8 @@ export function ZuVielZuWenigEinkauf(props) {
                 if (json.discrepancy === 0) {
                   return;
                 } else {
-                  setDiscrepancy(json.discrepancy);
+                  const filteredDiscrepancy = json.discrepancy.filter(item => item.zuVielzuWenig > 0);
+                  setDiscrepancy(filteredDiscrepancy);
                 }
               } else {
                 return;
@@ -139,7 +140,7 @@ export function ZuVielZuWenigEinkauf(props) {
                       );
                     } else if(cell.column.Header === "zu Viel"){
                       return(
-                        <td key={`${row.original.id}-${cell.column.Header}ZuViel`} style={{color: row.original.bestand.verfuegbarkeit === false ? NotAvailableColor : '', border: row.original.zuVielzuWenig < 0 ? '2px solid red' : row.original.zuVielzuWenig > 0 ? '2px solid green' : ''}} {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                        <td key={`${row.original.id}-${cell.column.Header}ZuViel`} style={{color: row.original.bestand.verfuegbarkeit === false ? NotAvailableColor : ''}} {...cell.getCellProps()}>{cell.render('Cell')}</td>
                       );
                     } else {
                       return <td key={`${row.original.id}-${cell.column.Header}ZuViel`} style={{color: row.original.bestand.verfuegbarkeit === false ? NotAvailableColor : ''}} {...cell.getCellProps()}>{cell.render('Cell')}</td>

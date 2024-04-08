@@ -81,7 +81,6 @@ export function FrischEinkauf(props) {
         }
     };
 
-    //TODO. switch to betweenDates
     useEffect(() => {
         const fetchFrischBestellung = async () => {
             try {
@@ -148,13 +147,14 @@ export function FrischEinkauf(props) {
                 <tr {...headerGroup.getHeaderGroupProps()}>
                   {headerGroup.headers.map(column => (
                     <th key={headerGroup.id + "HeaderFrisch"} {...column.getHeaderProps(column.getSortByToggleProps())}>
-                      {column.render('Header')}
-                      {column.Header === "Bestellmenge" && rows.some(row => discrepancyObj[row.original.frischbestand.name]?.zuVielzuWenig < 0) ? <span style={{color: 'red'}}> (zu Wenig)</span> : ''}
-                      <span>
-                          {column.isSorted ? (column.isSortedDesc ? ' ↓' : ' ↑') : ''}
-                      </span>
+                        {column.render('Header')}
+                        {column.Header === "Bestellmenge" && rows.some(row => discrepancyObj[row.original.frischbestand.name]?.zuVielzuWenig < 0) ? <span style={{color: 'red', fontWeight: 300, fontSize: "15px"}}> (zu Wenig)</span> : ''}
+                        {column.Header === "Bestellmenge" && rows.some(row => discrepancyObj[row.original.frischbestand.name]?.zuVielzuWenig > 0) ? <span style={{color: 'green', fontWeight: 300, fontSize: "15px"}}> (zu Viel)</span> : ''}
+                        <span>
+                            {column.isSorted ? (column.isSortedDesc ? ' ↓' : ' ↑') : ''}
+                        </span>
                     </th>
-                  ))}
+                ))}
                 </tr>
               ))}
             </thead>
@@ -178,9 +178,9 @@ export function FrischEinkauf(props) {
                         } else if(cell.column.Header === "Bestellmenge"){
                           return (
                             <td key={`${row.original.id}-${cell.column.Header}Frisch`} style={{color: row.original.frischbestand.verfuegbarkeit === false ? NotAvailableColor : ''}} {...cell.getCellProps()}>
-                                {cell.render('Cell')} 
-{discrepancy && discrepancy.zuVielzuWenig < 0 ? <span style={{color: 'red'}}> ( {discrepancy.zuVielzuWenig} )</span> : ''}
-{discrepancy && discrepancy.zuVielzuWenig > 0 ? <span style={{color: 'green'}}> ( {discrepancy.zuVielzuWenig} )</span> : ''}
+                              {cell.render('Cell')} 
+                              {discrepancy && discrepancy.zuVielzuWenig < 0 ? <span style={{color: 'red'}}> ( {discrepancy.zuVielzuWenig} )</span> : ''}
+                              {discrepancy && discrepancy.zuVielzuWenig > 0 ? <span style={{color: 'green'}}> ( {discrepancy.zuVielzuWenig} )</span> : ''}
                             </td>
                           );
                         } else {

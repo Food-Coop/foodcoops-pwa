@@ -54,6 +54,7 @@ export const ApiProvider = (props) => {
         createBestandBuyObject: props.createBestandBuyObject || createBestandBuyObject,
 
         readBestellUebersicht: props.readBestellUebersicht || readBestellUebersicht,
+        readDiscrepancyOverviwe: props.readDiscrepancyOverviwe || readDiscrepancyOverviwe,
     };
 
     return (
@@ -117,6 +118,7 @@ export const useApi = () => {
         createBestandBuyObject,
 
         readBestellUebersicht,
+        readDiscrepancyOverviwe,
     };
 };
 
@@ -439,4 +441,8 @@ const createBestandBuyObject = (data) =>
 
 // Bestellübersicht
 const readBestellUebersicht = () =>
+    fetch(BACKEND_URL + BESTELLUEBERSICHT + LAST);
+
+//Zu viel zu venig Übersicht
+const readDiscrepancyOverviwe = () =>
     fetch(BACKEND_URL + BESTELLUEBERSICHT + LAST);

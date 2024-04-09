@@ -13,6 +13,8 @@
     "@testing-library/user-event": "^12.6.3",
     "bootstrap": "^4.6.0",
     "chokidar": "^3.5.1",
+    "jspdf": "^2.5.1",
+    "jspdf-autotable": "^3.8.2",
     "keycloak-js": "^19.0.1",
     "namor": "^2.0.2",
     "react": "^17.0.0 || ^18.0.0",

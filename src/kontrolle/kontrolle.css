@@ -1,0 +1,47 @@
+.custom-list-group-item {
+    margin-top: 0px;
+    margin-bottom: 0px;
+  }
+  
+  /* Entfernt den Abstand vom ersten und letzten Item, wenn nicht gewünscht */
+.custom-list-group-item:first-child {
+  margin-top: 0;
+}
+  
+.custom-list-group-item:last-child {
+  margin-bottom: 0;
+}
+
+.dropdown-toggle-custom {
+  width: 120px !important; /* Stellen Sie sicher, dass dies die Größe überschreibt, die durch Bootstrap vorgegeben wird */
+  height: 40px;
+  display: block; /* Block-Level, um die Breite zu respektieren */
+  text-align: center; /* Zentriert den Text, falls nötig */
+}
+
+.Content {
+  padding-bottom: 60px;
+}
+
+.card-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-gap: 20px;
+}
+
+.left-column {
+  flex-basis: 40%; /* Breite der linken Spalte */
+  text-align: left; /* Ausrichtung des Textes */
+}
+
+.right-column {
+  flex-basis: 60%; /* Breite der rechten Spalte */
+  display: flex;
+  align-items: center;
+  justify-content: flex-end; /* Rechtsausrichtung der Elemente in der rechten Spalte */
+}
+
+.long-text {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}

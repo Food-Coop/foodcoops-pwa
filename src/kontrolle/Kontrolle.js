@@ -1,107 +1,166 @@
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import Accordion from '@mui/material/Accordion';
-import AccordionDetails from '@mui/material/AccordionDetails';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import AddBoxIcon from '@mui/icons-material/AddBox';
-import IndeterminateCheckBoxIcon from '@mui/icons-material/IndeterminateCheckBox';
-import Typography from '@mui/material/Typography';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import jsPDF from 'jspdf';
-import "jspdf-autotable"
-import React, { useEffect, useState } from "react";
-import { Button, Table } from 'react-bootstrap';
+import React, { useState, useEffect } from 'react';
 import { useApi } from '../ApiService';
-import "./kontrolle.css";
-import { green, red } from '@mui/material/colors';
-import Card from 'react-bootstrap/Card';
-import {FormControl} from 'react-bootstrap';
-import {Form} from 'react-bootstrap';
-import {InputGroup} from 'react-bootstrap';
+import { useKeycloak } from "@react-keycloak/web";
+import BTable from "react-bootstrap/Table";
+import { useTable, useSortBy } from 'react-table';
+import NumberFormatComponent from '../logic/NumberFormatComponent';
 
-export function Kontrolle() {
+export function Kontrolle(props) {
     const [discrepancyList, getDiscrepancyList] = useState([]);
     const api = useApi();
+    const { keycloak } = useKeycloak();
+    const [totalFrischPrice, setTotalFrischPrice] = useState(0);
+    const NotAvailableColor = '#D3D3D3';
+
+    const columns = React.useMemo(
+        () => [
+          {
+            Header: 'Produkt',
+            accessor: 'discrepancy.bestand.name',
+          },
+          {
+            Header: 'Zu Viel / Zu Wenig',
+            accessor: 'discrepancy.bestand.zuVielzuWenig',
+            Cell: ({ value }) => <NumberFormatComponent value={value}/>,
+          },
+          {
+            Header: 'Einheit',
+            accessor: 'discrepancy.bestand.kategorie.name',
+          },
+        ],
+        []
+    )
+
+    const {
+        getTableProps,
+        getTableBodyProps,
+        headerGroups,
+        rows,
+        prepareRow,
+        
+      } = useTable({ columns, data: discrepancyList, initialState: { sortBy: [{ id: 'descrepandy.Sbestand.name' }] }, }, useSortBy)
+
+    const handleChange = () => {
+        let preis = 0;
+        for(let i = 0; i < discrepancyList.length; i++){
+            let bestellId = "InputfieldFrisch" + i;
+            let bestellmenge = document.getElementById(bestellId).value;
+            let preisId = "PreisIdFrisch" + i;
+            preis += document.getElementById(preisId).innerText.replace(',', '.') * bestellmenge;
+        }
+        setTotalFrischPrice(preis);
+    };
+      
+
+    const getStepValue = (einheit) => {
+        const lowerCaseEinheit = einheit.toLowerCase();
+        if (lowerCaseEinheit === 'kg') {
+            return 0.2;
+        } else {
+            return 1;
+        }
+    };
 
     useEffect(() => {
-      const fetchDiscrepancyList = async () => {
-        try {
-          const response = await api.readDiscrepancyOverviwe();
-          const data = await response.json();
-          if (data && data.discrepancy) {
-            getDiscrepancyList(data.discrepancy);
-            console.log(discrepancyList);
-          } else {
-            getDiscrepancyList([]);
-            console.log(discrepancyList);
-          }
-        } catch (error) {
-          console.error('Error getting frischBestellung')
-          console.log(discrepancyList)
-        }
-      };
 
-      fetchDiscrepancyList();
+        const fetchBestellUebersicht = async () => {
+          try {
+              const response = await api.readDiscrepancyOverviwe();
+              const data = await response.text();
+              console.log(data)
+              if (data) {
+                const json = JSON.parse(data);
+                if (json.discrepancyList === 0) {
+                  return;
+                } else {
+                  getDiscrepancyList(json.discrepancyList);
+                }
+              } else {
+                return;
+              }
+          } catch (error) {
+              console.error('Error fetching discrepancy:', error);
+          }
+        };
+        fetchBestellUebersicht();
     }, []);
 
-    const listContent = () => {
+    const discrepancyObj = discrepancyList.reduce((obj, item) => {
+      obj[item.discrepancy.bestand.name] = item;
+      return obj;
+    }, {});
 
-        const generatePDF = () => {
-            const doc = new jsPDF();
+    useEffect(() => {
+        if (props.onPriceChange) {
+          props.onPriceChange(totalFrischPrice);
+        }
+      }, [totalFrischPrice]);
 
-            doc.setFontSize(16); // Größe der Schriftart setzen
-            doc.setFont("helvetica", "bold"); // Schriftart und Stil setzen (fett)
-            doc.text("Liste der zu viel und zu wenig gelieferten Lebensmittel", 10, 10);
-            
-            const columnNames = ["Produktbezeichnung", "Menge", "Einheit"];
-            
-            doc.save("Lebensmittel_Liste.pdf");
-        };
+    useEffect(() => {
+        if (props.handleFrisch) {
+            props.handleFrisch(discrepancyList);
+        }        
+    }, [discrepancyList]);
 
+    const content = () => {
+      if (discrepancyList.length === 0) {
+        return null;
+      } else {
         return (
-            <div className="main-einkauf">
-              
-              {discrepancyList.filter(item => item.zuVielzuWenig !== 0).map((item, index) => (
-                <Card key={index}>
-                  <Card.Body>
-                    <div className="row">
-                      <div className="col-md-2">
-                        <Card.Text>{item.bestand.name}</Card.Text>
-                      </div>
-                      <div className="col-md-2">
-                        <Button variant='secondary'>Zu Wenig</Button>
-                      </div>
-                      <div className="col-md-2">
-                        <Button variant='secondary'>Zu Viel</Button>
-                      </div>
-                      <div className="col-md-2">
-                        <InputGroup>
-                          <Form.Control placeholder={Math.abs(item.zuVielzuWenig)} aria-label='Username' aria-describedby='basic-addon1'/>
-                        </InputGroup>
-                      </div>
-                      <div className="col-md-2">
-                        <Card.Text>{item.bestand.einheit.name}</Card.Text>
-                      </div>
-                      <div className="col-md-2">
-                        <Button variant='primary' onClick={() => (index)}>
-                          OK
-                        </Button>
-                      </div>
-                    </div>
-                  </Card.Body>
-                </Card>
+          <BTable striped bordered hover size="sm" {...getTableProps()}>
+            <thead>
+              {headerGroups.map(headerGroup => (
+                <tr {...headerGroup.getHeaderGroupProps()}>
+                  {headerGroup.headers.map(column => (
+                    <th key={headerGroup.id + "HeaderFrisch"} {...column.getHeaderProps(column.getSortByToggleProps())}>
+                        {column.render('Header')}
+                        {column.Header === "Bestellmenge" && rows.some(row => discrepancyObj[row.original.frischbestand.name]?.zuVielzuWenig < 0) ? <span style={{color: 'red', fontWeight: 300, fontSize: "15px"}}> (zu Wenig)</span> : ''}
+                        {column.Header === "Bestellmenge" && rows.some(row => discrepancyObj[row.original.frischbestand.name]?.zuVielzuWenig > 0) ? <span style={{color: 'green', fontWeight: 300, fontSize: "15px"}}> (zu Viel)</span> : ''}
+                        <span>
+                            {column.isSorted ? (column.isSortedDesc ? ' ↓' : ' ↑') : ''}
+                        </span>
+                    </th>
+                ))}
+                </tr>
               ))}
-
-                <div style={{marginTop: "20px"}}>
-                  <Button onClick={generatePDF} variant="success" style={{width: "150px"}}>Als PDF herunterladen</Button>
-                </div>
-
-            </div>
+            </thead>
+            <tbody {...getTableBodyProps()}>
+              {rows.map((row) => {
+                prepareRow(row)
+                return (
+                  <tr {...row.getRowProps()}>
+                    {row.cells.map(cell => {
+                        const discrepancy = discrepancyObj[row.original.discrepancy.bestand.name];
+                        if (cell.column.Header === "Preis in €"){
+                          let id = "PreisIdFrisch" + row.index;
+                          return(
+                            <td key={`${row.original.id}-${cell.column.Header}Frisch`} style={{color: row.original.frischbestand.verfuegbarkeit === false ? NotAvailableColor : ''}} id={id} >{cell.render('Cell')}</td>
+                          );
+                        } else if(cell.column.Header === "genommene Menge"){
+                          let id = "InputfieldFrisch" + row.index;
+                          return(
+                            <td key={`${row.original.id}-${cell.column.Header}Frisch`}><input id={id} type="number" min="0" step={getStepValue(row.original.frischbestand.einheit.name)} onChange={() => handleChange()} disabled={row.original.frischbestand.verfuegbarkeit === false} ></input></td>
+                          );
+                        } else if(cell.column.Header === "Bestellmenge"){
+                          return (
+                            <td key={`${row.original.id}-${cell.column.Header}Frisch`} style={{color: row.original.frischbestand.verfuegbarkeit === false ? NotAvailableColor : ''}} {...cell.getCellProps()}>
+                              {cell.render('Cell')} 
+                              {discrepancy && discrepancy.zuVielzuWenig < 0 ? <span style={{color: 'red'}}> ( <NumberFormatComponent value={discrepancy.zuVielzuWenig} includeFractionDigits={false}/> )</span> : ''}
+                              {discrepancy && discrepancy.zuVielzuWenig > 0 ? <span style={{color: 'green'}}> ( <NumberFormatComponent value={discrepancy.zuVielzuWenig} includeFractionDigits={false}/> )</span> : ''}
+                            </td>
+                          );
+                        } else {
+                          return <td key={`${row.original.id}-${cell.column.Header}Frisch`} style={{color: row.original.frischbestand.verfuegbarkeit === false ? NotAvailableColor : ''}} {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                        }
+                    })}
+                  </tr>
+                )
+              })}
+            </tbody>
+            </BTable>
         );
+      }
     }
 
-    return (
-        <div className="Content">
-            {listContent()}
-        </div>
-    );
+  return content();
 }

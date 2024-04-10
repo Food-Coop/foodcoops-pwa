@@ -55,6 +55,7 @@ export const ApiProvider = (props) => {
 
         readBestellUebersicht: props.readBestellUebersicht || readBestellUebersicht,
         readDiscrepancyOverviwe: props.readDiscrepancyOverviwe || readDiscrepancyOverviwe,
+        updateDiscrepancy: props.updateDiscrepancy|| updateDiscrepancy,
     };
 
     return (
@@ -119,6 +120,7 @@ export const useApi = () => {
 
         readBestellUebersicht,
         readDiscrepancyOverviwe,
+        updateDiscrepancy
     };
 };
 
@@ -141,6 +143,8 @@ const EINKAUF = "einkauf/";
 const PDF = "pdf/";
 const BESTANDBUYOBJECT = "einkaufe/create/bestandBuyObject";
 const BESTELLUEBERSICHT = "bestellUebersicht/";
+const GEBINDE = "gebinde/";
+const UPDATEDESCREPANCY = "discrepancy/update/tooMuchTooLittke/";
 
 
 // Produkt
@@ -446,3 +450,12 @@ const readBestellUebersicht = () =>
 //Zu viel zu venig Übersicht
 const readDiscrepancyOverviwe = () =>
     fetch(BACKEND_URL + BESTELLUEBERSICHT + LAST);
+
+const updateDiscrepancy = (id, data) =>
+fetch(BACKEND_URL + GEBINDE + UPDATEDESCREPANCY + id, {
+    method: 'PUT', 
+    headers: {
+    'Content-Type': 'application/json',
+    },
+    body: data,
+});

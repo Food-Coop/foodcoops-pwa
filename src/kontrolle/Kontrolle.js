@@ -4,28 +4,28 @@ import { useKeycloak } from "@react-keycloak/web";
 import BTable from "react-bootstrap/Table";
 import { useTable, useSortBy } from 'react-table';
 import NumberFormatComponent from '../logic/NumberFormatComponent';
+import {Button} from 'react-bootstrap';
+import {jsPDF} from "jspdf";
+import 'jspdf-autotable';
 
 export function Kontrolle(props) {
-    const [discrepancyList, getDiscrepancyList] = useState([]);
+    const [discrepancy, setDiscrepancy] = useState([]);
     const api = useApi();
-    const { keycloak } = useKeycloak();
-    const [totalFrischPrice, setTotalFrischPrice] = useState(0);
-    const NotAvailableColor = '#D3D3D3';
 
     const columns = React.useMemo(
         () => [
           {
             Header: 'Produkt',
-            accessor: 'discrepancy.bestand.name',
+            accessor: 'bestand.name',
           },
           {
             Header: 'Zu Viel / Zu Wenig',
-            accessor: 'discrepancy.bestand.zuVielzuWenig',
+            accessor: 'zuVielzuWenig',
             Cell: ({ value }) => <NumberFormatComponent value={value}/>,
           },
           {
             Header: 'Einheit',
-            accessor: 'discrepancy.bestand.kategorie.name',
+            accessor: 'bestand.einheit.name',
           },
         ],
         []
@@ -38,42 +38,19 @@ export function Kontrolle(props) {
         rows,
         prepareRow,
         
-      } = useTable({ columns, data: discrepancyList, initialState: { sortBy: [{ id: 'descrepandy.Sbestand.name' }] }, }, useSortBy)
-
-    const handleChange = () => {
-        let preis = 0;
-        for(let i = 0; i < discrepancyList.length; i++){
-            let bestellId = "InputfieldFrisch" + i;
-            let bestellmenge = document.getElementById(bestellId).value;
-            let preisId = "PreisIdFrisch" + i;
-            preis += document.getElementById(preisId).innerText.replace(',', '.') * bestellmenge;
-        }
-        setTotalFrischPrice(preis);
-    };
-      
-
-    const getStepValue = (einheit) => {
-        const lowerCaseEinheit = einheit.toLowerCase();
-        if (lowerCaseEinheit === 'kg') {
-            return 0.2;
-        } else {
-            return 1;
-        }
-    };
+      } = useTable({ columns, data: discrepancy, initialState: { sortBy: [{ id: 'bestand.name' }] }, }, useSortBy)
 
     useEffect(() => {
-
         const fetchBestellUebersicht = async () => {
           try {
-              const response = await api.readDiscrepancyOverviwe();
+              const response = await api.readBestellUebersicht();
               const data = await response.text();
-              console.log(data)
               if (data) {
                 const json = JSON.parse(data);
-                if (json.discrepancyList === 0) {
+                if (json.discrepancy === 0) {
                   return;
                 } else {
-                  getDiscrepancyList(json.discrepancyList);
+                  setDiscrepancy(json.discrepancy);
                 }
               } else {
                 return;
@@ -85,25 +62,69 @@ export function Kontrolle(props) {
         fetchBestellUebersicht();
     }, []);
 
-    const discrepancyObj = discrepancyList.reduce((obj, item) => {
-      obj[item.discrepancy.bestand.name] = item;
+    const generatePDF = () => {
+      const doc = new jsPDF();
+      doc.text("Kontrolle Tabelle", 10, 10);
+      const tableData = [];
+      const columns = [];
+      headerGroups.forEach(headerGroup => {
+          headerGroup.headers.forEach(column => {
+              columns.push(column.Header);
+          });
+      });
+      tableData.push(columns);
+      rows.forEach(row => {
+          const rowData = [];
+          row.cells.forEach(cell => {
+              rowData.push(cell.value);
+          });
+          tableData.push(rowData);
+      });
+      doc.autoTable({
+          head: [tableData.shift()],
+          body: tableData
+      });
+      doc.save("kontrolle_table.pdf");
+  };
+
+    const discrepancyObj = discrepancy.reduce((obj, item) => {
+      obj[item.bestand.name] = item;
       return obj;
     }, {});
 
-    useEffect(() => {
-        if (props.onPriceChange) {
-          props.onPriceChange(totalFrischPrice);
-        }
-      }, [totalFrischPrice]);
+    const submitUpdateDiscr = async () => {
+      const apiCalls = [];
+      for(let i = 0; i < discrepancy.length; i++){
+        const discrId = discrepancy[i].id;
+        const name = discrepancy[i].bestand.name;
+        const inputField = document.getElementById("InputfieldDiscr" + i);
 
-    useEffect(() => {
-        if (props.handleFrisch) {
-            props.handleFrisch(discrepancyList);
-        }        
-    }, [discrepancyList]);
+        if (inputField !== null && inputField !== undefined && inputField !== 0) {
+          const inputValue = inputField.value.trim();
+          let formatedValue;
+
+          if (!isNaN(inputValue) && Number.isInteger(parseFloat(inputValue))) {
+            formatedValue = inputValue + ".0";
+          } else if (!isNaN(inputValue) && isFinite(parseFloat(inputValue))) {
+            formatedValue = inputValue;
+          } else {
+            console.log("Ungültige Eingabe:" + inputValue)
+            continue;
+          }
+
+          const placeholderValue = parseFloat(discrepancy[i].zuVielzuWenig);
+
+          if(formatedValue !== placeholderValue){
+            apiCalls.push(api.updateDiscrepancy(discrId, formatedValue));
+            console.log("Übermittlung erfolgreich: " + name + " | " + placeholderValue + " ==> " + formatedValue);
+          }
+        }
+      }
+      window.location.reload();
+    }
 
     const content = () => {
-      if (discrepancyList.length === 0) {
+      if (discrepancy.length === 0) {
         return null;
       } else {
         return (
@@ -112,10 +133,8 @@ export function Kontrolle(props) {
               {headerGroups.map(headerGroup => (
                 <tr {...headerGroup.getHeaderGroupProps()}>
                   {headerGroup.headers.map(column => (
-                    <th key={headerGroup.id + "HeaderFrisch"} {...column.getHeaderProps(column.getSortByToggleProps())}>
+                    <th key={headerGroup.id + "HeaderDiscr"} {...column.getHeaderProps(column.getSortByToggleProps())}>
                         {column.render('Header')}
-                        {column.Header === "Bestellmenge" && rows.some(row => discrepancyObj[row.original.frischbestand.name]?.zuVielzuWenig < 0) ? <span style={{color: 'red', fontWeight: 300, fontSize: "15px"}}> (zu Wenig)</span> : ''}
-                        {column.Header === "Bestellmenge" && rows.some(row => discrepancyObj[row.original.frischbestand.name]?.zuVielzuWenig > 0) ? <span style={{color: 'green', fontWeight: 300, fontSize: "15px"}}> (zu Viel)</span> : ''}
                         <span>
                             {column.isSorted ? (column.isSortedDesc ? ' ↓' : ' ↑') : ''}
                         </span>
@@ -127,34 +146,24 @@ export function Kontrolle(props) {
             <tbody {...getTableBodyProps()}>
               {rows.map((row) => {
                 prepareRow(row)
-                return (
-                  <tr {...row.getRowProps()}>
-                    {row.cells.map(cell => {
-                        const discrepancy = discrepancyObj[row.original.discrepancy.bestand.name];
-                        if (cell.column.Header === "Preis in €"){
-                          let id = "PreisIdFrisch" + row.index;
-                          return(
-                            <td key={`${row.original.id}-${cell.column.Header}Frisch`} style={{color: row.original.frischbestand.verfuegbarkeit === false ? NotAvailableColor : ''}} id={id} >{cell.render('Cell')}</td>
-                          );
-                        } else if(cell.column.Header === "genommene Menge"){
-                          let id = "InputfieldFrisch" + row.index;
-                          return(
-                            <td key={`${row.original.id}-${cell.column.Header}Frisch`}><input id={id} type="number" min="0" step={getStepValue(row.original.frischbestand.einheit.name)} onChange={() => handleChange()} disabled={row.original.frischbestand.verfuegbarkeit === false} ></input></td>
-                          );
-                        } else if(cell.column.Header === "Bestellmenge"){
-                          return (
-                            <td key={`${row.original.id}-${cell.column.Header}Frisch`} style={{color: row.original.frischbestand.verfuegbarkeit === false ? NotAvailableColor : ''}} {...cell.getCellProps()}>
-                              {cell.render('Cell')} 
-                              {discrepancy && discrepancy.zuVielzuWenig < 0 ? <span style={{color: 'red'}}> ( <NumberFormatComponent value={discrepancy.zuVielzuWenig} includeFractionDigits={false}/> )</span> : ''}
-                              {discrepancy && discrepancy.zuVielzuWenig > 0 ? <span style={{color: 'green'}}> ( <NumberFormatComponent value={discrepancy.zuVielzuWenig} includeFractionDigits={false}/> )</span> : ''}
-                            </td>
-                          );
-                        } else {
-                          return <td key={`${row.original.id}-${cell.column.Header}Frisch`} style={{color: row.original.frischbestand.verfuegbarkeit === false ? NotAvailableColor : ''}} {...cell.getCellProps()}>{cell.render('Cell')}</td>
-                        }
-                    })}
-                  </tr>
-                )
+                if (row.original.zuVielzuWenig === 0 || row.original.zuVielzuWenig === null || row.original.zuVielzuWenig === undefined) {
+                  return null
+                } else {
+                  return (
+                    <tr {...row.getRowProps()}>
+                      {row.cells.map(cell => {
+                          if(cell.column.Header === "Zu Viel / Zu Wenig"){
+                            let id = "InputfieldDiscr" + row.index;
+                            return(
+                              <td key={`${row.original.id}-${cell.column.Header}Discr`}><input placeholder={row.original.zuVielzuWenig} id={id} type="number" min="0" ></input></td>
+                            );
+                          } else {
+                            return <td key={`${row.original.id}-${cell.column.Header}Discr`} {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                          }
+                      })}
+                    </tr>
+                  )
+                }
               })}
             </tbody>
             </BTable>
@@ -162,5 +171,14 @@ export function Kontrolle(props) {
       }
     }
 
-  return content();
+  return (
+    <div>
+      <div style={{overflowX: "auto", width: "100%"}}>
+        {content()}
+        <Button style={{margin: "20px 0.25rem 30px 0.25rem"}} variant="success" onClick={() => submitUpdateDiscr()}>Aktualisieren</Button>
+        <Button style={{margin: "20px 0.25rem 30px 0.25rem"}} variant="primary" onClick={() => generatePDF()}>PDF erstellen</Button>
+
+      </div>
+    </div>
+  );
 }

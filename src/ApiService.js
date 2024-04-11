@@ -144,7 +144,7 @@ const PDF = "pdf/";
 const BESTANDBUYOBJECT = "einkaufe/create/bestandBuyObject";
 const BESTELLUEBERSICHT = "bestellUebersicht/";
 const GEBINDE = "gebinde/";
-const UPDATEDESCREPANCY = "discrepancy/update/tooMuchTooLittke/";
+const UPDATEDESCREPANCY = "discrepancy/update/tooMuchTooLittle/";
 
 
 // Produkt

@@ -77,11 +77,15 @@ export function Kontrolle() {
       });
       tableData.push(columns);
       rows.forEach(row => {
+        //remove rows with discrepancy = 0
+        const discrepancy = row.cells[1].value;
+        if (discrepancy !== 0) {
           const rowData = [];
           row.cells.forEach(cell => {
-              rowData.push(cell.value);
+          rowData.push(cell.value);
           });
           tableData.push(rowData);
+        }
       });
       doc.autoTable({
           head: [tableData.shift()],

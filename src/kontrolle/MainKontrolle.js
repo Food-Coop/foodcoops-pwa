@@ -16,22 +16,22 @@ export function MainKontrolle(){
     return(
         <Router>
             <div>
-                <Paper squere>
+                <Paper square>
                     <Tabs
                     value={value}
                     onChange={handleChange}
                     indicatorColor="primary"
                     textColor="primary"
                     >
-                    <Tab label="Kontronllpanel" component={Link} to="/kontrolle" />
+                    <Tab label="Zu Viel / Zu Wenig" component={Link} to="/zuVielzuWenig" />
                     </Tabs>
                 </Paper>
                 <Switch>
-                    <Route path="/kontrolle">
+                    <Route path="/zuVielzuWenig">
                         <Kontrolle />
                     </Route>
                     <Route>
-                        <Redirect to="/kontrolle" />
+                        <Redirect to="/zuVielzuWenig" />
                     </Route>
                 </Switch>
             </div>

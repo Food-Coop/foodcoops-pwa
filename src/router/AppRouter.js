@@ -49,7 +49,7 @@ const AppContent = ({ menuOpen, toggleMenu }) => {
       '/mainBestellung': 'Bestellung',
       '/mainEinkauf': 'Einkauf',
       '/mainManagement': 'Management',
-      '/mainKontrolle' : 'Kontrolle',
+      '/mainKontrolle' : 'Übersicht',
       '/about': 'Impressum',
     };
 
@@ -116,7 +116,7 @@ const AppContent = ({ menuOpen, toggleMenu }) => {
                     <InventoryIcon/>
                   </ListItemIcon>
                   <Typography variant="h6">
-                    Zu viel / Zu wenig
+                    Übersicht
                   </Typography>
                 </ListItemButton>
               </Link>

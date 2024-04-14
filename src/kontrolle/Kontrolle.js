@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useApi } from '../ApiService';
 import BTable from "react-bootstrap/Table";
+import Alert from '@mui/material/Alert';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useTable, useSortBy } from 'react-table';
@@ -94,6 +95,13 @@ export function Kontrolle() {
       doc.save("zuViel-zuWenig_Tabelle.pdf");
   };
 
+  const clearInputFields = () => {
+    const inputFields = document.querySelectorAll('input[type="number"]');
+    inputFields.forEach((input) => {
+      input.value = "";
+    });
+  };
+
     const submitUpdateDiscr = async () => {
       let errorOccurred = false;
       const apiCalls = [];
@@ -142,6 +150,7 @@ export function Kontrolle() {
         toast.error("Es gab einen Fehler beim Übermitteln der Änderungen. Bitte versuchen Sie es erneut.");
         console.log(error);
       }
+      clearInputFields();
       forceUpdate();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -197,6 +206,9 @@ export function Kontrolle() {
   return (
     <div>
       <div style={{overflowX: "auto", width: "100%"}}>
+        <Alert severity="info" style={{margin: "0.5em 1em 0.5em 1em"}}> 
+          Wenn zu wenig von einem Produkt geliefert wurde, wird ein negativer Wert angezeigt. Wenn zu viel geliefert wurde, wird ein positiver Wert angezeigt.
+        </Alert>
         {content()}
         <Button style={{margin: "20px 0.25rem 30px 0.25rem"}} variant="success" onClick={() => submitUpdateDiscr()}>Aktualisieren</Button>
         <Button style={{margin: "20px 0.25rem 30px 0.25rem"}} variant="primary" onClick={() => generatePDF()}>PDF erstellen</Button>

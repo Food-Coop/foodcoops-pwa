@@ -8,6 +8,7 @@ import NumberFormatComponent from '../logic/NumberFormatComponent';
 import {Button} from 'react-bootstrap';
 import {jsPDF} from "jspdf";
 import 'jspdf-autotable';
+import '../Table.css';
 
 export function Kontrolle() {
     const [discrepancy, setDiscrepancy] = useState([]);
@@ -160,7 +161,7 @@ export function Kontrolle() {
               {headerGroups.map(headerGroup => (
                 <tr {...headerGroup.getHeaderGroupProps()}>
                   {headerGroup.headers.map(column => (
-                    <th key={headerGroup.id + "HeaderDiscr"} {...column.getHeaderProps(column.getSortByToggleProps())}>
+                    <th class="word-wrap" key={headerGroup.id + "HeaderDiscr"} {...column.getHeaderProps(column.getSortByToggleProps())}>
                         {column.render('Header')}
                         <span>
                             {column.isSorted ? (column.isSortedDesc ? ' ↓' : ' ↑') : ''}
@@ -182,10 +183,10 @@ export function Kontrolle() {
                           if(cell.column.Header === "Zu Viel / Zu Wenig"){
                             let id = "InputfieldDiscr" + row.index;
                             return(
-                              <td key={`${row.original.id}-${cell.column.Header}Discr`}><input value={inputValues[id] || row.original.zuVielzuWenig} onChange={(e) => handleChange(id, e.target.value)} id={id} type="number"></input></td>
+                              <td class="word-wrap" key={`${row.original.id}-${cell.column.Header}Discr`}><input value={inputValues[id] || row.original.zuVielzuWenig} onChange={(e) => handleChange(id, e.target.value)} id={id} type="number"></input></td>
                             );
                           } else {
-                            return <td key={`${row.original.id}-${cell.column.Header}Discr`} {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                            return <td class="word-wrap" key={`${row.original.id}-${cell.column.Header}Discr`} {...cell.getCellProps()}>{cell.render('Cell')}</td>
                           }
                       })}
                     </tr>

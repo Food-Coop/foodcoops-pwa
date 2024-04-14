@@ -4,6 +4,7 @@ import { useApi } from '../ApiService';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import BTable from "react-bootstrap/Table";
+import '../Table.css';
 
 import NumberFormatComponent from '../logic/NumberFormatComponent';
 
@@ -104,7 +105,7 @@ export function LagerwareEinkauf(props) {
             {headerGroups.map(headerGroup => (
               <tr {...headerGroup.getHeaderGroupProps()}>
                 {headerGroup.headers.map(column => (
-                  <th key={headerGroup.id + "HeaderLager"} {...column.getHeaderProps(column.getSortByToggleProps())}>
+                  <th class="word-wrap" key={headerGroup.id + "HeaderLager"} {...column.getHeaderProps(column.getSortByToggleProps())}>
                     {column.render('Header')}
                     <span>
                         {column.isSorted ? (column.isSortedDesc ? ' ↓' : ' ↑') : ''}
@@ -123,15 +124,15 @@ export function LagerwareEinkauf(props) {
                     if (cell.column.Header === "Preis in €"){
                       let id = "PreisIdLager" + row.index;
                       return(
-                        <td key={`${row.original.id}-${cell.column.Header}Lager`} style={{color: row.original.lagerbestand.istLagerbestand === 0 ? NotAvailableColor : ''}} id={id} >{cell.render('Cell')}</td>
+                        <td class="word-wrap" key={`${row.original.id}-${cell.column.Header}Lager`} style={{color: row.original.lagerbestand.istLagerbestand === 0 ? NotAvailableColor : ''}} id={id} >{cell.render('Cell')}</td>
                       );
                     }else if(cell.column.Header === "genommene Menge"){
                       let id = "InputfieldLager" + row.index;
                       return(
-                        <td key={`${row.original.id}-${cell.column.Header}Lager`}><input id={id} type="number" min="0" max={row.original.lagerbestand.istLagerbestand} onChange={(e) => handleChange(e, row.original.lagerbestand.istLagerbestand, row.original.name)} disabled={row.original.lagerbestand.istLagerbestand === 0}></input></td>
+                        <td class="word-wrap" key={`${row.original.id}-${cell.column.Header}Lager`}><input class='einkauf-inputfield-size lagerEinkauf-size' id={id} type="number" min="0" max={row.original.lagerbestand.istLagerbestand} onChange={(e) => handleChange(e, row.original.lagerbestand.istLagerbestand, row.original.name)} disabled={row.original.lagerbestand.istLagerbestand === 0}></input></td>
                       );
                     } else {
-                      return <td key={`${row.original.id}-${cell.column.Header}Lager`} style={{color: row.original.lagerbestand.istLagerbestand === 0 ? NotAvailableColor : ''}} {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                      return <td class="word-wrap" key={`${row.original.id}-${cell.column.Header}Lager`} style={{color: row.original.lagerbestand.istLagerbestand === 0 ? NotAvailableColor : ''}} {...cell.getCellProps()}>{cell.render('Cell')}</td>
                     }
                   })}
                 </tr>

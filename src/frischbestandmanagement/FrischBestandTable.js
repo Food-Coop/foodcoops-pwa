@@ -1,6 +1,7 @@
 import React from "react";
 import { useExpanded, useTable, useSortBy } from "react-table";
 import BTable from "react-bootstrap/Table";
+import '../Table.css';
 
 export function FrischBestandTable({ columns, data, skipPageReset, dispatchModal }) {
     const {
@@ -28,7 +29,7 @@ export function FrischBestandTable({ columns, data, skipPageReset, dispatchModal
                 {headerGroups.map(headerGroup => (
                     <tr {...headerGroup.getHeaderGroupProps()}>
                         {headerGroup.headers.map(column => (
-                            <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                            <th class="word-wrap" {...column.getHeaderProps(column.getSortByToggleProps())}>
                                 {column.render('Header')}
                                 <span>
                                     {column.isSorted ? (column.isSortedDesc ? ' ↓' : ' ↑') : ''}
@@ -48,7 +49,7 @@ export function FrischBestandTable({ columns, data, skipPageReset, dispatchModal
                                 props.onClick = () => dispatchModal("EditFrischBestandModal", cell, row);
                                 props.style = { ...props.style, cursor: "pointer" };
                                 return (
-                                    <td {...props}>
+                                    <td class="word-wrap" {...props}>
                                         {cell.column.id === 'verfuegbarkeit' ? (cell.value ? 'Ja' : 'Nein') : cell.render('Cell')}
                                     </td>
                                 )

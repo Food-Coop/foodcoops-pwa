@@ -6,9 +6,16 @@
     width: 150px;
  }
 
- .brotbestellung-inputfield-size {
+.brotbestellung-inputfield-size {
     width: 200px;
- }
+}
+
+.frischEinkauf-inputfield-size {
+    width: 150px;
+}
+.lagerEinkauf-size {
+    width: 150px;
+}
  #aktuelleBrotBestellmenge {
     width: 200px;
 }
@@ -17,6 +24,9 @@
     width: 100px;
     }
     .brotbestellung-inputfield-size {
+        width: 100px;
+    }
+    .einkauf-inputfield-size {
         width: 100px;
     }
 }

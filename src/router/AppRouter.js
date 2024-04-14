@@ -55,6 +55,7 @@ const AppContent = ({ menuOpen, toggleMenu }) => {
     document.documentElement.style.setProperty('--font-size', isLarge ? '1.5em' : '1em');
     document.documentElement.style.setProperty('--current-site-name-font-size', isLarge ? '1.5em' : '34px');
     document.documentElement.style.setProperty('--deadline-font-size', isLarge ? '1.5em' : '20px');
+    document.documentElement.style.setProperty('--zuVielzuWenigFrischEinkauf-font-size', isLarge ? '1em' : '15px');
   }, [isLarge]);
 
   const getPageName = () => {

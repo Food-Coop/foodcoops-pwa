@@ -3,6 +3,7 @@ import BTable from "react-bootstrap/Table";
 import React from "react";
 import {EditProduktModal} from "./EditProduktModal";
 import {EditKategorieModal} from "./EditKategorieModal";
+import '../Table.css';
 
 export function LagerTable({columns, data, skipPageReset, dispatchModal}) {
     const {
@@ -31,7 +32,7 @@ export function LagerTable({columns, data, skipPageReset, dispatchModal}) {
             {headerGroups.map(headerGroup => (
                 <tr {...headerGroup.getHeaderGroupProps()}>
                     {headerGroup.headers.map(column => (
-                        <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                        <th class="word-wrap" {...column.getHeaderProps(column.getSortByToggleProps())}>
                             {column.render('Header')}
                             <span>
                                 {column.isSorted ? (column.isSortedDesc ? ' ↓' : ' ↑') : ''}
@@ -62,7 +63,7 @@ export function LagerTable({columns, data, skipPageReset, dispatchModal}) {
                                     }
 
                                     return (
-                                        <td {...props}>
+                                        <td class="word-wrap" {...props}>
                                             {cell.render('Cell')}
                                         </td>
                                     )

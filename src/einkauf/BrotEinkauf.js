@@ -4,6 +4,7 @@ import { useKeycloak } from "@react-keycloak/web";
 import BTable from "react-bootstrap/Table";
 import { useTable, useSortBy } from 'react-table';
 import NumberFormatComponent from '../logic/NumberFormatComponent';
+import '../Table.css';
 
 export function BrotEinkauf(props) {
     const [brotBestellung, setBrotBestellung] = useState([]);
@@ -97,7 +98,7 @@ export function BrotEinkauf(props) {
               {headerGroups.map(headerGroup => (
                 <tr {...headerGroup.getHeaderGroupProps()}>
                   {headerGroup.headers.map(column => (
-                    <th key={headerGroup.id + "HeaderBrot"} {...column.getHeaderProps(column.getSortByToggleProps())}>
+                    <th class="word-wrap" key={headerGroup.id + "HeaderBrot"} {...column.getHeaderProps(column.getSortByToggleProps())}>
                       {column.render('Header')}
                       <span>
                           {column.isSorted ? (column.isSortedDesc ? ' ↓' : ' ↑') : ''}
@@ -116,15 +117,15 @@ export function BrotEinkauf(props) {
                       if (cell.column.Header === "Preis in €"){
                         let id = "PreisIdBrot" + row.index;
                         return(
-                          <td key={`${row.original.id}-${cell.column.Header}Brot`} style={{color: row.original.brotbestand.verfuegbarkeit === false ? NotAvailableColor : ''}} id={id} >{cell.render('Cell')}</td>
+                          <td class="word-wrap" key={`${row.original.id}-${cell.column.Header}Brot`} style={{color: row.original.brotbestand.verfuegbarkeit === false ? NotAvailableColor : ''}} id={id} >{cell.render('Cell')}</td>
                         );
                       }else if(cell.column.Header === "genommene Menge"){
                         let id = "InputfieldBrot" + row.index;
                         return(
-                          <td key={`${row.original.id}-${cell.column.Header}Brot`}><input id={id} type="number" min="0" onChange={() => handleChange()} disabled={row.original.brotbestand.verfuegbarkeit === false}></input></td>
+                          <td class="word-wrap" key={`${row.original.id}-${cell.column.Header}Brot`}><input class='einkauf-inputfield-size' id={id} type="number" min="0" onChange={() => handleChange()} disabled={row.original.brotbestand.verfuegbarkeit === false}></input></td>
                         );
                       } else {
-                        return <td key={`${row.original.id}-${cell.column.Header}Brot`} style={{color: row.original.brotbestand.verfuegbarkeit === false ? NotAvailableColor : ''}} {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                        return <td class="word-wrap" key={`${row.original.id}-${cell.column.Header}Brot`} style={{color: row.original.brotbestand.verfuegbarkeit === false ? NotAvailableColor : ''}} {...cell.getCellProps()}>{cell.render('Cell')}</td>
                       }
                     })}
                   </tr>

@@ -4,6 +4,7 @@ import { useKeycloak } from "@react-keycloak/web";
 import BTable from "react-bootstrap/Table";
 import { useTable, useSortBy } from 'react-table';
 import NumberFormatComponent from '../logic/NumberFormatComponent';
+import '../Table.css';
 
 export function FrischEinkauf(props) {
     const [frischBestellung, setFrischBestellung] = useState([]);
@@ -146,10 +147,10 @@ export function FrischEinkauf(props) {
               {headerGroups.map(headerGroup => (
                 <tr {...headerGroup.getHeaderGroupProps()}>
                   {headerGroup.headers.map(column => (
-                    <th key={headerGroup.id + "HeaderFrisch"} {...column.getHeaderProps(column.getSortByToggleProps())}>
+                    <th class="word-wrap" key={headerGroup.id + "HeaderFrisch"} {...column.getHeaderProps(column.getSortByToggleProps())}>
                         {column.render('Header')}
-                        {column.Header === "Bestellmenge" && rows.some(row => discrepancyObj[row.original.frischbestand.name]?.zuVielzuWenig < 0) ? <span style={{color: 'red', fontWeight: 300, fontSize: "15px"}}> (zu Wenig)</span> : ''}
-                        {column.Header === "Bestellmenge" && rows.some(row => discrepancyObj[row.original.frischbestand.name]?.zuVielzuWenig > 0) ? <span style={{color: 'green', fontWeight: 300, fontSize: "15px"}}> (zu Viel)</span> : ''}
+                        {column.Header === "Bestellmenge" && rows.some(row => discrepancyObj[row.original.frischbestand.name]?.zuVielzuWenig < 0) ? <span style={{color: 'red', fontWeight: 300, fontSize: 'var(--zuVielzuWenigFrischEinkauf-font-size)'}}> (zu Wenig)</span> : ''}
+                        {column.Header === "Bestellmenge" && rows.some(row => discrepancyObj[row.original.frischbestand.name]?.zuVielzuWenig > 0) ? <span style={{color: 'green', fontWeight: 300, fontSize: 'var(--zuVielzuWenigFrischEinkauf-font-size'}}> (zu Viel)</span> : ''}
                         <span>
                             {column.isSorted ? (column.isSortedDesc ? ' ↓' : ' ↑') : ''}
                         </span>
@@ -168,23 +169,23 @@ export function FrischEinkauf(props) {
                         if (cell.column.Header === "Preis in €"){
                           let id = "PreisIdFrisch" + row.index;
                           return(
-                            <td key={`${row.original.id}-${cell.column.Header}Frisch`} style={{color: row.original.frischbestand.verfuegbarkeit === false ? NotAvailableColor : ''}} id={id} >{cell.render('Cell')}</td>
+                            <td class="word-wrap" key={`${row.original.id}-${cell.column.Header}Frisch`} style={{color: row.original.frischbestand.verfuegbarkeit === false ? NotAvailableColor : ''}} id={id} >{cell.render('Cell')}</td>
                           );
                         } else if(cell.column.Header === "genommene Menge"){
                           let id = "InputfieldFrisch" + row.index;
                           return(
-                            <td key={`${row.original.id}-${cell.column.Header}Frisch`}><input id={id} type="number" min="0" step={getStepValue(row.original.frischbestand.einheit.name)} onChange={() => handleChange()} disabled={row.original.frischbestand.verfuegbarkeit === false} ></input></td>
+                            <td class="word-wrap" key={`${row.original.id}-${cell.column.Header}Frisch`}><input class='einkauf-inputfield-size' id={id} type="number" min="0" step={getStepValue(row.original.frischbestand.einheit.name)} onChange={() => handleChange()} disabled={row.original.frischbestand.verfuegbarkeit === false} ></input></td>
                           );
                         } else if(cell.column.Header === "Bestellmenge"){
                           return (
-                            <td key={`${row.original.id}-${cell.column.Header}Frisch`} style={{color: row.original.frischbestand.verfuegbarkeit === false ? NotAvailableColor : ''}} {...cell.getCellProps()}>
+                            <td class="word-wrap" key={`${row.original.id}-${cell.column.Header}Frisch`} style={{color: row.original.frischbestand.verfuegbarkeit === false ? NotAvailableColor : ''}} {...cell.getCellProps()}>
                               {cell.render('Cell')} 
                               {discrepancy && discrepancy.zuVielzuWenig < 0 ? <span style={{color: 'red'}}> ( <NumberFormatComponent value={discrepancy.zuVielzuWenig} includeFractionDigits={false}/> )</span> : ''}
                               {discrepancy && discrepancy.zuVielzuWenig > 0 ? <span style={{color: 'green'}}> ( <NumberFormatComponent value={discrepancy.zuVielzuWenig} includeFractionDigits={false}/> )</span> : ''}
                             </td>
                           );
                         } else {
-                          return <td key={`${row.original.id}-${cell.column.Header}Frisch`} style={{color: row.original.frischbestand.verfuegbarkeit === false ? NotAvailableColor : ''}} {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                          return <td class="word-wrap" key={`${row.original.id}-${cell.column.Header}Frisch`} style={{color: row.original.frischbestand.verfuegbarkeit === false ? NotAvailableColor : ''}} {...cell.getCellProps()}>{cell.render('Cell')}</td>
                         }
                     })}
                   </tr>

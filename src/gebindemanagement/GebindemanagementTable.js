@@ -1,6 +1,7 @@
 import React from "react";
 import { useExpanded, useTable, useSortBy } from "react-table";
 import BTable from "react-bootstrap/Table";
+import '../Table.css';
 
 export function GebindemanagementTable({ columns, data, skipPageReset }) {
     const {
@@ -28,7 +29,7 @@ export function GebindemanagementTable({ columns, data, skipPageReset }) {
                 {headerGroups.map(headerGroup => (
                     <tr {...headerGroup.getHeaderGroupProps()}>
                         {headerGroup.headers.map(column => (
-                            <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                            <th class="word-wrap" {...column.getHeaderProps(column.getSortByToggleProps())}>
                                 {column.render('Header')}
                                 <span>
                                     {column.isSorted ? (column.isSortedDesc ? ' ↓' : ' ↑') : ''}
@@ -46,7 +47,7 @@ export function GebindemanagementTable({ columns, data, skipPageReset }) {
                             {row.cells.map((cell, i) => {
                                 const props = cell.getCellProps();
                                 return (
-                                    <td {...props}>
+                                    <td class="word-wrap" {...props}>
                                         {cell.render('Cell')}
                                     </td>
                                 );

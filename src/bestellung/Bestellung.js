@@ -62,6 +62,7 @@ export function Bestellung(){
     );
 
     const [frischBestellung, setFrischBestellung] = React.useState([]);
+    const [lastWeekFrischBestellung, setLastWeekFrischBestellung] = React.useState([]);
     const [isLoading, setIsLoading] = React.useState(true);
     const [isAlsoLoading, setIsAlsoLoading] = React.useState(true);
     const [data, setData] = React.useState([]);
@@ -98,6 +99,15 @@ export function Bestellung(){
                 .then(r => r.json())
                 .then(r => {
                     setFrischBestellung(old => {
+                        const n = r?._embedded?.frischBestellungRepresentationList
+                        return n === undefined ? old : n;
+                    }
+                );
+            });
+            api.readFrischBestellungBetweenDatesProPerson(person_id)
+                .then(r => r.json())
+                .then(r => {
+                    setLastWeekFrischBestellung(old => {
                         const n = r?._embedded?.frischBestellungRepresentationList
                         return n === undefined ? old : n;
                     }
@@ -201,6 +211,11 @@ export function Bestellung(){
                     deepAssign("bestellsumme", data[i], bestellmenge);
                 }
             }
+            for(let j = 0; j < lastWeekFrischBestellung.length; j++){
+                if(data[i].id === lastWeekFrischBestellung[j].frischbestand.id){
+                    deepAssign("bestellmengeAlt", data[i], lastWeekFrischBestellung[j].bestellmenge);
+                }    
+            }
             for(let j = 0; j < frischBestellung.length; j++){
                 if(checkAlreadyOrdered(data[i].id) && data[i].id === frischBestellung[j].frischbestand.id){
                     deepAssign("bestellmengeNeu", data[i], frischBestellung[j].bestellmenge);
@@ -211,7 +226,8 @@ export function Bestellung(){
         return (
             <BestellungTable
                 columns={columns}
-                data={data}/>
+                data={data}
+                lastWeekBestellung={lastWeekFrischBestellung}/>
         );
     }
 

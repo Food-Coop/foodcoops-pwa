@@ -3,7 +3,7 @@
 }
 
 .bestellung-inputfield-size {
-    width: 150px;
+    width: 200px;
  }
 
 .brotbestellung-inputfield-size {
@@ -21,10 +21,10 @@
 }
 @media (max-width: 1100px)  {
     .bestellung-inputfield-size {
-    width: 100px;
+    width: 170px;
     }
     .brotbestellung-inputfield-size {
-        width: 100px;
+        width: 170px;
     }
     .einkauf-inputfield-size {
         width: 100px;

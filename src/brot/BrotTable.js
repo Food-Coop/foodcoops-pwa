@@ -70,9 +70,13 @@ export function BrotTable({ columns, data, skipPageReset }) {
                                     if(cell.column.Header === "BrotID"){
                                         return null;
                                     } else if(cell.column.Header === "Bestellmenge"){
+                                        let vorwoche = data[row.index].bestellmengeAlt;
+                                        if(vorwoche === null || vorwoche === undefined){
+                                            vorwoche = 0;
+                                        }
                                         let id = "Inputfield" + row.index;
                                         return(
-                                            <td class="word-wrap" key={row.index}><input class="brotbestellung-inputfield-size" type="number" min="0" id={id} onChange={() => calculatePrice()} disabled={data[row.index].verfuegbarkeit === false}></input></td>
+                                            <td class="word-wrap" key={row.index}><input placeholder={"Vorwoche: " + vorwoche} class="brotbestellung-inputfield-size" type="number" min="0" id={id} onChange={() => calculatePrice()} disabled={data[row.index].verfuegbarkeit === false}></input></td>
                                         );
                                     } else if(cell.column.Header === "Preis in €"){
                                         let id = "PreisId" + row.index;

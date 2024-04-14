@@ -46,6 +46,7 @@ export function Brot(){
     );
 
     const [brotBestellung, setBrotBestellung] = React.useState([]);
+    const [lastWeekBrotBestellung, setLastWeekBrotBestellung] = React.useState([]);
     const [isLoading, setIsLoading] = React.useState(true);
     const [isAlsoLoading, setIsAlsoLoading] = React.useState(true);
     const [data, setData] = React.useState([]);
@@ -82,6 +83,15 @@ export function Brot(){
                 .then(r => r.json())
                 .then(r => {
                     setBrotBestellung(old => {
+                        const n = r?._embedded?.brotBestellungRepresentationList
+                        return n === undefined ? old : n;
+                    }
+                );
+            });
+            api.readBrotBestellungBetweenDatesProPerson(person_id)
+                .then(r => r.json())
+                .then(r => {
+                    setLastWeekBrotBestellung(old => {
                         const n = r?._embedded?.brotBestellungRepresentationList
                         return n === undefined ? old : n;
                     }
@@ -186,6 +196,11 @@ export function Brot(){
                 else if(data[i]){
                     deepAssign("bestellsumme", data[i], 0);
                 } 
+            }
+            for(let j = 0; j < lastWeekBrotBestellung.length; j++){
+                if(data[i].id === lastWeekBrotBestellung[j].brotbestand.id){
+                    deepAssign("bestellmengeAlt", data[i], lastWeekBrotBestellung[j].bestellmenge);
+                }    
             }
             for(let j = 0; j < brotBestellung.length; j++){
                 if(data[i] && checkAlreadyOrdered(data[i].id)){

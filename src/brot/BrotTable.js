@@ -1,6 +1,7 @@
 import { useExpanded, useTable, useSortBy } from "react-table";
 import BTable from "react-bootstrap/Table";
 import React from "react";
+import '../Table.css';
 
 export function BrotTable({ columns, data, skipPageReset }) {
     const NotAvailableColor = '#D3D3D3';
@@ -44,7 +45,7 @@ export function BrotTable({ columns, data, skipPageReset }) {
                    // Hide the 'BrotID' header
                    return null;
                  } else {
-                   return <th key={headerGroup.id + "Header"} {...column.getHeaderProps(column.getSortByToggleProps())}>
+                   return <th class="word-wrap" key={headerGroup.id + "Header"} {...column.getHeaderProps(column.getSortByToggleProps())}>
                         {column.render("Header")}
                         <span>
                             {column.isSorted ? (column.isSortedDesc ? ' ↓' : ' ↑') : ''}
@@ -71,20 +72,20 @@ export function BrotTable({ columns, data, skipPageReset }) {
                                     } else if(cell.column.Header === "Bestellmenge"){
                                         let id = "Inputfield" + row.index;
                                         return(
-                                            <td style={{width: "17em"}} key={row.index}><input type="number" min="0" id={id} onChange={() => calculatePrice()} disabled={data[row.index].verfuegbarkeit === false}></input></td>
+                                            <td class="word-wrap" key={row.index}><input class="brotbestellung-inputfield-size" type="number" min="0" id={id} onChange={() => calculatePrice()} disabled={data[row.index].verfuegbarkeit === false}></input></td>
                                         );
                                     } else if(cell.column.Header === "Preis in €"){
                                         let id = "PreisId" + row.index;
                                         return(
-                                            <td style={{color: data[row.index].verfuegbarkeit === false ? NotAvailableColor : ''}} key={row.index}{...props} id = {id}>{cell.render('Cell')}</td>
+                                            <td class="word-wrap" style={{color: data[row.index].verfuegbarkeit === false ? NotAvailableColor : ''}} key={row.index}{...props} id = {id}>{cell.render('Cell')}</td>
                                         );
                                     } else if(cell.column.Header === "aktuelle Bestellmenge" || cell.column.Header === "Gewicht in g"){
                                         return(
-                                            <td style={{color: data[row.index].verfuegbarkeit === false ? NotAvailableColor : '', width: "15em"}} key={row.index}{...props} >{cell.render('Cell')}</td>
+                                            <td class="word-wrap" id="aktuelleBrotBestellmenge" style={{color: data[row.index].verfuegbarkeit === false ? NotAvailableColor : ''}} key={row.index}{...props} >{cell.render('Cell')}</td>
                                         );
                                     } else{
                                         return (
-                                            <td style={{color: data[row.index].verfuegbarkeit === false ? NotAvailableColor : ''}} key={row.index} {...props}>{cell.render('Cell')}</td>
+                                            <td class="word-wrap" style={{color: data[row.index].verfuegbarkeit === false ? NotAvailableColor : ''}} key={row.index} {...props}>{cell.render('Cell')}</td>
                                         );
                                     }
                                 })}

@@ -1,3 +1,7 @@
+:root {
+  font-size: var(--font-size);
+}
+
 .Header {
     position: relative;
     z-index: 2;
@@ -29,7 +33,6 @@
     height: 100px;
     width: 100px;
   }
-
   .CurrentSiteName {
     position: absolute;
     right: 40%;
@@ -37,8 +40,48 @@
     font-family: 'Arial', sans-serif;
     text-transform: uppercase;
     color: #333;
+    font-size: var(--current-site-name-font-size);
   }
 
+  @media (max-width: 1220px) {
+    .toggleSizeButton {
+      left: 33%;
+    }
+    .CurrentSiteName {
+      right: 30%;
+      left: 30%;
+    }
+  }
+
+  @media (max-width: 1050px) {
+    .toggleSizeButton {
+      left: 30%;
+    }
+  }
+  @media (max-width: 870px) {
+    .toggleSizeButton {
+      left: 27%;
+    }
+    .CurrentSiteName {
+      right: 30%;
+      left: 25%;
+    }
+  }
+  @media (max-width: 700px) {
+    .toggleSizeButton {
+      left: 23%;
+    }
+  }
+  @media (max-width: 630px) {
+    .toggleSizeButton {
+      left: 15%;
+    }
+  }
+  @media (min-width: 1220px) {
+    .toggleSizeButton {
+      left: 35%;
+    }
+  }
 
   footer {
     width: 100%;

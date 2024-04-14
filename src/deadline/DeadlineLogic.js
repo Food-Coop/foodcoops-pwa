@@ -61,7 +61,7 @@ export function DeadlineLogic() {
                     borderRadius: '4px', 
                     textAlign: 'center', 
                     fontWeight: 'bold',
-                    fontSize: '20px',
+                    fontSize: 'var(--deadline-font-size)',
                     marginTop: '10px',
                     marginBottom: '10px'
                 }}>

@@ -1,0 +1,28 @@
+.word-wrap {
+    word-break: break-word;
+}
+
+.bestellung-inputfield-size {
+    width: 150px;
+ }
+
+ .brotbestellung-inputfield-size {
+    width: 200px;
+ }
+ #aktuelleBrotBestellmenge {
+    width: 200px;
+}
+@media (max-width: 780px)  {
+    .bestellung-inputfield-size {
+    width: 100px;
+    }
+    .brotbestellung-inputfield-size {
+        width: 100px;
+    }
+}
+
+@media (max-width: 1000px)  {
+    #aktuelleBrotBestellmenge {
+        width: 115px;
+    }
+}

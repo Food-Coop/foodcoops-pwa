@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Link, Route, Switch, useLocation } from 'react-router-dom';
 import { useKeycloak } from "@react-keycloak/web";
 import { AuthButton } from '../auth/AuthButton';
@@ -12,6 +12,7 @@ import { Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import Button from "@mui/material/Button";
+import IconButton from '@mui/material/IconButton';
 import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
@@ -22,6 +23,8 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import InfoIcon from '@mui/icons-material/Info';
+import ZoomInIcon from '@mui/icons-material/ZoomIn';
+import ZoomOutIcon from '@mui/icons-material/ZoomOut';
 import './AppRouter.css';
 import { MainKontrolle } from '../kontrolle/MainKontrolle';
 
@@ -42,6 +45,17 @@ export const AppRouter = () => {
 const AppContent = ({ menuOpen, toggleMenu }) => {
   const location = useLocation();
   const { keycloak } = useKeycloak();
+  const [isLarge, setIsLarge] = useState(false);
+
+  const toggleSize = () => {
+    setIsLarge(!isLarge);
+  };
+
+  useEffect(() => {
+    document.documentElement.style.setProperty('--font-size', isLarge ? '1.5em' : '1em');
+    document.documentElement.style.setProperty('--current-site-name-font-size', isLarge ? '1.5em' : '34px');
+    document.documentElement.style.setProperty('--deadline-font-size', isLarge ? '1.5em' : '20px');
+  }, [isLarge]);
 
   const getPageName = () => {
     const routeToPageName = {
@@ -144,6 +158,9 @@ const AppContent = ({ menuOpen, toggleMenu }) => {
         <BurgerMenuButton variant="contained" size="large" disableElevation color='secondary' className="BurgerButton" onClick={toggleMenu(true)}>
           ☰
         </BurgerMenuButton>
+        <IconButton className='toggleSizeButton' onClick={toggleSize}>
+          {isLarge ? <ZoomOutIcon style={{ fontSize: "50px" }} /> : <ZoomInIcon style={{ fontSize: "50px" }} />}
+        </IconButton>
         <Drawer open={menuOpen} onClose={toggleMenu(false)}>
           <div
             role="presentation"

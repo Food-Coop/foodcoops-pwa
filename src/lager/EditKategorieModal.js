@@ -7,6 +7,7 @@ import ClickAwayListener from '@mui/material/ClickAwayListener';
 import { LagerModal } from "./LagerModal";
 import ListGroup from 'react-bootstrap/ListGroup';
 import CustomTooltip from "../components/CustomToolTip";
+import './Dialog.css'; // Import the CSS file
 
 export function EditKategorieModal(props) {
     const [mixable, setmixable] = useState(false); 
@@ -52,15 +53,6 @@ export function EditKategorieModal(props) {
             </ClickAwayListener>
         </div>
       );
-    const style = {
-        fontSize: "large",
-        float: "right",
-        margin: "0",
-        cursor: "pointer",
-        width: "1em",
-        textAlign: "right",
-        marginLeft: "1em"
-    };
 
     const submit = (inputElement) => {
         const name = inputElement.value;
@@ -82,20 +74,19 @@ export function EditKategorieModal(props) {
     };
 
     const body = 
-        <div>
-            
+        <div className="body">
             <ListGroup as="ul">
                 <ListGroup.Item key="input" as="li">
-                    <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <input style={{ border: "0", background: "lightgray", borderRadius: "5px" }} type="text" onKeyDown={ignoreEnter} />
-                        <label style={{ margin: "0 0 0 3em" }}>Mischbar:</label>
+                    <div className="input-container">
+                        <input className="input-text" type="text" onKeyDown={ignoreEnter} />
+                        <label className="checkbox-label">Mischbar:</label>
                         <input 
-                            style={{ margin: "0 0 0 1em"}}
+                            className="checkbox-input"
                             type="checkbox"
                             checked={mixable}
                             onChange={handleCheckboxChange}
                         />
-                        <img alt="delete" src="icons/icons8-checkmark-50.png" style={style} onClick={(e) => {
+                        <img alt="delete" src="icons/icons8-checkmark-50.png" className="list-item-delete" onClick={(e) => {
                             e.preventDefault();
                             const inputElement = e.target.parentElement.parentElement.querySelector("input");
                             submit(inputElement);
@@ -108,18 +99,18 @@ export function EditKategorieModal(props) {
                         .map(({id, name, mixable}, i) => {
                             return (
                                 <ListGroup.Item key={i} as="li">
-                                    <div style={{ display: 'flex', alignItems: 'center' }}>
-                                        <div style={{ flex: 1 }}>{name}</div>
-                                        <div style={{ borderLeft: '1px solid black', height: '100%', marginRight: '10px' }}></div>
-                                        <label style={{ margin: "0 0 0 1em" }}> Mischbar:</label>
+                                    <div className="list-item">
+                                        <div id="nameKategorie">{name}</div>
+                                        <div className="list-item-divider"></div>
+                                        <label className="checkbox-label"> Mischbar:</label>
                                         <input 
-                                            style={{ margin: "0 0 0 1em"}}
+                                            className="checkbox-input"
                                             type="checkbox"
                                             checked={mixable}
                                             onChange={handleCheckboxChange}
                                             disabled
                                         />
-                                        <img alt="delete" src="icons/icons8-delete-50.png" style={style} onClick={e => {
+                                        <img alt="delete" src="icons/icons8-delete-50.png" className="list-item-delete" onClick={e => {
                                             e.preventDefault();
                                             props.remove({id, name});
                                         }}/>

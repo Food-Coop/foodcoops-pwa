@@ -14,7 +14,6 @@ export function Kontrolle() {
     const [discrepancy, setDiscrepancy] = useState([]);
     const api = useApi();
     const [reducerValue, forceUpdate] = React.useReducer(x => x+1, 0);
-    const [inputValues, setInputValues] = useState({});
 
     const columns = React.useMemo(
         () => [
@@ -94,10 +93,6 @@ export function Kontrolle() {
       });
       doc.save("zuViel-zuWenig_Tabelle.pdf");
   };
-
-    const handleChange = (id, value) => {
-      setInputValues(prev => ({ ...prev, [id]: value }));
-    };
 
     const submitUpdateDiscr = async () => {
       let errorOccurred = false;
@@ -183,7 +178,7 @@ export function Kontrolle() {
                           if(cell.column.Header === "Zu Viel / Zu Wenig"){
                             let id = "InputfieldDiscr" + row.index;
                             return(
-                              <td class="word-wrap" key={`${row.original.id}-${cell.column.Header}Discr`}><input value={inputValues[id] || row.original.zuVielzuWenig} onChange={(e) => handleChange(id, e.target.value)} id={id} type="number"></input></td>
+                              <td class="word-wrap" key={`${row.original.id}-${cell.column.Header}Discr`}><input placeholder={row.original.zuVielzuWenig} id={id} type="number"></input></td>
                             );
                           } else {
                             return <td class="word-wrap" key={`${row.original.id}-${cell.column.Header}Discr`} {...cell.getCellProps()}>{cell.render('Cell')}</td>

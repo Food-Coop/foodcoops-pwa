@@ -1,0 +1,99 @@
+.edit-kategorie-modal {
+    font-size: large;
+    float: right;
+    margin: 0;
+    cursor: pointer;
+    width: 1em;
+    text-align: right;
+    margin-left: 1em;
+  }
+  
+  .input-container {
+    display: flex;
+    align-items: center;
+  }
+  
+  .input-text {
+    border: 0;
+    background: lightgray;
+    border-radius: 5px;
+  }
+  
+  .checkbox-label {
+    margin: 0 0 0 1em;
+  }
+  
+  .checkbox-input {
+    margin: 0 0 0 1em;
+  }
+  
+  .list-item {
+    display: flex;
+    align-items: center;
+  }
+  
+  .list-item-divider {
+    border-left: 1px solid black;
+    height: 100%;
+    margin-right: 10px;
+  }
+  
+  .list-item-delete {
+    font-size: large;
+    float: right;
+    margin: 0;
+    cursor: pointer;
+    width: 1em;
+    text-align: right;
+    margin-left: 1em;
+  }
+
+  .modal-body {
+    flex: 1 1 auto;
+    overflow: auto;
+  }
+
+  #nameKategorie {
+    flex: 1;
+}
+
+@media (max-width: 1000px)  {
+
+    .modal-body {
+        font-size: 0.8em;
+    }
+
+    .input-text {
+        width: 50px;
+        flex: 1;
+        margin-right: 0.5em;
+    }
+
+    .edit-kategorie-modal {
+        font-size: small;
+        float: right;
+        margin: 0;
+        cursor: pointer;
+        width: 0.3em;
+        text-align: right;
+        margin-left: 0em;
+      }
+
+      .checkbox-label {
+        margin: 0em;
+      }
+      
+      .checkbox-input {
+        margin: 0em;
+      }
+
+      .modal-body {
+        flex: 1 1 auto;
+        overflow: auto;
+      }
+
+      #nameKategorie {
+        flex: 1;
+    }
+}
+  

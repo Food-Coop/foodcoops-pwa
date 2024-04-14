@@ -70,7 +70,7 @@ export function BestellungTable({ columns, data, skipPageReset }) {
                                     } else if(cell.column.Header === "Bestellmenge"){
                                         let id = "Inputfield" + row.index;
                                         return(
-                                            <td class="word-wrap" id="bestellung-inputfield-size" key={row.index}><input class="inputfield-size" type="number" min="0" id={id} onChange={() => calculatePrice()} disabled={data[row.index].verfuegbarkeit === false}></input></td>
+                                            <td class="word-wrap" key={row.index}><input class="bestellung-inputfield-size" type="number" min="0" id={id} onChange={() => calculatePrice()} disabled={data[row.index].verfuegbarkeit === false}></input></td>
                                         );
                                     } else if(cell.column.Header === "Preis in €"){
                                         let id = "PreisId" + row.index;

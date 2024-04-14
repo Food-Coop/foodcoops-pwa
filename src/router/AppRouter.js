@@ -24,6 +24,7 @@ import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import InfoIcon from '@mui/icons-material/Info';
 import './AppRouter.css';
 import { MainKontrolle } from '../kontrolle/MainKontrolle';
+import { MainOverview } from '../lastweekoverview/MainOverview';
 
 export const AppRouter = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -50,6 +51,7 @@ const AppContent = ({ menuOpen, toggleMenu }) => {
       '/mainEinkauf': 'Einkauf',
       '/mainManagement': 'Management',
       '/mainKontrolle' : 'Übersicht',
+      '/mainOverview' : 'Übersich Vorwoche',
       '/about': 'Impressum',
     };
 
@@ -120,6 +122,16 @@ const AppContent = ({ menuOpen, toggleMenu }) => {
                   </Typography>
                 </ListItemButton>
               </Link>
+              <Link to="/mainOverview">
+                <ListItemButton sx={{ color: "grey" }}>
+                  <ListItemIcon> 
+                    <InventoryIcon/>
+                  </ListItemIcon>
+                  <Typography variant="h6">
+                    Übersicht Vorwoche
+                  </Typography>
+                </ListItemButton>
+              </Link>
               <Divider />
               <Link to="/about">
                 <ListItemButton sx={{ color: "grey" }}>
@@ -165,6 +177,7 @@ const AppContent = ({ menuOpen, toggleMenu }) => {
         <PrivateRoute roles={["Einkäufer"]} path="/mainEinkauf" component={MainEinkauf} />
         <PrivateRoute roles={["Einkäufer"]} path="/mainManagement" component={MainManagement} />
         <PrivateRoute roles={["Einkäufer"]} path="/mainKontrolle" component={MainKontrolle} />
+        <PrivateRoute roles={["Einkäufer"]} path="/mainOverview" component={MainOverview} />
         <Route path="/" component={Home} />
       </Switch>
     </div>

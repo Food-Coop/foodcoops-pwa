@@ -56,6 +56,7 @@ const AppContent = ({ menuOpen, toggleMenu }) => {
     document.documentElement.style.setProperty('--current-site-name-font-size', isLarge ? '1.5em' : '34px');
     document.documentElement.style.setProperty('--deadline-font-size', isLarge ? '1.5em' : '20px');
     document.documentElement.style.setProperty('--zuVielzuWenigFrischEinkauf-font-size', isLarge ? '1em' : '15px');
+    document.documentElement.style.setProperty('--checkbox-size', isLarge ? '30px' : '15px');
   }, [isLarge]);
 
   const getPageName = () => {
@@ -180,7 +181,7 @@ const AppContent = ({ menuOpen, toggleMenu }) => {
         <Route exact path="/login" component={AuthButton} />
         <Route exact path="/about" component={About} />
         <PrivateRoute roles={["Einkäufer"]} path="/mainBestellung" component={MainBestellung} />
-        <PrivateRoute roles={["Einkäufer"]} path="/mainEinkauf" component={MainEinkauf} />
+        <PrivateRoute roles={["Einkäufer"]} path="/mainEinkauf" component={() => <MainEinkauf isLarge={isLarge} />} />
         <PrivateRoute roles={["Einkäufer"]} path="/mainManagement" component={MainManagement} />
         <PrivateRoute roles={["Einkäufer"]} path="/mainKontrolle" component={MainKontrolle} />
         <Route path="/" component={Home} />

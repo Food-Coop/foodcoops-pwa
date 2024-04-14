@@ -16,7 +16,7 @@ import { useApi } from '../ApiService';
 import NumberFormatComponent from '../logic/NumberFormatComponent';
 import './MainEinkauf.css';
 
-export function MainEinkauf() {
+export function MainEinkauf( { isLarge }) {
   const [totalFrischPrice, setTotalFrischPrice] = useState(0);
   const [totalBrotPrice, setTotalBrotPrice] = useState(0);
   const [totalProduktPrice, setTotalProduktPrice] = useState(0);
@@ -278,7 +278,7 @@ export function MainEinkauf() {
         </AccordionDetails>
       </Accordion>
 
-      <div className="price-section">
+      <div className={isLarge ? 'price-section-large' : 'price-section'}>
         <div className="price-details">
           <div>
             <h4>Frischware:</h4>
@@ -288,17 +288,17 @@ export function MainEinkauf() {
             <h4>5 % Lieferkosten:</h4>
           </div>
           <div className="total-price">
-            <h4><span className="price"><NumberFormatComponent value={totalFrischPrice.toFixed(2)} /></span> <span className="currency">€</span></h4>
-            <h4><span className="price"><NumberFormatComponent value={totalDiscrepancyPrice.toFixed(2)} /></span> <span className="currency">€</span></h4>
-            <h4><span className="price"><NumberFormatComponent value={totalBrotPrice.toFixed(2)} /></span> <span className="currency">€</span></h4>
-            <h4><span className="price"><NumberFormatComponent value={totalProduktPrice.toFixed(2)} /></span> <span className="currency">€</span></h4>
-            <h4><span className="price"><NumberFormatComponent value={deliveryCost.toFixed(2)} /></span> <span className="currency">€</span></h4>
+            <h4><span className={isLarge ? 'price-large' : 'price'}><NumberFormatComponent value={totalFrischPrice.toFixed(2)} /></span> <span className="currency">€</span></h4>
+            <h4><span className={isLarge ? 'price-large' : 'price'}><NumberFormatComponent value={totalDiscrepancyPrice.toFixed(2)} /></span> <span className="currency">€</span></h4>
+            <h4><span className={isLarge ? 'price-large' : 'price'}><NumberFormatComponent value={totalBrotPrice.toFixed(2)} /></span> <span className="currency">€</span></h4>
+            <h4><span className={isLarge ? 'price-large' : 'price'}><NumberFormatComponent value={totalProduktPrice.toFixed(2)} /></span> <span className="currency">€</span></h4>
+            <h4><span className={isLarge ? 'price-large' : 'price'}><NumberFormatComponent value={deliveryCost.toFixed(2)} /></span> <span className="currency">€</span></h4>
           </div>
         </div>
         <hr className="hr-divider" id="sum-divider" />
         <div className="total-price-section">
           <h4>Insgesamt:</h4>
-          <h4><span className="price"><NumberFormatComponent value={totalPrice.toFixed(2)} /></span> <span className="currency">€</span></h4>
+          <h4><span className={isLarge ? 'price-large' : 'price'}><NumberFormatComponent value={totalPrice.toFixed(2)} /></span> <span className="currency">€</span></h4>
         </div>
         <Button className="confirm-button" variant="success" onClick={submitEinkauf}>
           Einkauf bestätigen	

@@ -2,6 +2,7 @@ import React from "react";
 import Button from "react-bootstrap/Button";
 import {BrotBestandModal} from "./BrotBestandModal";
 import {deepAssign} from "../util";
+import '../Dialog.css';
 
 function defaultData(columns) {
     const capitalize = word => word.replace(/^\w/, c => c.toUpperCase());

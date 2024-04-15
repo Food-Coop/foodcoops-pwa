@@ -227,7 +227,7 @@ export function Bestellung(){
             <BestellungTable
                 columns={columns}
                 data={data}
-                lastWeekBestellung={lastWeekFrischBestellung}/>
+                />
         );
     }
 

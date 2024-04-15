@@ -1,6 +1,8 @@
 import { useExpanded, useTable, useSortBy } from "react-table";
 import BTable from "react-bootstrap/Table";
-import React from "react";
+import Button from 'react-bootstrap/Button';
+import React from 'react';
+import Alert from '@mui/material/Alert';
 import '../Table.css';
 
 export function BrotTable({ columns, data, skipPageReset }) {
@@ -35,7 +37,26 @@ export function BrotTable({ columns, data, skipPageReset }) {
         document.getElementById("preis").innerHTML = "Preis: " + preis.toFixed(2).replace('.', ',') + " €";
     }
 
+    const setValuesToBestellungVorwoche = () => {
+        for(let i = 0; i < data.length; i++){
+            let inputfieldId = "Inputfield" + i;
+            let bestellmenge = data[i].bestellmengeAlt;
+            if(bestellmenge === null || bestellmenge === undefined){
+                bestellmenge = '';
+            }
+            document.getElementById(inputfieldId).value = bestellmenge;
+        }
+        calculatePrice();
+    }
+
     return (
+        <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <Button style={{margin: "0.5em 0 0.5em 1em"}} variant="primary" onClick={() => setValuesToBestellungVorwoche()}>Bestellmenge Vorwoche laden</Button>
+                <Alert severity="info" style={{margin: "0.5em 0 0.5em 1em"}}> 
+                    Über "Bestellmenge Vorwoche laden" können Sie die Bestellmengen ihrer Bestellung aus der Vorwoche in die Eingabefelder "Bestellmenge" laden.
+                </Alert>
+            </div>
         <BTable striped bordered hover size="sm" {...getTableProps()}>
             <thead>
             {headerGroups.map(headerGroup => (
@@ -98,5 +119,6 @@ export function BrotTable({ columns, data, skipPageReset }) {
             })}
             </tbody>
         </BTable>
+        </div>
     )
 }

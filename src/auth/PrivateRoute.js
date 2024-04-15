@@ -20,10 +20,22 @@ export function PrivateRoute({component: Component, roles, ...rest}) {
         <Route
             {...rest}
             render={props => {
-                return isAutherized(roles)
-                    ? <Component {...props} />
-                    : <Redirect to={{pathname: '/',}}/>
+                const user = JSON.parse(localStorage.getItem('user'));
+
+                if (!user) {
+                // Not logged in so redirect to login page
+                return <Redirect to={{ pathname: '/login' }} />
+                }
+
+                // Check if route is restricted by role
+                if (roles && roles.indexOf(user.role) === -1) {
+                // Role not authorized so redirect to home page
+                return <Redirect to={{ pathname: '/'}} />
+                }
+
+                // Authorized so return component
+                return <Component {...props} />
             }}
-        />
+        />  
     )
 }

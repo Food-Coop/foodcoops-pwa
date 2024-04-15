@@ -178,13 +178,13 @@ const AppContent = ({ menuOpen, toggleMenu }) => {
         </Link>
       </div>
       <Switch>
+        <Route exact path="/" component={Home} />
         <Route exact path="/login" component={AuthButton} />
         <Route exact path="/about" component={About} />
         <PrivateRoute roles={["Einkäufer"]} path="/mainBestellung" component={MainBestellung} />
         <PrivateRoute roles={["Einkäufer"]} path="/mainEinkauf" component={() => <MainEinkauf isLarge={isLarge} />} />
         <PrivateRoute roles={["Einkäufer"]} path="/mainManagement" component={MainManagement} />
         <PrivateRoute roles={["Einkäufer"]} path="/mainKontrolle" component={MainKontrolle} />
-        <Route path="/" component={Home} />
       </Switch>
     </div>
   );

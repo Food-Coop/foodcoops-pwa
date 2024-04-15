@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Switch, Route, Link, Redirect} from 'react-router-dom';
+import { BrowserRouter as Router, Switch, Route, Link, Redirect, useRouteMatch} from 'react-router-dom';
 import Paper from '@mui/material/Paper';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -11,6 +11,7 @@ import { BrotBestandManagement } from './brotmanagement/BrotBestandManagement';
 
 export function MainManagement(){
     const [value, setValue] = useState(0);
+    const match = useRouteMatch();
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -27,31 +28,31 @@ export function MainManagement(){
                 textColor="primary"
                 variant="scrollable"
                 >
-                <Tab label="Lager" component={Link} to="/lager" />
-                <Tab label="Frisch" component={Link} to="/frischbestandmanagement" />
-                <Tab label="Gebinde" component={Link} to="/gebindemanagement" />
-                <Tab label="Brot" component={Link} to="/brotbestandmanagement" />
-                <Tab label="Deadline" component={Link} to="/deadline" />
+                <Tab label="Lager" component={Link} to={`${match.url}/lager`} />
+                <Tab label="Frisch" component={Link} to={`${match.url}/frischbestandmanagement`} />
+                <Tab label="Gebinde" component={Link} to={`${match.url}/gebindemanagement`} />
+                <Tab label="Brot" component={Link} to={`${match.url}/brotbestandmanagement`} />
+                <Tab label="Deadline" component={Link} to={`${match.url}/deadline`} />
                 </Tabs>
             </Paper>
             <Switch>
-                <Route path="/lager">
+                <Route exact path={`${match.url}/lager`}>
                     <Lager />
                 </Route>
-                <Route path="/frischbestandmanagement">
+                <Route exact path={`${match.url}/frischbestandmanagement`}>
                     <FrischBestandManagement />
                 </Route>
-                <Route path="/gebindemanagement">
+                <Route exact path={`${match.url}/gebindemanagement`}>
                     <Gebindemanagement />
                 </Route>
-                <Route path="/brotbestandmanagement">
+                <Route exact path={`${match.url}/brotbestandmanagement`}>
                     <BrotBestandManagement />
                 </Route>
-                <Route path="/deadline">
+                <Route exact path={`${match.url}/deadline`}>
                     <Deadline />
                 </Route>
                 <Route>
-                    <Redirect to="/lager" />
+                    <Redirect to={`${match.url}/lager`}/>
                 </Route>
             </Switch>
             </div>

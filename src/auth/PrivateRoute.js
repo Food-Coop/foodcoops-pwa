@@ -3,7 +3,11 @@ import {Redirect, Route} from "react-router-dom";
 import {useKeycloak} from "@react-keycloak/web";
 
 export function PrivateRoute({component: Component, roles, ...rest}) {
-    const {keycloak} = useKeycloak();
+    const { keycloak, initialized } = useKeycloak();
+
+    if (!initialized) {
+        return <div>Lädt...</div>;
+    }
 
     const isAuthorized = (roles) => {
         if (keycloak && roles) {
@@ -19,11 +23,12 @@ export function PrivateRoute({component: Component, roles, ...rest}) {
     return (
         <Route
             {...rest}
-            render={props => {
-                return isAuthorized(roles)	      
-                    ? <Component {...props} />	
-                    : <Redirect to={{pathname: '/',}}/>
-            }}
+            render={props => 
+                isAuthorized(roles) ? (
+                    <Component {...props} />
+                  ) : (
+                     <Redirect to={{pathname: '/',}}/>)
+            }
         />  
     )
 }

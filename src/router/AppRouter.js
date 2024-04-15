@@ -69,7 +69,19 @@ const AppContent = ({ menuOpen, toggleMenu }) => {
       '/about': 'Impressum',
     };
 
-    return routeToPageName[location.pathname] || 'Home';
+    const currentRoute = location.pathname;
+
+    if (currentRoute.startsWith('/mainBestellung')) {
+      return 'Bestellung';
+    }
+    if (currentRoute.startsWith('/mainManagement')) {
+      return 'Management';
+    }
+    if (currentRoute.startsWith('/mainKontrolle')) {
+      return 'Übersicht';
+    }
+
+    return routeToPageName[currentRoute] || 'Home';
   };
 
   const itemsList = () => (
@@ -184,7 +196,8 @@ const AppContent = ({ menuOpen, toggleMenu }) => {
         <PrivateRoute roles={["Einkäufer"]} path="/mainEinkauf" component={() => <MainEinkauf isLarge={isLarge} />} />
         <PrivateRoute roles={["Einkäufer"]} path="/mainManagement" component={MainManagement} />
         <PrivateRoute roles={["Einkäufer"]} path="/mainKontrolle" component={MainKontrolle} />
-        <Route path="/" component={Home} />
+        <Route exact path="/" component={Home} />
+        <Route exact path="/home" component={Home} />
       </Switch>
     </div>
   );

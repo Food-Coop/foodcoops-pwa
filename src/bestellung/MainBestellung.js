@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Switch, Route, Link, Redirect} from 'react-router-dom';
+import { Switch, Route, Link, Redirect, useRouteMatch } from 'react-router-dom';
 import Paper from '@mui/material/Paper';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -8,14 +8,14 @@ import { Brot } from '../brot/Brot';
 
 export function MainBestellung(){
     const [value, setValue] = useState(0);
+    const match = useRouteMatch();
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
 
     return (
-        <Router>
-            <div>
+        <div>
             <Paper square>
                 <Tabs
                 value={value}
@@ -23,22 +23,21 @@ export function MainBestellung(){
                 indicatorColor="primary"
                 textColor="primary"
                 >
-                <Tab label="Frischbestellung" component={Link} to="/bestellung" />
-                <Tab label="Brotbestellung" component={Link} to="/brotbestellung" />
+                <Tab label="Frischbestellung" component={Link} to={`${match.url}/bestellung`} />
+                <Tab label="Brotbestellung" component={Link} to={`${match.url}/brotbestellung`} />
                 </Tabs>
             </Paper>
             <Switch>
-                <Route path="/bestellung">
+                <Route exact path={`${match.path}/bestellung`}>
                     <Bestellung />
                 </Route>
-                <Route path="/brotbestellung">
+                <Route exact path={`${match.path}/brotbestellung`}>
                     <Brot />
                 </Route>
-                <Route>
-                    <Redirect to="/bestellung" />
+                <Route exact path={match.path}>
+                    <Redirect to={`${match.path}/bestellung`} />
                 </Route>
             </Switch>
-            </div>
-        </Router>
+        </div>
     );
 }

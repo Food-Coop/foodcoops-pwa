@@ -56,6 +56,8 @@ export const ApiProvider = (props) => {
         readBestellUebersicht: props.readBestellUebersicht || readBestellUebersicht,
         readDiscrepancyOverviwe: props.readDiscrepancyOverviwe || readDiscrepancyOverviwe,
         updateDiscrepancy: props.updateDiscrepancy|| updateDiscrepancy,
+
+        readGebindeOverview: props.readGebindeOverview|| readGebindeOverview,
     };
 
     return (
@@ -459,3 +461,7 @@ fetch(BACKEND_URL + GEBINDE + UPDATEDESCREPANCY + id, {
     },
     body: data,
 });
+
+//Gebinde übersichet
+const readGebindeOverview = () =>
+    fetch(BACKEND_URL + GEBINDE);

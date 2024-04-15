@@ -10,8 +10,8 @@ import {jsPDF} from "jspdf";
 import 'jspdf-autotable';
 
 export function Kontrolle() {
-    const [discrepancy, setDiscrepancy] = useState([]);
     const api = useApi();
+    const [discrepancy, setDiscrepancy] = useState([]);
     const [reducerValue, forceUpdate] = React.useReducer(x => x+1, 0);
     const [inputValues, setInputValues] = useState({});
 

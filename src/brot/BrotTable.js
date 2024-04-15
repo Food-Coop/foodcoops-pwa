@@ -2,7 +2,11 @@ import { useExpanded, useTable, useSortBy } from "react-table";
 import BTable from "react-bootstrap/Table";
 import Button from 'react-bootstrap/Button';
 import React from 'react';
-import Alert from '@mui/material/Alert';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
+import ClickAwayListener from '@mui/material/ClickAwayListener';
+import CustomTooltip from "../components/CustomToolTip";
 import '../Table.css';
 
 export function BrotTable({ columns, data, skipPageReset }) {
@@ -49,13 +53,40 @@ export function BrotTable({ columns, data, skipPageReset }) {
         calculatePrice();
     }
 
+    const [open, setOpen] = React.useState(false);
+
+    const handleTooltipClose = () => {
+      setOpen(false);
+    };
+  
+    const handleTooltipOpen = () => {
+      setOpen(true);
+    };
+
     return (
         <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <Button style={{margin: "0.5em 0 0.5em 1em"}} variant="primary" onClick={() => setValuesToBestellungVorwoche()}>Bestellmenge Vorwoche laden</Button>
-                <Alert severity="info" style={{margin: "0.5em 0 0.5em 1em"}}> 
-                    Über "Bestellmenge Vorwoche laden" können Sie die Bestellmengen ihrer Bestellung aus der Vorwoche in die Eingabefelder "Bestellmenge" laden.
-                </Alert>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+            <ClickAwayListener onClickAway={handleTooltipClose}>
+                <div >
+                    <CustomTooltip onClose={handleTooltipClose}
+                        open={open}
+                        disableFocusListener
+                        disableHoverListener
+                        disableTouchListener
+                        title={
+                        <React.Fragment>
+                            <Typography color="inherit"><b>Hinweis</b></Typography>
+                            Über "Bestellmenge Vorwoche laden" können Sie die Bestellmengen ihrer Bestellung aus der Vorwoche in die Eingabefelder "Bestellmenge" laden.
+                        </React.Fragment>
+                        }
+                        placement="right" arrow>
+                        <IconButton style={{margin: "0.5em 0 0.5em 0"}} onClick={handleTooltipOpen}>
+                            <HelpOutlineIcon />
+                        </IconButton>
+                    </CustomTooltip>
+                </div>
+            </ClickAwayListener>
+                <Button style={{margin: "0.5em 1em 0.5em 0"}} variant="primary" onClick={() => setValuesToBestellungVorwoche()}>Bestellmenge Vorwoche laden</Button>
             </div>
         <BTable striped bordered hover size="sm" {...getTableProps()}>
             <thead>

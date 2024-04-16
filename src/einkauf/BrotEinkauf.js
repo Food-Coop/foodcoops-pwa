@@ -122,7 +122,7 @@ export function BrotEinkauf(props) {
                       }else if(cell.column.Header === "genommene Menge"){
                         let id = "InputfieldBrot" + row.index;
                         return(
-                          <td className="word-wrap" key={`${row.original.id}-${cell.column.Header}Brot`}><input class='einkauf-inputfield-size' id={id} type="number" min="0" onChange={() => handleChange()} disabled={row.original.brotbestand.verfuegbarkeit === false}></input></td>
+                          <td className="word-wrap" key={`${row.original.id}-${cell.column.Header}Brot`}><input className='einkauf-inputfield-size' id={id} type="number" min="0" onChange={() => handleChange()} disabled={row.original.brotbestand.verfuegbarkeit === false}></input></td>
                         );
                       } else {
                         return <td className="word-wrap" key={`${row.original.id}-${cell.column.Header}Brot`} style={{color: row.original.brotbestand.verfuegbarkeit === false ? NotAvailableColor : ''}} {...cell.getCellProps()}>{cell.render('Cell')}</td>

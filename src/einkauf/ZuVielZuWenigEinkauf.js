@@ -137,7 +137,7 @@ export function ZuVielZuWenigEinkauf(props) {
                     } else if(cell.column.Header === "genommene Menge"){
                       let id = "InputfieldDiscrepancy" + row.index;
                       return(
-                        <td className="word-wrap" key={`${row.original.id}-${cell.column.Header}ZuViel`}><input class='einkauf-inputfield-size' id={id} type="number" min="0" onChange={() => handleChange()} disabled={row.original.bestand.verfuegbarkeit === false}></input></td>
+                        <td className="word-wrap" key={`${row.original.id}-${cell.column.Header}ZuViel`}><input className='einkauf-inputfield-size' id={id} type="number" min="0" onChange={() => handleChange()} disabled={row.original.bestand.verfuegbarkeit === false}></input></td>
                       );
                     } else if(cell.column.Header === "zu Viel"){
                       return(

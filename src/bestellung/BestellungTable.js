@@ -125,7 +125,7 @@ export function BestellungTable({ columns, data, skipPageReset }) {
                                         }
                                         let id = "Inputfield" + row.index;
                                         return(
-                                            <td className="word-wrap" key={row.index}><input placeholder={"Vorwoche: " + vorwoche} class="bestellung-inputfield-size" type="number" min="0" id={id} onChange={() => calculatePrice()} disabled={data[row.index].verfuegbarkeit === false}></input></td>
+                                            <td className="word-wrap" key={row.index}><input placeholder={"Vorwoche: " + vorwoche} className="bestellung-inputfield-size" type="number" min="0" id={id} onChange={() => calculatePrice()} disabled={data[row.index].verfuegbarkeit === false}></input></td>
                                         );
                                     } else if(cell.column.Header === "Preis in €"){
                                         let id = "PreisId" + row.index;

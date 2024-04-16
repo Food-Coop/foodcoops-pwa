@@ -174,7 +174,7 @@ export function FrischEinkauf(props) {
                         } else if(cell.column.Header === "genommene Menge"){
                           let id = "InputfieldFrisch" + row.index;
                           return(
-                            <td className="word-wrap" key={`${row.original.id}-${cell.column.Header}Frisch`}><input class='einkauf-inputfield-size' id={id} type="number" min="0" step={getStepValue(row.original.frischbestand.einheit.name)} onChange={() => handleChange()} disabled={row.original.frischbestand.verfuegbarkeit === false} ></input></td>
+                            <td className="word-wrap" key={`${row.original.id}-${cell.column.Header}Frisch`}><input className='einkauf-inputfield-size' id={id} type="number" min="0" step={getStepValue(row.original.frischbestand.einheit.name)} onChange={() => handleChange()} disabled={row.original.frischbestand.verfuegbarkeit === false} ></input></td>
                           );
                         } else if(cell.column.Header === "Bestellmenge"){
                           return (

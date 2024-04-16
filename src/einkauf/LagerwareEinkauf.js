@@ -129,7 +129,7 @@ export function LagerwareEinkauf(props) {
                     }else if(cell.column.Header === "genommene Menge"){
                       let id = "InputfieldLager" + row.index;
                       return(
-                        <td className="word-wrap" key={`${row.original.id}-${cell.column.Header}Lager`}><input class='einkauf-inputfield-size lagerEinkauf-size' id={id} type="number" min="0" max={row.original.lagerbestand.istLagerbestand} onChange={(e) => handleChange(e, row.original.lagerbestand.istLagerbestand, row.original.name)} disabled={row.original.lagerbestand.istLagerbestand === 0}></input></td>
+                        <td className="word-wrap" key={`${row.original.id}-${cell.column.Header}Lager`}><input className='einkauf-inputfield-size lagerEinkauf-size' id={id} type="number" min="0" max={row.original.lagerbestand.istLagerbestand} onChange={(e) => handleChange(e, row.original.lagerbestand.istLagerbestand, row.original.name)} disabled={row.original.lagerbestand.istLagerbestand === 0}></input></td>
                       );
                     } else {
                       return <td className="word-wrap" key={`${row.original.id}-${cell.column.Header}Lager`} style={{color: row.original.lagerbestand.istLagerbestand === 0 ? NotAvailableColor : ''}} {...cell.getCellProps()}>{cell.render('Cell')}</td>

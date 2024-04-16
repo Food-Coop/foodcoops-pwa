@@ -65,12 +65,13 @@ export function FrischEinkauf(props) {
         let preis = 0;
         for(let i = 0; i < frischBestellung.length; i++){
             let bestellId = "InputfieldFrisch" + i;
+            //if discrepancy.done is true
+            if (document.getElementById(bestellId) === null) {
+              continue;
+            }
             let bestellmenge = document.getElementById(bestellId).value || 0;
             let preisId = "PreisIdFrisch" + i;
             preis += document.getElementById(preisId).innerText.replace(',', '.') * bestellmenge;
-            console.log(document.getElementById(preisId).innerText.replace(',', '.'));
-            console.log(bestellmenge);
-            console.log(preis);
         }
         setTotalFrischPrice(preis);
     };
@@ -164,6 +165,7 @@ export function FrischEinkauf(props) {
             </thead>
             <tbody {...getTableBodyProps()}>
               {rows.map((row) => {
+                  if (row.original.done === false) {
                   prepareRow(row)
                   return (
                     <tr {...row.getRowProps()}>
@@ -199,7 +201,7 @@ export function FrischEinkauf(props) {
                       })}
                     </tr>
                   )
-            })}
+            }})}
             </tbody>
             </BTable>
         );

@@ -89,7 +89,7 @@ export function ZuVielZuWenigEinkauf(props) {
           }
       };
       fetchBestellUebersicht();
-  }, []);
+  }, [props.forceUpdate]);
 
     useEffect(() => {
         if (props.onPriceChange) {

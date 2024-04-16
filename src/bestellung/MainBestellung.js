@@ -23,8 +23,8 @@ export function MainBestellung(){
                 indicatorColor="primary"
                 textColor="primary"
                 >
-                <Tab label="Frischbestellung" component={Link} to={`${match.url}/bestellung`} />
-                <Tab label="Brotbestellung" component={Link} to={`${match.url}/brotbestellung`} />
+                <Tab label="Frisch" component={Link} to={`${match.url}/bestellung`} />
+                <Tab label="Brot" component={Link} to={`${match.url}/brotbestellung`} />
                 </Tabs>
             </Paper>
             <Switch>

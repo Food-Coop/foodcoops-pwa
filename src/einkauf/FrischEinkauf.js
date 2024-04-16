@@ -65,9 +65,12 @@ export function FrischEinkauf(props) {
         let preis = 0;
         for(let i = 0; i < frischBestellung.length; i++){
             let bestellId = "InputfieldFrisch" + i;
-            let bestellmenge = document.getElementById(bestellId).value;
+            let bestellmenge = document.getElementById(bestellId).value || 0;
             let preisId = "PreisIdFrisch" + i;
             preis += document.getElementById(preisId).innerText.replace(',', '.') * bestellmenge;
+            console.log(document.getElementById(preisId).innerText.replace(',', '.'));
+            console.log(bestellmenge);
+            console.log(preis);
         }
         setTotalFrischPrice(preis);
     };
@@ -118,7 +121,7 @@ export function FrischEinkauf(props) {
           }
         };
         fetchBestellUebersicht();
-    }, []);
+    }, [props.forceUpdate]);
 
     const discrepancyObj = discrepancy.reduce((obj, item) => {
       obj[item.bestand.name] = item;
@@ -149,8 +152,8 @@ export function FrischEinkauf(props) {
                   {headerGroup.headers.map(column => (
                     <th className="word-wrap" key={headerGroup.id + "HeaderFrisch"} {...column.getHeaderProps(column.getSortByToggleProps())}>
                         {column.render('Header')}
-                        {column.Header === "Bestellmenge" && rows.some(row => discrepancyObj[row.original.frischbestand.name]?.zuVielzuWenig < 0) ? <span style={{color: 'red', fontWeight: 300, fontSize: 'var(--zuVielzuWenigFrischEinkauf-font-size)'}}> (zu Wenig)</span> : ''}
-                        {column.Header === "Bestellmenge" && rows.some(row => discrepancyObj[row.original.frischbestand.name]?.zuVielzuWenig > 0) ? <span style={{color: 'green', fontWeight: 300, fontSize: 'var(--zuVielzuWenigFrischEinkauf-font-size'}}> (zu Viel)</span> : ''}
+                        {column.Header === "Bestellmenge" && rows.some(row => discrepancyObj[row.original.frischbestand.name]?.zuBestellendeGebinde !== 0 && discrepancyObj[row.original.frischbestand.name]?.zuVielzuWenig < 0) ? <span style={{color: 'red', fontWeight: 300, fontSize: 'var(--zuVielzuWenigFrischEinkauf-font-size)'}}> (zu Wenig)</span> : ''}
+                        {column.Header === "Bestellmenge" && rows.some(row => discrepancyObj[row.original.frischbestand.name]?.zuBestellendeGebinde !== 0 && discrepancyObj[row.original.frischbestand.name]?.zuVielzuWenig > 0) ? <span style={{color: 'green', fontWeight: 300, fontSize: 'var(--zuVielzuWenigFrischEinkauf-font-size)'}}> (zu Viel)</span> : ''}
                         <span>
                             {column.isSorted ? (column.isSortedDesc ? ' ↓' : ' ↑') : ''}
                         </span>
@@ -161,36 +164,42 @@ export function FrischEinkauf(props) {
             </thead>
             <tbody {...getTableBodyProps()}>
               {rows.map((row) => {
-                prepareRow(row)
-                return (
-                  <tr {...row.getRowProps()}>
-                    {row.cells.map(cell => {
-                        const discrepancy = discrepancyObj[row.original.frischbestand.name];
-                        if (cell.column.Header === "Preis in €"){
-                          let id = "PreisIdFrisch" + row.index;
-                          return(
-                            <td className="word-wrap" key={`${row.original.id}-${cell.column.Header}Frisch`} style={{color: row.original.frischbestand.verfuegbarkeit === false ? NotAvailableColor : ''}} id={id} >{cell.render('Cell')}</td>
-                          );
-                        } else if(cell.column.Header === "genommene Menge"){
-                          let id = "InputfieldFrisch" + row.index;
-                          return(
-                            <td className="word-wrap" key={`${row.original.id}-${cell.column.Header}Frisch`}><input className='einkauf-inputfield-size' id={id} type="number" min="0" step={getStepValue(row.original.frischbestand.einheit.name)} onChange={() => handleChange()} disabled={row.original.frischbestand.verfuegbarkeit === false} ></input></td>
-                          );
-                        } else if(cell.column.Header === "Bestellmenge"){
-                          return (
-                            <td className="word-wrap" key={`${row.original.id}-${cell.column.Header}Frisch`} style={{color: row.original.frischbestand.verfuegbarkeit === false ? NotAvailableColor : ''}} {...cell.getCellProps()}>
-                              {cell.render('Cell')} 
-                              {discrepancy && discrepancy.zuVielzuWenig < 0 ? <span style={{color: 'red'}}> ( <NumberFormatComponent value={discrepancy.zuVielzuWenig} includeFractionDigits={false}/> )</span> : ''}
-                              {discrepancy && discrepancy.zuVielzuWenig > 0 ? <span style={{color: 'green'}}> ( <NumberFormatComponent value={discrepancy.zuVielzuWenig} includeFractionDigits={false}/> )</span> : ''}
-                            </td>
-                          );
-                        } else {
-                          return <td className="word-wrap" key={`${row.original.id}-${cell.column.Header}Frisch`} style={{color: row.original.frischbestand.verfuegbarkeit === false ? NotAvailableColor : ''}} {...cell.getCellProps()}>{cell.render('Cell')}</td>
-                        }
-                    })}
-                  </tr>
-                )
-              })}
+                  prepareRow(row)
+                  return (
+                    <tr {...row.getRowProps()}>
+                      {row.cells.map(cell => {
+                          const discrepancy = discrepancyObj[row.original.frischbestand.name];
+                          if (cell.column.Header === "Preis in €"){
+                            let id = "PreisIdFrisch" + row.index;
+                            return(
+                              <td className="word-wrap" key={`${row.original.id}-${cell.column.Header}Frisch`} style={{color: row.original.frischbestand.verfuegbarkeit === false ? NotAvailableColor : '', color: discrepancy.zuBestellendeGebinde === 0 ? NotAvailableColor : '' }} id={id} >{cell.render('Cell')}</td>
+                            );
+                          } else if(cell.column.Header === "genommene Menge"){
+                            let id = "InputfieldFrisch" + row.index;
+                            if(discrepancy.zuBestellendeGebinde === 0){
+                              return (
+                                <td className="word-wrap" key={`${row.original.id}-${cell.column.Header}Frisch`} style={{color: 'red' }} id={id} >Nicht geliefert</td>
+                              );
+                            } else {
+                              return(
+                                <td className="word-wrap" key={`${row.original.id}-${cell.column.Header}Frisch`}><input className='einkauf-inputfield-size' id={id} type="number" min="0" step={getStepValue(row.original.frischbestand.einheit.name)} onChange={() => handleChange()} disabled={row.original.frischbestand.verfuegbarkeit === false} ></input></td>
+                              );
+                            }
+                          } else if(cell.column.Header === "Bestellmenge"){
+                            return (
+                              <td className="word-wrap" key={`${row.original.id}-${cell.column.Header}Frisch`} style={{color: row.original.frischbestand.verfuegbarkeit === false ? NotAvailableColor : '', color: discrepancy.zuBestellendeGebinde === 0 ? NotAvailableColor : '' }} {...cell.getCellProps()}>
+                                {cell.render('Cell')} 
+                                {discrepancy && discrepancy.zuBestellendeGebinde !== 0 && discrepancy.zuVielzuWenig < 0 ? <span style={{color: 'red'}}> ( <NumberFormatComponent value={discrepancy.zuVielzuWenig} includeFractionDigits={false}/> )</span> : ''}
+                                {discrepancy && discrepancy.zuBestellendeGebinde !== 0 && discrepancy.zuVielzuWenig > 0 ? <span style={{color: 'green'}}> ( <NumberFormatComponent value={discrepancy.zuVielzuWenig} includeFractionDigits={false}/> )</span> : ''}
+                              </td>
+                            );
+                          } else {
+                            return <td className="word-wrap" key={`${row.original.id}-${cell.column.Header}Frisch`} style={{color: row.original.frischbestand.verfuegbarkeit === false ? NotAvailableColor : '', color: discrepancy.zuBestellendeGebinde === 0 ? NotAvailableColor : '' }} {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                          }
+                      })}
+                    </tr>
+                  )
+            })}
             </tbody>
             </BTable>
         );

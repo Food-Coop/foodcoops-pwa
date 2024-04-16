@@ -81,7 +81,7 @@ export function LagerwareEinkauf(props) {
         };
 
         fetchProdukt();
-    }, []);
+    }, [props.forceUpdate]);
 
     useEffect(() => {
         if (props.onPriceChange) {
@@ -100,7 +100,6 @@ export function LagerwareEinkauf(props) {
         return null;
       } else {
         return (
-        <div>
         <BTable striped bordered hover size="sm" {...getTableProps()}>
           <thead>
             {headerGroups.map(headerGroup => (
@@ -141,8 +140,6 @@ export function LagerwareEinkauf(props) {
             })}
           </tbody>
           </BTable>
-          <ToastContainer />
-          </div>
     );
   }}
 

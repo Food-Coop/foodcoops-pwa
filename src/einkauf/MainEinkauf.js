@@ -29,6 +29,7 @@ export function MainEinkauf( { isLarge }) {
   const [totalPrice, setTotalPrice] = useState(0);
   const { keycloak } = useKeycloak();
   const api = useApi();
+  const [forceUpdate, setForceUpdate] = React.useReducer(x => x+1, 0);
 
   const zuVielzuWenigTitle = (
       <Typography variant="h6" gutterBottom>Zu Viel-Einkauf 
@@ -174,6 +175,7 @@ export function MainEinkauf( { isLarge }) {
                 bestellmenge: frisch[i].bestellmenge,
                 id: frisch[i].id,
                 personId: frisch[i].personId,
+                done: frisch[i].done,
                 frischbestand: {
                   type: "frisch",
                   einheit: {
@@ -193,6 +195,7 @@ export function MainEinkauf( { isLarge }) {
                 },
               },
             };
+            console.log(frischEinkauf);
             bestellungsEinkaufe.push(frischEinkauf);
         }
     }
@@ -203,6 +206,8 @@ export function MainEinkauf( { isLarge }) {
         bestandEinkauf: bestandBuyObjects,
         // Bestellung = Brot & Frischware
         bestellungsEinkauf: bestellungsEinkaufe,
+        // Zu Viel Einkauf
+        tooMuchEinkauf: [],
         personId: person_id,
       };
       const response = await api.createEinkauf(einkaufData);
@@ -210,6 +215,7 @@ export function MainEinkauf( { isLarge }) {
       if (response.ok) {
         const responseData = await response.json();
         console.log("Einkauf ID: ", responseData.id); 
+        setForceUpdate();
         clearInputFields();
         window.scrollTo({ top: 0, behavior: 'smooth' });
         toast.success("Ihr Einkauf wurde übermittelt. Vielen Dank!");
@@ -225,59 +231,60 @@ export function MainEinkauf( { isLarge }) {
 
   return (
     <div className="main-einkauf">
-      <Accordion defaultExpanded>
-        <AccordionSummary aria-controls="panel1-content" id="panel1-header" expandIcon={<ExpandMoreIcon />}>
-          <Typography variant="h6" gutterBottom>Frischwaren-Einkauf</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <FrischEinkauf onPriceChange={handleFrischPriceChange} handleFrisch={handleFrisch}/>
-          {frisch.length === 0 ? (
-            "Sie haben letzte Woche keine Frischbestellung getätigt."
-          ) : (
-            <h5>Frisch-Preis: <NumberFormatComponent value={totalFrischPrice.toFixed(2)} /> €</h5>
-          )}
-        </AccordionDetails>
-      </Accordion>
-      <Accordion defaultExpanded>
-        <AccordionSummary aria-controls="panel1-content" id="panel1-header" expandIcon={<ExpandMoreIcon />}>
-          {zuVielzuWenigTitle}
-        </AccordionSummary>
-        <AccordionDetails>
-          <ZuVielZuWenigEinkauf onPriceChange={handleDiscrepancyPriceChange} handleDiscrepancy={handleDiscrepancy}/>
-          {discrepancy.length === 0 ? (
-            "Es gibt diese Woche keine Produkte auf der Zu Viel-Liste."
-          ) : (
-            <h5>Zu Viel-Preis: <NumberFormatComponent value={totalDiscrepancyPrice.toFixed(2)} /> €</h5>
-          )}
-        </AccordionDetails>
-      </Accordion>
-      <Accordion defaultExpanded>
-        <AccordionSummary aria-controls="panel1-content" id="panel1-header"  expandIcon={<ExpandMoreIcon />}>
-          <Typography variant="h6" gutterBottom>Brot-Einkauf</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <BrotEinkauf onPriceChange={handleBrotPriceChange} handleBrot={handleBrot}/>
-          {brot.length === 0 ? (
-            "Sie haben letzte Woche keine Brotbestellung getätigt."
-          ) : (
-            <h5>Brot-Preis: <NumberFormatComponent value={totalBrotPrice.toFixed(2)} /> €</h5>
-          )}
-        </AccordionDetails>
-      </Accordion>
-      <Accordion>
-        <AccordionSummary aria-controls="panel1-content" id="panel1-header"  expandIcon={<ExpandMoreIcon />}>
-          <Typography variant="h6" gutterBottom>Lagerware-Einkauf</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-        <LagerwareEinkauf onPriceChange={handleProduktPriceChange} handleProdukt={handleProdukt} />
-          {produkt.length === 0 ? (
-            "Es gibt momentan keine Produkte im Lager."
-          ) : (
-            <h5>Lagerwaren-Preis: <NumberFormatComponent value={totalProduktPrice.toFixed(2)} /> €</h5>
-          )}
-        </AccordionDetails>
-      </Accordion>
-
+      <div>
+        <Accordion defaultExpanded>
+          <AccordionSummary aria-controls="panel1-content" id="panel1-header" expandIcon={<ExpandMoreIcon />}>
+            <Typography variant="h6" gutterBottom>Frischwaren-Einkauf</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <FrischEinkauf onPriceChange={handleFrischPriceChange} handleFrisch={handleFrisch} forceUpdate={forceUpdate}/>
+            {frisch.length === 0 ? (
+              "Sie haben letzte Woche keine Frischbestellung getätigt."
+            ) : (
+              <h5>Frisch-Preis: <NumberFormatComponent value={totalFrischPrice.toFixed(2)} /> €</h5>
+            )}
+          </AccordionDetails>
+        </Accordion>
+        <Accordion defaultExpanded>
+          <AccordionSummary aria-controls="panel1-content" id="panel1-header" expandIcon={<ExpandMoreIcon />}>
+            {zuVielzuWenigTitle}
+          </AccordionSummary>
+          <AccordionDetails>
+            <ZuVielZuWenigEinkauf onPriceChange={handleDiscrepancyPriceChange} handleDiscrepancy={handleDiscrepancy} forceUpdate={forceUpdate}/>
+            {discrepancy.length === 0 ? (
+              "Es gibt diese Woche keine Produkte auf der Zu Viel-Liste."
+            ) : (
+              <h5>Zu Viel-Preis: <NumberFormatComponent value={totalDiscrepancyPrice.toFixed(2)} /> €</h5>
+            )}
+          </AccordionDetails>
+        </Accordion>
+        <Accordion defaultExpanded>
+          <AccordionSummary aria-controls="panel1-content" id="panel1-header"  expandIcon={<ExpandMoreIcon />}>
+            <Typography variant="h6" gutterBottom>Brot-Einkauf</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <BrotEinkauf onPriceChange={handleBrotPriceChange} handleBrot={handleBrot} forceUpdate={forceUpdate}/>
+            {brot.length === 0 ? (
+              "Sie haben letzte Woche keine Brotbestellung getätigt."
+            ) : (
+              <h5>Brot-Preis: <NumberFormatComponent value={totalBrotPrice.toFixed(2)} /> €</h5>
+            )}
+          </AccordionDetails>
+        </Accordion>
+        <Accordion>
+          <AccordionSummary aria-controls="panel1-content" id="panel1-header"  expandIcon={<ExpandMoreIcon />}>
+            <Typography variant="h6" gutterBottom>Lagerware-Einkauf</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+          <LagerwareEinkauf onPriceChange={handleProduktPriceChange} handleProdukt={handleProdukt} forceUpdate={forceUpdate}/>
+            {produkt.length === 0 ? (
+              "Es gibt momentan keine Produkte im Lager."
+            ) : (
+              <h5>Lagerwaren-Preis: <NumberFormatComponent value={totalProduktPrice.toFixed(2)} /> €</h5>
+            )}
+          </AccordionDetails>
+        </Accordion>
+      </div>
       <div className={isLarge ? 'price-section-large' : 'price-section'}>
         <div className="price-details">
           <div>
@@ -303,7 +310,7 @@ export function MainEinkauf( { isLarge }) {
         <Button className="confirm-button" variant="success" onClick={submitEinkauf}>
           Einkauf bestätigen	
         </Button>
-        <ToastContainer />
+        <ToastContainer/>
       </div>
     </div>
   );

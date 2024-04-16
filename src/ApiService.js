@@ -58,6 +58,7 @@ export const ApiProvider = (props) => {
         updateDiscrepancy: props.updateDiscrepancy|| updateDiscrepancy,
 
         readGebindeOverview: props.readGebindeOverview|| readGebindeOverview,
+        updateGebindeOverview: props.updateGebindeOverview|| updateGebindeOverview,
     };
 
     return (
@@ -122,7 +123,9 @@ export const useApi = () => {
 
         readBestellUebersicht,
         readDiscrepancyOverviwe,
-        updateDiscrepancy
+        updateDiscrepancy,
+
+        updateGebindeOverview,
     };
 };
 
@@ -147,6 +150,7 @@ const BESTANDBUYOBJECT = "einkaufe/create/bestandBuyObject";
 const BESTELLUEBERSICHT = "bestellUebersicht/";
 const GEBINDE = "gebinde/";
 const UPDATEDESCREPANCY = "discrepancy/update/tooMuchTooLittle/";
+const UPDATEGEBINDEOVERVIEW = "discrepancy/update/gebindeAmountToOrder/";
 
 
 // Produkt
@@ -350,6 +354,9 @@ const deleteBrotBestellung = (id) =>
         },
     });
 
+const readBrotBestellungAll = () => 
+    fetch();
+
 // Brotbestand
 
 const readBrotBestand = (id = undefined) => id ?
@@ -465,3 +472,12 @@ fetch(BACKEND_URL + GEBINDE + UPDATEDESCREPANCY + id, {
 //Gebinde übersichet
 const readGebindeOverview = () =>
     fetch(BACKEND_URL + GEBINDE);
+
+const updateGebindeOverview = (id, data) =>
+    fetch(BACKEND_URL + GEBINDE + UPDATEGEBINDEOVERVIEW + id, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'applicatopn/json',
+        },
+        body: data,
+    });

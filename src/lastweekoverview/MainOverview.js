@@ -23,7 +23,7 @@ export function MainOverview(){
                     indicatorColor="primary"
                     textColor="primary"
                     >
-                    <Tab label="Übersicht Vorwoche" component={Link} to="/lastWeekOverview" />
+                    <Tab label="Übersicht Vorwoche" component={Link} to="/brotOverview" />
                     </Tabs>
                 </Paper>
                 <Switch>

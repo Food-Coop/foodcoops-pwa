@@ -92,7 +92,7 @@ export function Kontrolle() {
           body: tableData
       });
       doc.save("zuViel-zuWenig_Tabelle.pdf");
-  };
+    };
 
     const handleChange = (id, value) => {
       setInputValues(prev => ({ ...prev, [id]: value }));

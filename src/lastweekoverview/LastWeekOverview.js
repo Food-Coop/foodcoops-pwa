@@ -8,6 +8,11 @@ import NumberFormatComponent from '../logic/NumberFormatComponent';
 import {Button} from 'react-bootstrap';
 import {jsPDF} from "jspdf";
 import 'jspdf-autotable';
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import Typography from '@mui/material/Typography';
 
 export function LastWeekOverview() {
     const api = useApi();
@@ -74,11 +79,92 @@ export function LastWeekOverview() {
         fetchBestellUebersicht();
     }, [reducerValue]);
 
+    const generatePDF = () => {
+        const doc = new jsPDF();
+        doc.text("Bestellübersicht", 10, 10);
+        const tableData = [];
+        const columns = [];
+        headerGroups.forEach(headerGroup => {
+            headerGroup.headers.forEach(column => {
+                columns.push(column.Header);
+            });
+        });
+        tableData.push(columns);
+        rows.forEach(row => {
+          //remove rows with discrepancy = 0
+          const discrepancy = row.cells[1].value;
+          if (discrepancy !== 0) {
+            const rowData = [];
+            row.cells.forEach(cell => {
+            rowData.push(cell.value);
+            });
+            tableData.push(rowData);
+          }
+        });
+        doc.autoTable({
+            head: [tableData.shift()],
+            body: tableData
+        });
+        doc.save("Bestelluebersicht_Frisch_Tabelle.pdf");
+      };
+
     const handleChange = (id, value) => {
         setInputValues(prev => ({ ...prev, [id]: value }));
       };
 
-    const content = () => {
+    const submitUpdateOverview = async () => {
+    let errorOccurred = false;
+    const apiCalls = [];
+    for(let i = 0; i < discrepancy.length; i++){
+        const discrId = discrepancy[i].id;
+        const name = discrepancy[i].bestand.name;
+        const inputField = document.getElementById("InputfieldGebinde" + i);
+
+        if (inputField !== null && inputField !== undefined && inputField !== 0) {
+        const inputValue = inputField.value.trim();
+        let formatedValue;
+
+        if (!isNaN(inputValue) && Number.isInteger(parseFloat(inputValue))) {
+            formatedValue = inputValue + ".0";
+        } else if (!isNaN(inputValue) && isFinite(parseFloat(inputValue))) {
+            formatedValue = inputValue;
+        } else {
+            console.error("Invalid input for discrepancy: " + name);
+            continue;
+        }
+
+        const placeholderValue = parseFloat(discrepancy[i].zuBestellendeGebinde);
+
+        if(formatedValue !== placeholderValue){
+            apiCalls.push(api.updateDiscrepancy(discrId, formatedValue));
+        }
+        }
+    }
+    try {
+        const responses = await Promise.all(apiCalls);
+        for (const response of responses) {
+        if (!(response.ok)) {
+            console.log(response.status);
+            errorOccurred = true;
+            break;
+        }
+        }
+
+        if (!errorOccurred) {
+        toast.success("Die Änderung wurden erfolgreich übermittelt.");
+        } else {
+        toast.error("Es gab einen Fehler beim Übermitteln der Änderungen. Bitte versuchen Sie es erneut.");
+        }
+    } catch (error) {
+        errorOccurred = true;
+        toast.error("Es gab einen Fehler beim Übermitteln der Änderungen. Bitte versuchen Sie es erneut.");
+        console.log(error);
+    }
+    forceUpdate();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    const contentFrisch = () => {
     if (discrepancy.length === 0) {
         return null;
         } else {
@@ -126,9 +212,16 @@ export function LastWeekOverview() {
     return(
         <div>
             <dic style={{overflowX: "auto", width: "100%"}}>
-                {content()}
-                <Button style={{margin: "20px 0.25rem 30px 0.25rem"}} variant="success" /*onClick={() => submitUpdateDiscr()}*/>Aktualisieren</Button>
-                <Button style={{margin: "20px 0.25rem 30px 0.25rem"}} variant="primary" /*onClick={() => generatePDF()}*/>PDF erstellen</Button>
+            <Accordion>
+                <AccordionSummary aria-controls="panel1-content" id="panel1-header"  expandIcon={<ExpandMoreIcon />}>
+                    <Typography variant="h6" gutterBottom>Bestellungübersicht Frisch</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                    {contentFrisch()}
+                </AccordionDetails>
+            </Accordion>
+                <Button style={{margin: "20px 0.25rem 30px 0.25rem"}} variant="success" onClick={() => submitUpdateOverview()}>Aktualisieren</Button>
+                <Button style={{margin: "20px 0.25rem 30px 0.25rem"}} variant="primary" onClick={() => generatePDF()}>PDF erstellen</Button>
                 <ToastContainer />
             </dic>
         </div>

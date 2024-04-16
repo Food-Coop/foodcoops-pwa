@@ -165,7 +165,7 @@ export function Kontrolle() {
               {headerGroups.map(headerGroup => (
                 <tr {...headerGroup.getHeaderGroupProps()}>
                   {headerGroup.headers.map(column => (
-                    <th class="word-wrap" key={headerGroup.id + "HeaderDiscr"} {...column.getHeaderProps(column.getSortByToggleProps())}>
+                    <th className="word-wrap" key={headerGroup.id + "HeaderDiscr"} {...column.getHeaderProps(column.getSortByToggleProps())}>
                         {column.render('Header')}
                         <span>
                             {column.isSorted ? (column.isSortedDesc ? ' ↓' : ' ↑') : ''}
@@ -187,10 +187,10 @@ export function Kontrolle() {
                           if(cell.column.Header === "Zu Viel / Zu Wenig"){
                             let id = "InputfieldDiscr" + row.index;
                             return(
-                              <td class="word-wrap" key={`${row.original.id}-${cell.column.Header}Discr`}><input placeholder={row.original.zuVielzuWenig} id={id} type="number"></input></td>
+                              <td className="word-wrap" key={`${row.original.id}-${cell.column.Header}Discr`}><input placeholder={row.original.zuVielzuWenig} id={id} type="number"></input></td>
                             );
                           } else {
-                            return <td class="word-wrap" key={`${row.original.id}-${cell.column.Header}Discr`} {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                            return <td className="word-wrap" key={`${row.original.id}-${cell.column.Header}Discr`} {...cell.getCellProps()}>{cell.render('Cell')}</td>
                           }
                       })}
                     </tr>

@@ -32,7 +32,7 @@ export function LagerTable({columns, data, skipPageReset, dispatchModal}) {
             {headerGroups.map(headerGroup => (
                 <tr {...headerGroup.getHeaderGroupProps()}>
                     {headerGroup.headers.map(column => (
-                        <th class="word-wrap" {...column.getHeaderProps(column.getSortByToggleProps())}>
+                        <th className="word-wrap" {...column.getHeaderProps(column.getSortByToggleProps())}>
                             {column.render('Header')}
                             <span>
                                 {column.isSorted ? (column.isSortedDesc ? ' ↓' : ' ↑') : ''}
@@ -63,7 +63,7 @@ export function LagerTable({columns, data, skipPageReset, dispatchModal}) {
                                     }
 
                                     return (
-                                        <td class="word-wrap" {...props}>
+                                        <td className="word-wrap" {...props}>
                                             {cell.render('Cell')}
                                         </td>
                                     )

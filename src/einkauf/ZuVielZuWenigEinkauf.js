@@ -113,7 +113,7 @@ export function ZuVielZuWenigEinkauf(props) {
             {headerGroups.map(headerGroup => (
               <tr {...headerGroup.getHeaderGroupProps()}>
                 {headerGroup.headers.map(column => (
-                  <th class="word-wrap" key={headerGroup.id + "HeaderZuViel"} {...column.getHeaderProps(column.getSortByToggleProps())}>
+                  <th className="word-wrap" key={headerGroup.id + "HeaderZuViel"} {...column.getHeaderProps(column.getSortByToggleProps())}>
                     {column.render('Header')}
                     <span>
                         {column.isSorted ? (column.isSortedDesc ? ' ↓' : ' ↑') : ''}
@@ -132,19 +132,19 @@ export function ZuVielZuWenigEinkauf(props) {
                     if (cell.column.Header === "Preis in €"){
                       let id = "PreisIdDiscrepancy" + row.index;
                       return(
-                       <td class="word-wrap" key={`${row.original.id}-${cell.column.Header}ZuViel`} style={{color: row.original.bestand.verfuegbarkeit === false ? NotAvailableColor : ''}} id={id} >{cell.render('Cell')}</td>
+                       <td className="word-wrap" key={`${row.original.id}-${cell.column.Header}ZuViel`} style={{color: row.original.bestand.verfuegbarkeit === false ? NotAvailableColor : ''}} id={id} >{cell.render('Cell')}</td>
                       );
                     } else if(cell.column.Header === "genommene Menge"){
                       let id = "InputfieldDiscrepancy" + row.index;
                       return(
-                        <td class="word-wrap" key={`${row.original.id}-${cell.column.Header}ZuViel`}><input class='einkauf-inputfield-size' id={id} type="number" min="0" onChange={() => handleChange()} disabled={row.original.bestand.verfuegbarkeit === false}></input></td>
+                        <td className="word-wrap" key={`${row.original.id}-${cell.column.Header}ZuViel`}><input class='einkauf-inputfield-size' id={id} type="number" min="0" onChange={() => handleChange()} disabled={row.original.bestand.verfuegbarkeit === false}></input></td>
                       );
                     } else if(cell.column.Header === "zu Viel"){
                       return(
-                        <td class="word-wrap" key={`${row.original.id}-${cell.column.Header}ZuViel`} style={{color: row.original.bestand.verfuegbarkeit === false ? NotAvailableColor : ''}} {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                        <td className="word-wrap" key={`${row.original.id}-${cell.column.Header}ZuViel`} style={{color: row.original.bestand.verfuegbarkeit === false ? NotAvailableColor : ''}} {...cell.getCellProps()}>{cell.render('Cell')}</td>
                       );
                     } else {
-                      return <td class="word-wrap" key={`${row.original.id}-${cell.column.Header}ZuViel`} style={{color: row.original.bestand.verfuegbarkeit === false ? NotAvailableColor : ''}} {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                      return <td className="word-wrap" key={`${row.original.id}-${cell.column.Header}ZuViel`} style={{color: row.original.bestand.verfuegbarkeit === false ? NotAvailableColor : ''}} {...cell.getCellProps()}>{cell.render('Cell')}</td>
                     }
                   })}
                 </tr>

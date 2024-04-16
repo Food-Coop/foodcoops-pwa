@@ -29,7 +29,7 @@ export function BrotBestandTable({ columns, data, skipPageReset, dispatchModal }
                 {headerGroups.map(headerGroup => (
                     <tr {...headerGroup.getHeaderGroupProps()}>
                         {headerGroup.headers.map(column => (
-                            <th class="word-wrap" {...column.getHeaderProps(column.getSortByToggleProps())}>
+                            <th className="word-wrap" {...column.getHeaderProps(column.getSortByToggleProps())}>
                                 {column.render('Header')}
                                 <span>
                                     {column.isSorted ? (column.isSortedDesc ? ' ↓' : ' ↑') : ''}
@@ -49,7 +49,7 @@ export function BrotBestandTable({ columns, data, skipPageReset, dispatchModal }
                                 props.onClick = () => dispatchModal("EditBrotBestandModal", cell, row);
                                 props.style = { ...props.style, cursor: "pointer" };
                                 return (
-                                    <td class="word-wrap" {...props}>
+                                    <td className="word-wrap" {...props}>
                                         {cell.column.id === 'verfuegbarkeit' ? (cell.value ? 'Ja' : 'Nein') : cell.render('Cell')}
                                     </td>
                                 )

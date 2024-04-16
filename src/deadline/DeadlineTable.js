@@ -26,7 +26,7 @@ export function DeadlineTable({ columns, data, skipPageReset }) {
         <BTable striped bordered hover size="sm" {...getTableProps()}>
             <thead>
                 {headerGroups.map(headerGroup => (
-                    <tr class="word-wrap" {...headerGroup.getHeaderGroupProps()}>
+                    <tr className="word-wrap" {...headerGroup.getHeaderGroupProps()}>
                         {headerGroup.headers.map(column => (
                             <th {...column.getHeaderProps()}>{column.render('Header')}</th>
                         ))}
@@ -44,7 +44,7 @@ export function DeadlineTable({ columns, data, skipPageReset }) {
                                     cell.column.id === 'time'
                                         ? formatTime(cell.value)
                                         : cell.render('Cell');
-                                return <td class="word-wrap" {...props}>{content}</td>;
+                                return <td className="word-wrap" {...props}>{content}</td>;
                             })}
                         </tr>
                     );

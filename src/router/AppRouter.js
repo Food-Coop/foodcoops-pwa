@@ -27,6 +27,7 @@ import ZoomInIcon from '@mui/icons-material/ZoomIn';
 import ZoomOutIcon from '@mui/icons-material/ZoomOut';
 import './AppRouter.css';
 import { MainKontrolle } from '../kontrolle/MainKontrolle';
+import { AdminConfig } from '../admin/AdminConfig';
 
 export const AppRouter = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -66,6 +67,7 @@ const AppContent = ({ menuOpen, toggleMenu }) => {
       '/mainEinkauf': 'Einkauf',
       '/mainManagement': 'Management',
       '/mainKontrolle' : 'Übersicht',
+      '/adminConfig' : 'Admin-Konfiguration',
       '/about': 'Impressum',
     };
 
@@ -148,6 +150,16 @@ const AppContent = ({ menuOpen, toggleMenu }) => {
                   </Typography>
                 </ListItemButton>
               </Link>
+              <Link to="/adminConfig">
+                <ListItemButton sx={{ color: "grey" }}>
+                  <ListItemIcon> 
+                    <InventoryIcon/>
+                  </ListItemIcon>
+                  <Typography variant="h6">
+                    Admin-Konfiguration
+                  </Typography>
+                </ListItemButton>
+              </Link>
               <Divider />
               <Link to="/about">
                 <ListItemButton sx={{ color: "grey" }}>
@@ -196,6 +208,7 @@ const AppContent = ({ menuOpen, toggleMenu }) => {
         <PrivateRoute roles={["Einkäufer"]} path="/mainEinkauf" component={() => <MainEinkauf isLarge={isLarge} />} />
         <PrivateRoute roles={["Einkäufer"]} path="/mainManagement" component={MainManagement} />
         <PrivateRoute roles={["Einkäufer"]} path="/mainKontrolle" component={MainKontrolle} />
+        <PrivateRoute roles={["Einkäufer"]} path="/adminConfig" component={AdminConfig} />
         <Route exact path="/" component={Home} />
         <Route exact path="/home" component={Home} />
       </Switch>

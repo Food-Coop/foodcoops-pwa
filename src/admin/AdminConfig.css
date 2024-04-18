@@ -1,0 +1,60 @@
+.container {
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+}
+
+.table {
+    width: 99vw;
+}
+
+.label {
+    width: 30%;
+    font-weight: bold;
+    text-align: right;
+}
+.label * {
+    margin-top: 12px;
+}
+
+
+@media (max-width: 1600px) {
+    #deliveryCost {
+        width: 15%;
+    }
+    #emailFromEinkaufAdmin, #emailFromBestellAdmin {
+        width: 70%;
+    }
+}
+
+@media (max-width: 1000px) {
+    #deliveryCost {
+        width: 30%;
+    }
+    #emailFromEinkaufAdmin, #emailFromBestellAdmin {
+        width: 100%;
+    }
+}
+
+@media (min-width: 1600px) {
+    #deliveryCost {
+        width: 15%;
+    }
+
+    #emailFromEinkaufAdmin, #emailFromBestellAdmin {
+        width: 50%;
+    }
+}
+
+.input {
+    width: 100%;
+    padding: 8px;
+    margin: 4px 0;
+    box-sizing: border-box;
+    float: left;
+}
+
+.button {
+    margin: 20px 0.25rem;
+    margin-top: 0;
+}

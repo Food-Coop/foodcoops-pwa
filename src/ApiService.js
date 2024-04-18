@@ -56,6 +56,9 @@ export const ApiProvider = (props) => {
         readBestellUebersicht: props.readBestellUebersicht || readBestellUebersicht,
         readDiscrepancyOverviwe: props.readDiscrepancyOverviwe || readDiscrepancyOverviwe,
         updateDiscrepancy: props.updateDiscrepancy|| updateDiscrepancy,
+
+        readConfig: props.readConfig || readConfig,
+        updateConfig: props.updateConfig || updateConfig,
     };
 
     return (
@@ -120,7 +123,10 @@ export const useApi = () => {
 
         readBestellUebersicht,
         readDiscrepancyOverviwe,
-        updateDiscrepancy
+        updateDiscrepancy,
+
+        readConfig,
+        updateConfig,
     };
 };
 
@@ -145,6 +151,7 @@ const BESTANDBUYOBJECT = "einkaufe/create/bestandBuyObject";
 const BESTELLUEBERSICHT = "bestellUebersicht/";
 const GEBINDE = "gebinde/";
 const UPDATEDESCREPANCY = "discrepancy/update/tooMuchTooLittle/";
+const CONFIG = "/configuration";
 
 
 // Produkt
@@ -459,3 +466,15 @@ fetch(BACKEND_URL + GEBINDE + UPDATEDESCREPANCY + id, {
     },
     body: data,
 });
+
+const readConfig = () =>    
+    fetch(BACKEND_URL + CONFIG);
+
+const updateConfig = (data) =>
+    fetch(BACKEND_URL, {
+        method: "PUT",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    });

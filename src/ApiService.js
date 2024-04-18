@@ -59,6 +59,9 @@ export const ApiProvider = (props) => {
 
         readConfig: props.readConfig || readConfig,
         updateConfig: props.updateConfig || updateConfig,
+        
+        readGebindeOverview: props.readGebindeOverview|| readGebindeOverview,
+        updateGebindeOverview: props.updateGebindeOverview|| updateGebindeOverview,
     };
 
     return (
@@ -127,6 +130,9 @@ export const useApi = () => {
 
         readConfig,
         updateConfig,
+
+        readGebindeOverview,
+        updateGebindeOverview,
     };
 };
 
@@ -152,7 +158,7 @@ const BESTELLUEBERSICHT = "bestellUebersicht/";
 const GEBINDE = "gebinde/";
 const UPDATEDESCREPANCY = "discrepancy/update/tooMuchTooLittle/";
 const CONFIG = "/configuration";
-
+const UPDATEGEBINDEOVERVIEW = "discrepancy/update/gebindeAmountToOrder/";
 
 // Produkt
 
@@ -355,6 +361,9 @@ const deleteBrotBestellung = (id) =>
         },
     });
 
+const readBrotBestellungAll = () => 
+    fetch();
+
 // Brotbestand
 
 const readBrotBestand = (id = undefined) => id ?
@@ -477,4 +486,17 @@ const updateConfig = (data) =>
             'Content-Type': 'application/json',
         },
         body: JSON.stringify(data),
-    });
+});
+
+//Gebinde übersicht
+const readGebindeOverview = () =>
+    fetch(BACKEND_URL + GEBINDE);
+
+const updateGebindeOverview = (id, data) =>
+    fetch(BACKEND_URL + GEBINDE + UPDATEGEBINDEOVERVIEW + id, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'applicatopn/json',
+        },
+        body: data,
+});

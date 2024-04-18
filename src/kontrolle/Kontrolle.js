@@ -5,6 +5,7 @@ import Alert from '@mui/material/Alert';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useTable, useSortBy } from 'react-table';
+import Alert from '@mui/material/Alert';
 import NumberFormatComponent from '../logic/NumberFormatComponent';
 import {Button} from 'react-bootstrap';
 import {jsPDF} from "jspdf";
@@ -12,8 +13,8 @@ import 'jspdf-autotable';
 import '../Table.css';
 
 export function Kontrolle() {
-    const [discrepancy, setDiscrepancy] = useState([]);
     const api = useApi();
+    const [discrepancy, setDiscrepancy] = useState([]);
     const [reducerValue, forceUpdate] = React.useReducer(x => x+1, 0);
 
     const columns = React.useMemo(
@@ -93,7 +94,7 @@ export function Kontrolle() {
           body: tableData
       });
       doc.save("zuViel-zuWenig_Tabelle.pdf");
-  };
+    };
 
   const clearInputFields = () => {
     const inputFields = document.querySelectorAll('input[type="number"]');
@@ -206,8 +207,8 @@ export function Kontrolle() {
   return (
     <div>
       <div style={{overflowX: "auto", width: "100%"}}>
-        <Alert severity="info" style={{margin: "0.5em 1em 0.5em 1em"}}> 
-          Wenn zu wenig von einem Produkt geliefert wurde, wird ein negativer Wert angezeigt. Wenn zu viel geliefert wurde, wird ein positiver Wert angezeigt.
+        <Alert severity="info" style={{margin: "0.5em 1em 0.5em 1em"}}>
+          Bitte beachten Sie: Wenn Produkte geliefert wurden, jedoch in zu geringer Menge, müssen Sie die Bestellmenge mit einem Minuszeichen vorne angeben. <strong>Zum Beispiel</strong>, wenn Sie <strong>10 Einheiten</strong> eines Produkts bestellt haben, aber nur <strong>8 Einheiten</strong> geliefert wurden, geben Sie die Anpassung als <strong>-2</strong> ein.
         </Alert>
         {content()}
         <Button style={{margin: "20px 0.25rem 30px 0.25rem"}} variant="success" onClick={() => submitUpdateDiscr()}>Aktualisieren</Button>

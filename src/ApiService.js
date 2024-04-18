@@ -361,9 +361,6 @@ const deleteBrotBestellung = (id) =>
         },
     });
 
-const readBrotBestellungAll = () => 
-    fetch();
-
 // Brotbestand
 
 const readBrotBestand = (id = undefined) => id ?

@@ -3,12 +3,11 @@ import { BrowserRouter as Router, Switch, Route, Link, Redirect, useRouteMatch} 
 import Paper from '@mui/material/Paper';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import { Deadline } from './deadline/Deadline';
-import { Lager } from './lager/Lager';
-import { FrischBestandManagement } from './frischbestandmanagement/FrischBestandManagement';
-import { BrotBestandManagement } from './brotmanagement/BrotBestandManagement';
+import { Deadline } from '../deadline/Deadline';
+import { Kontrolle } from './Kontrolle';
+import { OrderOverview } from './OrderOverview';
 
-export function MainManagement(){
+export function MainAdmin(){
     const [value, setValue] = useState(0);
     const match = useRouteMatch();
 
@@ -27,27 +26,23 @@ export function MainManagement(){
                 textColor="primary"
                 variant="scrollable"
                 >
-                <Tab label="Lager" component={Link} to={`${match.url}/lager`} />
-                <Tab label="Frisch" component={Link} to={`${match.url}/frischbestandmanagement`} />
-                <Tab label="Brot" component={Link} to={`${match.url}/brotbestandmanagement`} />
+                <Tab label="Zu Viel / Zu Wenig" component={Link} to={`${match.url}/zuVielzuWenig`} />
+                <Tab label="Bestellung Übersicht" component={Link} to={`${match.url}/OrderOverview`} />
                 <Tab label="Deadline" component={Link} to={`${match.url}/deadline`} />
                 </Tabs>
             </Paper>
             <Switch>
-                <Route exact path={`${match.url}/lager`}>
-                    <Lager />
+                <Route path={`${match.url}/zuVielzuWenig`}>
+                    <Kontrolle />
                 </Route>
-                <Route exact path={`${match.url}/frischbestandmanagement`}>
-                    <FrischBestandManagement />
-                </Route>
-                <Route exact path={`${match.url}/brotbestandmanagement`}>
-                    <BrotBestandManagement />
+                <Route path={`${match.url}/OrderOverview`}>
+                    <OrderOverview />
                 </Route>
                 <Route exact path={`${match.url}/deadline`}>
                     <Deadline />
                 </Route>
                 <Route>
-                    <Redirect to={`${match.url}/lager`}/>
+                    <Redirect to={`${match.url}/zuVielzuWenig`}/>
                 </Route>
             </Switch>
             </div>

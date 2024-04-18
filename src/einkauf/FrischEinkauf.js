@@ -122,7 +122,7 @@ export function FrischEinkauf(props) {
           }
         };
         fetchBestellUebersicht();
-    }, [props.forceUpdate]);
+    }, [props.forceUpdate, api, keycloak.tokenParsed.preferred_username]);
 
     const discrepancyObj = discrepancy.reduce((obj, item) => {
       obj[item.bestand.name] = item;
@@ -171,6 +171,7 @@ export function FrischEinkauf(props) {
                       <tr {...row.getRowProps()}>
                         {row.cells.map(cell => {
                             const discrepancy = discrepancyObj[row.original.frischbestand.name];
+                            if(discrepancy !== undefined){
                             if (cell.column.Header === "Preis in €"){
                               let id = "PreisIdFrisch" + row.index;
                               return(
@@ -196,9 +197,12 @@ export function FrischEinkauf(props) {
                                 </td>
                               );
                             } else {
-                              return <td className="word-wrap" key={`${row.original.id}-${cell.column.Header}Frisch`} style={{color: row.original.frischbestand.verfuegbarkeit === false ? NotAvailableColor : '' || discrepancy.zuBestellendeGebinde === 0 ? NotAvailableColor : '' }} {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                              return <td className="word-wrap" key={`${row.original.id}-${cell.column.Header}Frisch`} style={{color: row.original.frischbestand.verfuegbarkeit === false ? NotAvailableColor : '' || discrepancy?.zuBestellendeGebinde === 0 ? NotAvailableColor : '' }} {...cell.getCellProps()}>{cell.render('Cell')}</td>
                             }
-                        })}
+                        } else {
+                          return null;
+                        }
+                      })}
                       </tr>
                     )
               } else {

@@ -5,7 +5,6 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useTable, useSortBy } from 'react-table';
 import NumberFormatComponent from '../logic/NumberFormatComponent';
-import Alert from '@mui/material/Alert';
 import {Button} from 'react-bootstrap';
 import {jsPDF} from "jspdf";
 import 'jspdf-autotable';
@@ -30,7 +29,7 @@ export function OrderOverview() {
             accessor: 'bestand.name',
             },
             {
-            Header: 'Menge',
+            Header: 'Bestellmenge',
             accessor: 'gewollteMenge',
             Cell: ({ value }) => <NumberFormatComponent value={value}/>,
             },
@@ -43,7 +42,7 @@ export function OrderOverview() {
             accessor: 'bestand.gebindegroesse',
             },
             {
-            Header: 'Zubestelende Gebinde',
+            Header: 'Zu bestellende Gebinde',
             accessor: 'zuBestellendeGebinde',
             },
         ],
@@ -57,7 +56,7 @@ export function OrderOverview() {
                 accessor: 'brotBestand.name',
             },
             {
-                Header: 'Zubestellende Menge',
+                Header: 'Zu bestellende Menge',
                 accessor: 'bestellmenge',
             }
         ],
@@ -100,7 +99,7 @@ export function OrderOverview() {
             }
         };
         fetchBestellUebersicht();
-    }, [reducerValue]);
+    }, [reducerValue, api]);
 
     useEffect(() => {
         const fetchBrotBestellungOverview= async () => {
@@ -121,7 +120,7 @@ export function OrderOverview() {
             }
         };
         fetchBrotBestellungOverview();
-    }, [reducerValue]);
+    }, [reducerValue, api]);
 
     const generateCombinedPDF = () => {
         const doc = new jsPDF();
@@ -358,7 +357,7 @@ export function OrderOverview() {
                     return (
                         <tr {...row.getRowProps()}>
                             {row.cells.map(cell => {
-                                if(cell.column.Header === "Zubestelende Gebinde"){
+                                if(cell.column.Header === "Zu bestellende Gebinde"){
                                 let id = "InputfieldGebinde" + row.index;
                                 return(
                                     <td key={`${row.original.id}-${cell.column.Header}Gebinde`}><input value={inputValues[id] || row.original.zuBestellendeGebinde} onChange={(e) => handleChange(id, e.target.value)} id={id} type="number"></input></td>

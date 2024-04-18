@@ -26,9 +26,7 @@ import InfoIcon from '@mui/icons-material/Info';
 import ZoomInIcon from '@mui/icons-material/ZoomIn';
 import ZoomOutIcon from '@mui/icons-material/ZoomOut';
 import './AppRouter.css';
-import { MainKontrolle } from '../kontrolle/MainKontrolle';
-import { AdminConfig } from '../admin/AdminConfig';
-import { MainOverview } from '../orderoverview/MainOverview';
+import { MainAdmin } from '../admin/MainAdmin';
 
 export const AppRouter = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -67,9 +65,7 @@ const AppContent = ({ menuOpen, toggleMenu }) => {
       '/mainBestellung': 'Bestellung',
       '/mainEinkauf': 'Einkauf',
       '/mainManagement': 'Management',
-      '/mainKontrolle' : 'Übersicht',
-      '/adminConfig' : 'Admin-Konfiguration',
-      '/mainOverview' : 'Bestellug Übersicht',
+      '/mainAdmin' : 'Admin-Konfiguration',
       '/about': 'Impressum',
     };
 
@@ -79,10 +75,10 @@ const AppContent = ({ menuOpen, toggleMenu }) => {
       return 'Bestellung';
     }
     if (currentRoute.startsWith('/mainManagement')) {
-      return 'Management';
+      return 'Produkt-Management';
     }
-    if (currentRoute.startsWith('/mainKontrolle')) {
-      return 'Übersicht';
+    if (currentRoute.startsWith('/mainAdmin')) {
+      return 'Admin-Konfiguration';
     }
 
     return routeToPageName[currentRoute] || 'Home';
@@ -138,31 +134,11 @@ const AppContent = ({ menuOpen, toggleMenu }) => {
                     <InventoryIcon/>
                   </ListItemIcon>
                   <Typography variant="h6">
-                    Management
+                    Produkt-Management
                   </Typography>
                 </ListItemButton>
               </Link>
-              <Link to="/mainKontrolle">
-                <ListItemButton sx={{ color: "grey" }}>
-                  <ListItemIcon> 
-                    <InventoryIcon/>
-                  </ListItemIcon>
-                  <Typography variant="h6">
-                    Abweichung Übersicht
-                  </Typography>
-                </ListItemButton>
-              </Link>
-              <Link to="/mainOverview">
-                <ListItemButton sx={{ color: "grey" }}>
-                  <ListItemIcon> 
-                    <InventoryIcon/>
-                  </ListItemIcon>
-                  <Typography variant="h6">
-                    Bestellung Übersicht
-                  </Typography>
-                </ListItemButton>
-              </Link>
-              <Link to="/adminConfig">
+              <Link to="/mainAdmin">
                 <ListItemButton sx={{ color: "grey" }}>
                   <ListItemIcon> 
                     <InventoryIcon/>
@@ -219,9 +195,7 @@ const AppContent = ({ menuOpen, toggleMenu }) => {
         <PrivateRoute roles={["Einkäufer"]} path="/mainBestellung" component={MainBestellung} />
         <PrivateRoute roles={["Einkäufer"]} path="/mainEinkauf" component={() => <MainEinkauf isLarge={isLarge} />} />
         <PrivateRoute roles={["Einkäufer"]} path="/mainManagement" component={MainManagement} />
-        <PrivateRoute roles={["Einkäufer"]} path="/mainKontrolle" component={MainKontrolle} />
-        <PrivateRoute roles={["Einkäufer"]} path="/adminConfig" component={AdminConfig} />
-        <PrivateRoute roles={["Einkäufer"]} path="/mainOverview" component={MainOverview} />
+        <PrivateRoute roles={["Einkäufer"]} path="/mainAdmin" component={MainAdmin} />
         <Route exact path="/" component={Home} />
         <Route exact path="/home" component={Home} />
       </Switch>

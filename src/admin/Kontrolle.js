@@ -5,7 +5,6 @@ import Alert from '@mui/material/Alert';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useTable, useSortBy } from 'react-table';
-import Alert from '@mui/material/Alert';
 import NumberFormatComponent from '../logic/NumberFormatComponent';
 import {Button} from 'react-bootstrap';
 import {jsPDF} from "jspdf";
@@ -65,7 +64,7 @@ export function Kontrolle() {
           }
         };
         fetchBestellUebersicht();
-    }, [reducerValue]);
+    }, [reducerValue, api]);
 
     const generatePDF = () => {
       const doc = new jsPDF();

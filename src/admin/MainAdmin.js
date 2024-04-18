@@ -27,7 +27,7 @@ export function MainAdmin(){
                 variant="scrollable"
                 >
                 <Tab label="Zu Viel / Zu Wenig" component={Link} to={`${match.url}/zuVielzuWenig`} />
-                <Tab label="Bestellung Übersicht" component={Link} to={`${match.url}/OrderOverview`} />
+                <Tab label="Bestellungs-Übersicht" component={Link} to={`${match.url}/OrderOverview`} />
                 <Tab label="Deadline" component={Link} to={`${match.url}/deadline`} />
                 </Tabs>
             </Paper>

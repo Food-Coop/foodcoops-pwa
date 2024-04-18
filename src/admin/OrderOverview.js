@@ -17,10 +17,8 @@ import Typography from '@mui/material/Typography';
 export function OrderOverview() {
     const api = useApi();
     const [discrepancy, setDiscrepancy] = useState([]);
-    const [reducerValue, forceUpdate] = React.useReducer(x => x+1, 0);
     const [inputValues, setInputValues] = useState({});
-    const [brotBestelungOverview, setBrotBestellungOverview] = useState([]);
-
+    const [brotBestellungOverview, setBrotBestellungOverview] = useState([]);
 
     const columns = React.useMemo(
         () => [
@@ -40,10 +38,12 @@ export function OrderOverview() {
             {
             Header: 'Gebindegröße',
             accessor: 'bestand.gebindegroesse',
+            Cell: ({ value }) => <NumberFormatComponent value={value} includeFractionDigits={false}/>,
             },
             {
             Header: 'Zu bestellende Gebinde',
             accessor: 'zuBestellendeGebinde',
+            Cell: ({ value }) => <NumberFormatComponent value={value} includeFractionDigits={false}/>,
             },
         ],
         []
@@ -58,6 +58,7 @@ export function OrderOverview() {
             {
                 Header: 'Zu bestellende Menge',
                 accessor: 'bestellmenge',
+                Cell: ({ value }) => <NumberFormatComponent value={value} includeFractionDigits={false}/>,
             }
         ],
         []
@@ -78,7 +79,7 @@ export function OrderOverview() {
         headerGroups: brotBestellungHeaderGroups,
         rows: brotBestellungRows,
         prepareRow: prepareBrotBestellungRow,
-    } = useTable({columns: brotColumns, data: brotBestelungOverview}, useSortBy);
+    } = useTable({columns: brotColumns, data: brotBestellungOverview}, useSortBy);
 
     useEffect(() => {
         const fetchBestellUebersicht = async () => {
@@ -94,33 +95,18 @@ export function OrderOverview() {
                 } else {
                     setDiscrepancy([]);
                 }
-            } catch (error) {
-                console.error('Error fetching discrepancy:', error);
-            }
-        };
-        fetchBestellUebersicht();
-    }, [reducerValue, api]);
 
-    useEffect(() => {
-        const fetchBrotBestellungOverview= async () => {
-            try {
-                const response = await api.readBestellUebersicht();
-                if (!response.ok) {
-                    throw new Error('Failed to fetch data');
-                }
-                const data = await response.json();
-                //console.log(data.brotBestellung)
                 if (Array.isArray(data.brotBestellung)) {
                     setBrotBestellungOverview(data.brotBestellung);
                 } else {
                     setBrotBestellungOverview([]);
                 }
             } catch (error) {
-                console.error('Error fetching Brot Bestellung overview:', error);
+                console.error('Error fetching discrepancy:', error);
             }
         };
-        fetchBrotBestellungOverview();
-    }, [reducerValue, api]);
+        fetchBestellUebersicht();
+    }, [api]);
 
     const generateCombinedPDF = () => {
         const doc = new jsPDF();
@@ -136,8 +122,8 @@ export function OrderOverview() {
         });
         brotTableData.push(brotColumns);
         brotBestellungRows.forEach(row => {
-            const brotBestelungOverview = row.cells[1].value;
-            if (brotBestelungOverview !== 0) {
+            const brotBestellungOverview = row.cells[1].value;
+            if (brotBestellungOverview !== 0) {
                 const rowData = [];
                 row.cells.forEach(cell => {
                     rowData.push(cell.value);
@@ -193,8 +179,8 @@ export function OrderOverview() {
         tableData.push(columns);
         brotBestellungRows.forEach(row => {
           //remove rows with discrepancy = 0
-          const brotBestelungOverview = row.cells[1].value;
-          if (brotBestelungOverview !== 0) {
+          const brotBestellungOverview = row.cells[1].value;
+          if (brotBestellungOverview !== 0) {
             const rowData = [];
             row.cells.forEach(cell => {
             rowData.push(cell.value);
@@ -252,21 +238,11 @@ export function OrderOverview() {
 
         if (inputField !== null && inputField !== undefined && inputField !== 0) {
         const inputValue = inputField.value.trim();
-        let formatedValue;
 
-        if (!isNaN(inputValue) && Number.isInteger(parseFloat(inputValue))) {
-            formatedValue = inputValue + ".0";
-        } else if (!isNaN(inputValue) && isFinite(parseFloat(inputValue))) {
-            formatedValue = inputValue;
-        } else {
-            console.error("Invalid input for discrepancy: " + name);
-            continue;
-        }
+        let placeholderValue = discrepancy[i].zuBestellendeGebinde;
 
-        const placeholderValue = parseFloat(discrepancy[i].zuBestellendeGebinde);
-
-        if(formatedValue !== placeholderValue){
-            apiCalls.push(api.updateDiscrepancy(discrId, formatedValue));
+        if(inputValue !== placeholderValue){
+            apiCalls.push(api.updateGebindeOverview(discrId, inputValue));
         }
         }
     }
@@ -290,13 +266,12 @@ export function OrderOverview() {
         toast.error("Es gab einen Fehler beim Übermitteln der Änderungen. Bitte versuchen Sie es erneut.");
         console.log(error);
     }
-    forceUpdate();
     window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     const contentBrot = () => {
-        if (brotBestelungOverview.length === 0) {
-            return <p>Keine Daten verfügbar.</p>;
+        if (brotBestellungOverview.length === 0) {
+            return <p>Lädt...</p>;
         } else {
             return (
                 <BTable striped bordered hover size="sm" {...getBrotBestellungTableProps()}>
@@ -333,7 +308,7 @@ export function OrderOverview() {
 
     const contentFrisch = () => {
     if (discrepancy.length === 0) {
-        return null;
+        return <p>Lädt...</p>;
         } else {
         return (
             <BTable striped bordered hover size="sm" {...getTableProps()}>
@@ -378,29 +353,29 @@ export function OrderOverview() {
 
     return(
         <div>
-            <dic style={{overflowX: "auto", width: "100%"}}>
-            <Accordion>
+            <div style={{overflowX: "auto", width: "100%"}}>
+            <Accordion defaultExpanded>
                 <AccordionSummary aria-controls="panel1-content" id="panel1-header"  expandIcon={<ExpandMoreIcon />}>
-                    <Typography variant="h6" gutterBottom>Übersicht - Frischbestellungen</Typography>
+                    <Typography variant="h6" gutterBottom>Frisch</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
                     {contentFrisch()}
+                    <Button style={{margin: "20px 0.25rem 30px 0.25rem"}} variant="success" onClick={() => submitUpdateOverview()}>Aktualisieren</Button>
                     <Button style={{margin: "20px 0.25rem 30px 0.25rem"}} variant="primary" onClick={() => generatePDF()}>Download Frischbestellungen als PDF</Button>
                 </AccordionDetails>
             </Accordion>
             <Accordion>
                 <AccordionSummary aria-controls="panel1-content" id="panel1-header"  expandIcon={<ExpandMoreIcon />}>
-                    <Typography variant="h6" gutterBottom>Übersicht - Brotbestellungen</Typography>
+                    <Typography variant="h6" gutterBottom>Brot</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
                     {contentBrot()}
                     <Button style={{margin: "20px 0.25rem 30px 0.25rem"}} variant="primary" onClick={() => generatePDFforBrot()}>Download Brotbestellungen als PDF</Button>
                 </AccordionDetails>
             </Accordion>
-                <Button style={{margin: "20px 0.25rem 30px 0.25rem"}} variant="success" onClick={() => submitUpdateOverview()}>Aktualisieren</Button>
                 <Button style={{margin: "20px 0.25rem 30px 0.25rem"}} variant="primary" onClick={() => generateCombinedPDF()}>Download Übersicht als PDF</Button>
                 <ToastContainer />
-            </dic>
+            </div>
         </div>
     )
 }

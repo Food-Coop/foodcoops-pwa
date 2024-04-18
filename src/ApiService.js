@@ -493,7 +493,7 @@ const updateGebindeOverview = (id, data) =>
     fetch(BACKEND_URL + GEBINDE + UPDATEGEBINDEOVERVIEW + id, {
         method: 'PUT',
         headers: {
-            'Content-Type': 'applicatopn/json',
+            'Content-Type': 'application/json',
         },
         body: data,
 });

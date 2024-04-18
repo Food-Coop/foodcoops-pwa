@@ -157,7 +157,7 @@ export function Kontrolle() {
 
     const content = () => {
       if (discrepancy.length === 0) {
-        return null;
+        return <p>Lädt...</p>;
       } else {
         return (
           <BTable striped bordered hover size="sm" {...getTableProps()}>

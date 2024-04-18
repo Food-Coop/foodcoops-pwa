@@ -94,8 +94,8 @@ export function MainEinkauf( { isLarge }) {
     // Lagerware
     let bestandBuyObjects = [];
     for (let i = 0; i < produkt.length; i++) {
-      let lagerId = "InputfieldLager" + i;
-      let einkaufsmenge = document.getElementById(lagerId).value;
+      let lagerInputId = "InputfieldLager" + i;
+      let einkaufsmenge = document.getElementById(lagerInputId).value;
       if (einkaufsmenge === undefined || einkaufsmenge === '0' || einkaufsmenge === '') {
       } else {
           //to get id of bestandEinkauf
@@ -135,8 +135,8 @@ export function MainEinkauf( { isLarge }) {
     // Brot
     let bestellungsEinkaufe = [];
     for (let i = 0; i < brot.length; i++) {
-      let brotBestellId = "InputfieldBrot" + i;
-      let einkaufsmenge = document.getElementById(brotBestellId).value;
+      let brotInputId = "InputfieldBrot" + i;
+      let einkaufsmenge = document.getElementById(brotInputId).value;
       if (einkaufsmenge === undefined || einkaufsmenge === '0' || einkaufsmenge === '') {
       } else {
           const brotEinkauf = {
@@ -163,8 +163,11 @@ export function MainEinkauf( { isLarge }) {
 
     // Frisch
     for (let i = 0; i < frisch.length; i++) {
-      let frischBestellId = "InputfieldFrisch" + i;
-      let einkaufsmenge = document.getElementById(frischBestellId).value;
+      let frischInputId = "InputfieldFrisch" + i;
+      if (document.getElementById(frischInputId) === null) {
+        continue;
+      }
+      let einkaufsmenge = document.getElementById(frischInputId).value;
       if (einkaufsmenge === undefined || einkaufsmenge === '0' || einkaufsmenge === '') {
       } else {
           const frischEinkauf = {
@@ -195,8 +198,46 @@ export function MainEinkauf( { isLarge }) {
                 },
               },
             };
-            console.log(frischEinkauf);
             bestellungsEinkaufe.push(frischEinkauf);
+        }
+    }
+
+    // Zu Viel Zu Wenig
+    let discrepancyEinkaufe = [];
+    for (let i = 0; i < discrepancy.length; i++) {
+      let discrepancyInputId = "InputfieldDiscrepancy" + i;
+      let einkaufsmenge = document.getElementById(discrepancyInputId).value;
+      if (einkaufsmenge === undefined || einkaufsmenge === '0' || einkaufsmenge === '') {
+      } else {
+          const discrepancyEinkauf = {
+              amount: einkaufsmenge,
+              discrepancy: {
+                bestand: {
+                  type: discrepancy[i].bestand.type,
+                  gebindegroesse: discrepancy[i].bestand.gebindegroesse,
+                  herkunftsland: discrepancy[i].bestand.herkunftsland,
+                  id: discrepancy[i].bestand.id,
+                  name: discrepancy[i].bestand.name,
+                  preis: discrepancy[i].bestand.preis,
+                  verfuegbarkeit: discrepancy[i].bestand.verfuegbarkeit,
+                  einheit: {
+                    id: discrepancy[i].bestand.einheit.id,
+                    name: discrepancy[i].bestand.einheit.name
+                  },
+                  kategorie: {
+                    id: discrepancy[i].bestand.kategorie.id,
+                    name: discrepancy[i].bestand.kategorie.name,
+                    mixable: discrepancy[i].bestand.kategorie.mixable
+                  },
+                  },
+                gewollteMenge: discrepancy[i].gewollteMenge,
+                id: discrepancy[i].id,
+                zuBestellendeGebinde: discrepancy[i].zuBestellendeGebinde,
+                zuVielzuWenig: discrepancy[i].zuVielzuWenig,
+                },
+            };
+            console.log(discrepancyEinkauf);
+            discrepancyEinkaufe.push(discrepancyEinkauf);
         }
     }
 
@@ -207,10 +248,11 @@ export function MainEinkauf( { isLarge }) {
         // Bestellung = Brot & Frischware
         bestellungsEinkauf: bestellungsEinkaufe,
         // Zu Viel Einkauf
-        tooMuchEinkauf: [],
+        tooMuchEinkauf: discrepancyEinkaufe,
         personId: person_id,
       };
       const response = await api.createEinkauf(einkaufData);
+      console.log(einkaufData);
 
       if (response.ok) {
         const responseData = await response.json();

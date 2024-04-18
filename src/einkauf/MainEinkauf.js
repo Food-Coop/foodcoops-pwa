@@ -182,8 +182,10 @@ export function MainEinkauf( { isLarge }) {
         clearInputFields();
         window.scrollTo({ top: 0, behavior: 'smooth' });
         toast.success("Ihr Einkauf wurde übermittelt. Vielen Dank!");
-        //TODO: Fehler ausgeben, falls es nicht klappt
-        //await api.createEinkaufPdf(responseData.id, email);
+        /*const emailResponse = await api.createEinkaufPdf(responseData.id, email);
+        if (!emailResponse.ok) {
+          toast.info("Ihre Einkaufsbestätigung konnte nicht per E-Mail versendet werden.");
+        }*/
       } else {
         toast.error("Fehler beim Übermitteln des Einkaufs. Bitte versuchen Sie es erneut.");
       }

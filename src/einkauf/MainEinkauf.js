@@ -211,30 +211,7 @@ export function MainEinkauf( { isLarge }) {
       } else {
           const discrepancyEinkauf = {
               amount: einkaufsmenge,
-              discrepancy: {
-                bestand: {
-                  type: discrepancy[i].bestand.type,
-                  gebindegroesse: discrepancy[i].bestand.gebindegroesse,
-                  herkunftsland: discrepancy[i].bestand.herkunftsland,
-                  id: discrepancy[i].bestand.id,
-                  name: discrepancy[i].bestand.name,
-                  preis: discrepancy[i].bestand.preis,
-                  verfuegbarkeit: discrepancy[i].bestand.verfuegbarkeit,
-                  einheit: {
-                    id: discrepancy[i].bestand.einheit.id,
-                    name: discrepancy[i].bestand.einheit.name
-                  },
-                  kategorie: {
-                    id: discrepancy[i].bestand.kategorie.id,
-                    name: discrepancy[i].bestand.kategorie.name,
-                    mixable: discrepancy[i].bestand.kategorie.mixable
-                  },
-                  },
-                gewollteMenge: discrepancy[i].gewollteMenge,
-                id: discrepancy[i].id,
-                zuBestellendeGebinde: discrepancy[i].zuBestellendeGebinde,
-                zuVielzuWenig: discrepancy[i].zuVielzuWenig,
-                },
+              discrepancy: discrepancy[i]
             };
             console.log(discrepancyEinkauf);
             discrepancyEinkaufe.push(discrepancyEinkauf);

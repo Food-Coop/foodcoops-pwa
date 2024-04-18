@@ -101,26 +101,7 @@ export function MainEinkauf( { isLarge }) {
           //to get id of bestandEinkauf
             const newBestandBuyObject = {
                 amount: einkaufsmenge,
-                bestandEntity: {
-                    type: "lager",
-                    id: produkt[i].id,
-                    kategorie: {
-                      id: produkt[i].kategorie.id,
-                      mixable: produkt[i].kategorie.mixable,
-                      name: produkt[i].kategorie.name
-                    },
-                    lagerbestand: {
-                      einheit: {
-                        id: produkt[i].lagerbestand.einheit.id,
-                        name: produkt[i].lagerbestand.einheit.name
-                      },
-                      istLagerbestand: produkt[i].lagerbestand.istLagerbestand,
-                      sollLagerbestand: produkt[i].lagerbestand.sollLagerbestand
-                    },
-                    name: produkt[i].name,
-                    preis: produkt[i].preis, 
-                    verfuegbarkeit: produkt[i].verfuegbarkeit
-                },
+                bestandEntity: { ...produkt[i], type: "lager" }
             };
             try {
               const response = await api.createBestandBuyObject(newBestandBuyObject);
@@ -141,21 +122,7 @@ export function MainEinkauf( { isLarge }) {
       } else {
           const brotEinkauf = {
               amount: einkaufsmenge,
-              bestellung: {
-                type: "brot",
-                bestellmenge: brot[i].bestellmenge,
-                datum: brot[i].datum,
-                id: brot[i].id,
-                personId: brot[i].personId,
-                brotbestand: {
-                  type: "brot",
-                  gewicht: brot[i].brotbestand.gewicht,
-                  id: brot[i].brotbestand.id,
-                  name: brot[i].brotbestand.name,
-                  preis: brot[i].brotbestand.preis,
-                  verfuegbarkeit: brot[i].brotbestand.verfuegbarkeit
-                },
-              },
+              bestellung: { ...brot[i], type: "brot", brotbestand: { ...brot[i].brotbestand, type: "brot" } }
             };
             bestellungsEinkaufe.push(brotEinkauf);
         }
@@ -170,35 +137,11 @@ export function MainEinkauf( { isLarge }) {
       let einkaufsmenge = document.getElementById(frischInputId).value;
       if (einkaufsmenge === undefined || einkaufsmenge === '0' || einkaufsmenge === '') {
       } else {
-          const frischEinkauf = {
-              amount: einkaufsmenge,
-              bestellung: {
-                type: "frisch",
-                datum: frisch[i].datum,
-                bestellmenge: frisch[i].bestellmenge,
-                id: frisch[i].id,
-                personId: frisch[i].personId,
-                done: frisch[i].done,
-                frischbestand: {
-                  type: "frisch",
-                  einheit: {
-                    id: frisch[i].frischbestand.einheit.id,
-                    name: frisch[i].frischbestand.einheit.name
-                  },
-                  gebindegroesse: frisch[i].frischbestand.gebindegroesse,
-                  herkunftsland: frisch[i].frischbestand.herkunftsland,
-                  id: frisch[i].frischbestand.id,
-                  kategorie: {
-                    id: frisch[i].frischbestand.kategorie.id,
-                    name: frisch[i].frischbestand.kategorie.name
-                  },
-                  name: frisch[i].frischbestand.name,
-                  preis: frisch[i].frischbestand.preis,
-                  verfuegbarkeit: frisch[i].frischbestand.verfuegbarkeit
-                },
-              },
-            };
-            bestellungsEinkaufe.push(frischEinkauf);
+        const frischEinkauf = {
+          amount: einkaufsmenge,
+          bestellung: { ...frisch[i], type: "frisch", frischbestand: { ...frisch[i].frischbestand, type: "frisch" } }
+        };
+        bestellungsEinkaufe.push(frischEinkauf);
         }
     }
 

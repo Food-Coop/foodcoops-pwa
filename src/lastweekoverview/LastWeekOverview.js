@@ -110,8 +110,8 @@ export function LastWeekOverview() {
                 }
                 const data = await response.json();
                 //console.log(data.brotBestellung)
-                if (Array.isArray(data)) {
-                    setBrotBestellungOverview(data);
+                if (data && Array.isArray(data.brotBestellung)) {
+                    setBrotBestellungOverview(data.brotBestellung);
                 } else {
                     setBrotBestellungOverview([]);
                 }

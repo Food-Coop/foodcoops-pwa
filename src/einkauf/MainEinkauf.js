@@ -38,7 +38,7 @@ export function MainEinkauf( { isLarge }) {
 
   const handleFrischPriceChange = (price) => {
     setTotalFrischPrice(price);
-    setDeliveryCost(price * 0.05);
+    setDeliveryCost((price + totalDiscrepancyPrice) * 0.05);
   };
 
   const handleBrotPriceChange = (price) => {
@@ -51,6 +51,7 @@ export function MainEinkauf( { isLarge }) {
 
   const handleDiscrepancyPriceChange = (price) => {
     setTotalDiscrepancyPrice(price);
+    setDeliveryCost((price + totalFrischPrice) * 0.05);
   };
 
   const handleFrisch = (frisch) => {

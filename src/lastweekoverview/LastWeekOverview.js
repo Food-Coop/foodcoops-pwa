@@ -19,6 +19,7 @@ export function LastWeekOverview() {
     const [discrepancy, setDiscrepancy] = useState([]);
     const [reducerValue, forceUpdate] = React.useReducer(x => x+1, 0);
     const [inputValues, setInputValues] = useState({});
+    const [brotBestelungOverview, setBrotBestellungOverview] = useState([]);
 
 
     const columns = React.useMemo(
@@ -48,6 +49,20 @@ export function LastWeekOverview() {
         []
     )
 
+    const brotColumns = React.useMemo(
+        () => [
+            {
+                Header: 'Produkt',
+                accessor: 'brotBestand.name',
+            },
+            {
+                Header: 'Zubestellende Menge',
+                accessor: 'bestellmenge',
+            }
+        ],
+        []
+    );
+
     const {
         getTableProps,
         getTableBodyProps,
@@ -57,26 +72,54 @@ export function LastWeekOverview() {
         
     } = useTable({ columns, data: discrepancy, initialState: { sortBy: [{ id: 'bestand.name' }] }, }, useSortBy)
 
+    const {
+        getTableProps: getBrotBestellungTableProps,
+        getTableBodyProps: getBrotBestellungTableBodyProps,
+        headerGroups: brotBestellungHeaderGroups,
+        rows: brotBestellungRows,
+        prepareRow: prepareBrotBestellungRow,
+    } = useTable({columns: brotColumns, data: brotBestelungOverview}, useSortBy);
+
     useEffect(() => {
         const fetchBestellUebersicht = async () => {
-          try {
-              const response = await api.readBestellUebersicht();
-              const data = await response.text();
-              if (data) {
-                const json = JSON.parse(data);
-                if (json.discrepancy === 0) {
-                  return;
-                } else {
-                  setDiscrepancy(json.discrepancy);
+            try {
+                const response = await api.readBestellUebersicht();
+                if (!response.ok) {
+                    throw new Error('Failed to fetch data');
                 }
-              } else {
-                return;
-              }
-          } catch (error) {
-              console.error('Error fetching discrepancy:', error);
-          }
+                const data = await response.json();
+                //console.log(data)
+                if (data && Array.isArray(data.discrepancy)) {
+                    setDiscrepancy(data.discrepancy);
+                } else {
+                    setDiscrepancy([]);
+                }
+            } catch (error) {
+                console.error('Error fetching discrepancy:', error);
+            }
         };
         fetchBestellUebersicht();
+    }, [reducerValue]);
+
+    useEffect(() => {
+        const fetchBrotBestellungOverview= async () => {
+            try {
+                const response = await api.readBestellUebersicht();
+                if (!response.ok) {
+                    throw new Error('Failed to fetch data');
+                }
+                const data = await response.json();
+                //console.log(data.brotBestellung)
+                if (Array.isArray(data)) {
+                    setBrotBestellungOverview(data);
+                } else {
+                    setBrotBestellungOverview([]);
+                }
+            } catch (error) {
+                console.error('Error fetching Brot Bestellung overview:', error);
+            }
+        };
+        fetchBrotBestellungOverview();
     }, [reducerValue]);
 
     const generatePDF = () => {
@@ -164,6 +207,50 @@ export function LastWeekOverview() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
+    const contentBrot = () => {
+        if (brotBestelungOverview.length === 0) {
+            return <p>Keine Daten verfügbar.</p>;
+        } else {
+            return (
+                <BTable striped bordered hover size="sm" {...getBrotBestellungTableProps()}>
+                    <thead>
+                        {brotBestellungHeaderGroups.map(headerGroup => (
+                            <tr {...headerGroup.getHeaderGroupProps()}>
+                                {headerGroup.headers.map(column => (
+                                    <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                                        {column.render('Header')}
+                                        <span>
+                                            {column.isSorted ? (column.isSortedDesc ? ' ↓' : ' ↑') : ''}
+                                        </span>
+                                    </th>
+                                ))}
+                            </tr>
+                        ))}
+                    </thead>
+                    <tbody {...getBrotBestellungTableBodyProps()}>
+                        {brotBestellungRows.map((row) => {
+                            prepareBrotBestellungRow(row);
+                            return (
+                                <tr {...row.getRowProps()}>
+                                    {row.cells.map(cell => {
+                                        if(cell.column.Header === "Zubestellende Menge"){
+                                            let id = "InputfieldBrot" + row.index;
+                                            return(
+                                                <td key={`${row.original.id}-${cell.column.Header}Brot`}><input value={inputValues[id] || row.original.bestellmenge} onChange={(e) => handleChange(id, e.target.value)} id={id} type="number"></input></td>
+                                            );
+                                            } else {
+                                            return <td key={`${row.original.id}-${cell.column.Header}Brot`} {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                                        }
+                                    })}
+                                </tr>
+                            );
+                        })}
+                    </tbody>
+                </BTable>
+            );
+        }
+    };
+
     const contentFrisch = () => {
     if (discrepancy.length === 0) {
         return null;
@@ -218,6 +305,14 @@ export function LastWeekOverview() {
                 </AccordionSummary>
                 <AccordionDetails>
                     {contentFrisch()}
+                </AccordionDetails>
+            </Accordion>
+            <Accordion>
+                <AccordionSummary aria-controls="panel1-content" id="panel1-header"  expandIcon={<ExpandMoreIcon />}>
+                    <Typography variant="h6" gutterBottom>Bestellungübersicht Brot</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                    {contentBrot()}
                 </AccordionDetails>
             </Accordion>
                 <Button style={{margin: "20px 0.25rem 30px 0.25rem"}} variant="success" onClick={() => submitUpdateOverview()}>Aktualisieren</Button>

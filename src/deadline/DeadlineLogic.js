@@ -3,7 +3,7 @@ import { useApi } from '../ApiService';
 
 export function DeadlineLogic() {
     const [isLoadingDeadline, setIsLoadingDeadline] = useState(true);
-    const [deadline, setDeadline] = useState(new Date(Date.now() + 2 * 60 * 1000));
+    const [deadline, setDeadline] = useState(null);
 
     const api = useApi();
 

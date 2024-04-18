@@ -5,6 +5,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useTable, useSortBy } from 'react-table';
 import NumberFormatComponent from '../logic/NumberFormatComponent';
+import Alert from '@mui/material/Alert';
 import {Button} from 'react-bootstrap';
 import {jsPDF} from "jspdf";
 import 'jspdf-autotable';
@@ -14,7 +15,7 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Typography from '@mui/material/Typography';
 
-export function LastWeekOverview() {
+export function OrderOverview() {
     const api = useApi();
     const [discrepancy, setDiscrepancy] = useState([]);
     const [reducerValue, forceUpdate] = React.useReducer(x => x+1, 0);
@@ -110,7 +111,7 @@ export function LastWeekOverview() {
                 }
                 const data = await response.json();
                 //console.log(data.brotBestellung)
-                if (data && Array.isArray(data.brotBestellung)) {
+                if (Array.isArray(data.brotBestellung)) {
                     setBrotBestellungOverview(data.brotBestellung);
                 } else {
                     setBrotBestellungOverview([]);
@@ -122,9 +123,96 @@ export function LastWeekOverview() {
         fetchBrotBestellungOverview();
     }, [reducerValue]);
 
+    const generateCombinedPDF = () => {
+        const doc = new jsPDF();
+    
+        // Bestellübersicht - Brotbestellungen
+        doc.text("Bestellübersicht - Brotbestellungen", 10, 10);
+        const brotTableData = [];
+        const brotColumns = [];
+        brotBestellungHeaderGroups.forEach(headerGroup => {
+            headerGroup.headers.forEach(column => {
+                brotColumns.push(column.Header);
+            });
+        });
+        brotTableData.push(brotColumns);
+        brotBestellungRows.forEach(row => {
+            const brotBestelungOverview = row.cells[1].value;
+            if (brotBestelungOverview !== 0) {
+                const rowData = [];
+                row.cells.forEach(cell => {
+                    rowData.push(cell.value);
+                });
+                brotTableData.push(rowData);
+            }
+        });
+        doc.autoTable({
+            head: [brotTableData.shift()],
+            body: brotTableData
+        });
+        doc.addPage(); // Neue Seite für die nächste Tabelle
+    
+        // Bestellübersicht - Frischbestellungen
+        doc.text("Bestellübersicht - Frischbestellungen", 10, 10);
+        const freshTableData = [];
+        const freshColumns = [];
+        headerGroups.forEach(headerGroup => {
+            headerGroup.headers.forEach(column => {
+                freshColumns.push(column.Header);
+            });
+        });
+        freshTableData.push(freshColumns);
+        rows.forEach(row => {
+            const discrepancy = row.cells[1].value;
+            if (discrepancy !== 0) {
+                const rowData = [];
+                row.cells.forEach(cell => {
+                    rowData.push(cell.value);
+                });
+                freshTableData.push(rowData);
+            }
+        });
+        doc.autoTable({
+            head: [freshTableData.shift()],
+            body: freshTableData
+        });
+    
+        // Speichern des kombinierten PDFs
+        doc.save("Kombinierte_Bestelluebersicht.pdf");
+    };
+
+    const generatePDFforBrot = () => {
+        const doc = new jsPDF();
+        doc.text("Bestellübersicht - Brotbestellungen", 10, 10);
+        const tableData = [];
+        const columns = [];
+        brotBestellungHeaderGroups.forEach(headerGroup => {
+            headerGroup.headers.forEach(column => {
+                columns.push(column.Header);
+            });
+        });
+        tableData.push(columns);
+        brotBestellungRows.forEach(row => {
+          //remove rows with discrepancy = 0
+          const brotBestelungOverview = row.cells[1].value;
+          if (brotBestelungOverview !== 0) {
+            const rowData = [];
+            row.cells.forEach(cell => {
+            rowData.push(cell.value);
+            });
+            tableData.push(rowData);
+          }
+        });
+        doc.autoTable({
+            head: [tableData.shift()],
+            body: tableData
+        });
+        doc.save("Bestelluebersicht_Brot_Tabelle.pdf");
+      };
+
     const generatePDF = () => {
         const doc = new jsPDF();
-        doc.text("Bestellübersicht", 10, 10);
+        doc.text("Bestellübersicht - Frischbestellungen", 10, 10);
         const tableData = [];
         const columns = [];
         headerGroups.forEach(headerGroup => {
@@ -233,14 +321,7 @@ export function LastWeekOverview() {
                             return (
                                 <tr {...row.getRowProps()}>
                                     {row.cells.map(cell => {
-                                        if(cell.column.Header === "Zubestellende Menge"){
-                                            let id = "InputfieldBrot" + row.index;
-                                            return(
-                                                <td key={`${row.original.id}-${cell.column.Header}Brot`}><input value={inputValues[id] || row.original.bestellmenge} onChange={(e) => handleChange(id, e.target.value)} id={id} type="number"></input></td>
-                                            );
-                                            } else {
-                                            return <td key={`${row.original.id}-${cell.column.Header}Brot`} {...cell.getCellProps()}>{cell.render('Cell')}</td>
-                                        }
+                                        return <td key={`${row.original.id}-${cell.column.Header}Brot`} {...cell.getCellProps()}>{cell.render('Cell')}</td>
                                     })}
                                 </tr>
                             );
@@ -301,22 +382,24 @@ export function LastWeekOverview() {
             <dic style={{overflowX: "auto", width: "100%"}}>
             <Accordion>
                 <AccordionSummary aria-controls="panel1-content" id="panel1-header"  expandIcon={<ExpandMoreIcon />}>
-                    <Typography variant="h6" gutterBottom>Bestellungübersicht Frisch</Typography>
+                    <Typography variant="h6" gutterBottom>Übersicht - Frischbestellungen</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
                     {contentFrisch()}
+                    <Button style={{margin: "20px 0.25rem 30px 0.25rem"}} variant="primary" onClick={() => generatePDF()}>Download Frischbestellungen als PDF</Button>
                 </AccordionDetails>
             </Accordion>
             <Accordion>
                 <AccordionSummary aria-controls="panel1-content" id="panel1-header"  expandIcon={<ExpandMoreIcon />}>
-                    <Typography variant="h6" gutterBottom>Bestellungübersicht Brot</Typography>
+                    <Typography variant="h6" gutterBottom>Übersicht - Brotbestellungen</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
                     {contentBrot()}
+                    <Button style={{margin: "20px 0.25rem 30px 0.25rem"}} variant="primary" onClick={() => generatePDFforBrot()}>Download Brotbestellungen als PDF</Button>
                 </AccordionDetails>
             </Accordion>
                 <Button style={{margin: "20px 0.25rem 30px 0.25rem"}} variant="success" onClick={() => submitUpdateOverview()}>Aktualisieren</Button>
-                <Button style={{margin: "20px 0.25rem 30px 0.25rem"}} variant="primary" onClick={() => generatePDF()}>PDF erstellen</Button>
+                <Button style={{margin: "20px 0.25rem 30px 0.25rem"}} variant="primary" onClick={() => generateCombinedPDF()}>Download Übersicht als PDF</Button>
                 <ToastContainer />
             </dic>
         </div>

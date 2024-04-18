@@ -4,7 +4,7 @@ import Tabs from '@mui/material/Tabs';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { useState } from "react";
 import { Link, Redirect, Route, BrowserRouter as Router, Switch } from "react-router-dom/";
-import { LastWeekOverview } from "./LastWeekOverview";
+import { OrderOverview } from "./OrderOverview";
 
 export function MainOverview(){
     const [value, setValue] = useState(0);
@@ -23,15 +23,15 @@ export function MainOverview(){
                     indicatorColor="primary"
                     textColor="primary"
                     >
-                    <Tab label="Übersicht Vorwoche" component={Link} to="/brotOverview" />
+                    <Tab label="Bestellung Übersicht" component={Link} to="/brotOverview" />
                     </Tabs>
                 </Paper>
                 <Switch>
-                    <Route path="/lastWeekOverview">
-                        <LastWeekOverview />
+                    <Route path="/OrderOverview">
+                        <OrderOverview />
                     </Route>
                     <Route>
-                        <Redirect to="/lastWeekOverview" />
+                        <Redirect to="/OrderOverview" />
                     </Route>
                 </Switch>
             </div>

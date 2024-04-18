@@ -24,7 +24,7 @@ import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import InfoIcon from '@mui/icons-material/Info';
 import './AppRouter.css';
 import { MainKontrolle } from '../kontrolle/MainKontrolle';
-import { MainOverview } from '../lastweekoverview/MainOverview';
+import { MainOverview } from '../orderoverview/MainOverview';
 
 export const AppRouter = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -50,8 +50,8 @@ const AppContent = ({ menuOpen, toggleMenu }) => {
       '/mainBestellung': 'Bestellung',
       '/mainEinkauf': 'Einkauf',
       '/mainManagement': 'Management',
-      '/mainKontrolle' : 'Übersicht',
-      '/mainOverview' : 'Übersich Vorwoche',
+      '/mainKontrolle' : 'Abweichung Übersicht',
+      '/mainOverview' : 'Bestellug Übersicht',
       '/about': 'Impressum',
     };
 
@@ -118,7 +118,7 @@ const AppContent = ({ menuOpen, toggleMenu }) => {
                     <InventoryIcon/>
                   </ListItemIcon>
                   <Typography variant="h6">
-                    Übersicht
+                    Abweichung Übersicht
                   </Typography>
                 </ListItemButton>
               </Link>
@@ -128,7 +128,7 @@ const AppContent = ({ menuOpen, toggleMenu }) => {
                     <InventoryIcon/>
                   </ListItemIcon>
                   <Typography variant="h6">
-                    Übersicht Vorwoche
+                    Bestellung Übersicht
                   </Typography>
                 </ListItemButton>
               </Link>

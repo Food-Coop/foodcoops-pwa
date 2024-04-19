@@ -80,61 +80,78 @@ export function Kontrolle() {
     }, [reducerValue]);
 
     const generatePDF = () => {
+      const currentDate = new Date();
+      const day = String(currentDate.getDate()).padStart(2, '0');
+      const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+      const year = currentDate.getFullYear();
+      const formattedDate = `${day}.${month}.${year}`;
       const doc = new jsPDF();
-      doc.text("Zu Viel / Zu Wenig-Tabelle", 10, 10);
+      doc.text(`Zu Viel / Zu Wenig-Liste ${formattedDate}`, 10, 10);
       const tableData = [];
       const columns = [];
+      const insgesamtIndexes = [];
       headerGroups.forEach(headerGroup => {
           headerGroup.headers.forEach(column => {
               columns.push(column.Header);
           });
       });
       tableData.push(columns);
-
+    
       let currentCategoryTotal = 0;
       let currentCategory = null;
       let currentEinheit = null;
-
+    
       rows.forEach((row, index) => {
           const discrepancy = row.cells[1].value;
           if (discrepancy !== 0 && row.original.bestand.kategorie.mixable) {
               if (currentCategory !== null && row.original.bestand.kategorie.name !== currentCategory) {
+                  insgesamtIndexes.push(tableData.length-1);
                   tableData.push([`Insgesamt Zu Viel / Zu Wenig für Kategorie ${currentCategory}`, currentCategoryTotal, currentEinheit]);
                   currentCategoryTotal = 0;
               }
-
+    
               const rowData = [];
               row.cells.forEach(cell => {
                   rowData.push(cell.value);
               });
               tableData.push(rowData);
-
+    
               currentCategory = row.original.bestand.kategorie.name;
               currentEinheit = row.original.bestand.einheit.name;
               currentCategoryTotal += row.original.zuVielzuWenig;
           }
       });
-
+    
       if (currentCategory !== null) {
+          insgesamtIndexes.push(tableData.length-1);
           tableData.push([`Insgesamt Zu Viel / Zu Wenig für Kategorie ${currentCategory}`, currentCategoryTotal, currentEinheit]);
       }
+      
       rows.forEach((row, index) => {
-      if (discrepancy !== 0 && (row.original.bestand.kategorie.mixable === false)) {
-          const rowData = [];
-          row.cells.forEach(cell => {
-              rowData.push(cell.value);
-          });
-          tableData.push(rowData);
-      }});
-
+          const discrepancy = row.cells[1].value;
+          if (discrepancy !== 0 && !row.original.bestand.kategorie.mixable) {
+              const rowData = [];
+              row.cells.forEach(cell => {
+                  rowData.push(cell.value);
+              });
+              tableData.push(rowData);
+          }
+      });
+    
       doc.autoTable({
           head: [tableData.shift()],
-          body: tableData
+          body: tableData,
+          didDrawCell: function(data) {
+            if (data.section === 'body' && insgesamtIndexes.includes(data.row.index)) {
+              doc.setDrawColor(0);
+              doc.setLineWidth(1);
+              doc.line(data.cell.x, data.cell.y + data.cell.height, data.cell.x + data.cell.width, data.cell.y + data.cell.height); // Bottom border
+            }
+          }
       });
-      doc.save("zuViel-zuWenig_Tabelle.pdf");
+      doc.save(`zuViel-zuWenig_Liste_${formattedDate}.pdf`);
     };
     
-
   const clearInputFields = () => {
     const inputFields = document.querySelectorAll('input[type="number"]');
     inputFields.forEach((input) => {
@@ -174,7 +191,7 @@ export function Kontrolle() {
         const responses = await Promise.all(apiCalls);
         for (const response of responses) {
           if (!(response.ok)) {
-            console.log(response.status);
+            console.error(response.status);
             errorOccurred = true;
             break;
           }
@@ -188,7 +205,7 @@ export function Kontrolle() {
       } catch (error) {
         errorOccurred = true;
         toast.error("Es gab einen Fehler beim Übermitteln der Änderungen. Bitte versuchen Sie es erneut.");
-        console.log(error);
+        console.error(error);
       }
       clearInputFields();
       forceUpdate();

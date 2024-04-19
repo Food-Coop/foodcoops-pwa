@@ -17,8 +17,8 @@ import Typography from '@mui/material/Typography';
 export function OrderOverview() {
     const api = useApi();
     const [discrepancy, setDiscrepancy] = useState([]);
-    const [inputValues, setInputValues] = useState({});
     const [brotBestellungOverview, setBrotBestellungOverview] = useState([]);
+    const [reducerValue, forceUpdate] = React.useReducer(x => x+1, 0);
 
     const columns = React.useMemo(
         () => [
@@ -106,7 +106,7 @@ export function OrderOverview() {
             }
         };
         fetchBestellUebersicht();
-    }, [api]);
+    }, [reducerValue, api]);
 
     const generateCombinedPDF = () => {
         const doc = new jsPDF();
@@ -224,9 +224,12 @@ export function OrderOverview() {
         doc.save("Bestelluebersicht_Frisch_Tabelle.pdf");
       };
 
-    const handleChange = (id, value) => {
-        setInputValues(prev => ({ ...prev, [id]: value }));
-      };
+    const clearInputFields = () => {
+        for (let i = 0; i < discrepancy.length; i++) {
+            let discrId = "InputfieldGebinde" + i;
+            document.getElementById(discrId).value = "";
+        }
+    }
 
     const submitUpdateOverview = async () => {
     let errorOccurred = false;
@@ -238,9 +241,7 @@ export function OrderOverview() {
         if (inputField !== null && inputField !== undefined && inputField !== 0) {
         const inputValue = inputField.value.trim();
 
-        let placeholderValue = discrepancy[i].zuBestellendeGebinde;
-
-        if(inputValue !== placeholderValue){
+        if(inputValue !== ''){
             apiCalls.push(api.updateGebindeOverview(discrId, inputValue));
         }
         }
@@ -265,6 +266,8 @@ export function OrderOverview() {
         toast.error("Es gab einen Fehler beim Übermitteln der Änderungen. Bitte versuchen Sie es erneut.");
         console.log(error);
     }
+    forceUpdate();
+    clearInputFields();
     window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -334,7 +337,7 @@ export function OrderOverview() {
                                 if(cell.column.Header === "Zu bestellende Gebinde"){
                                 let id = "InputfieldGebinde" + row.index;
                                 return(
-                                    <td key={`${row.original.id}-${cell.column.Header}Gebinde`}><input value={inputValues[id] || row.original.zuBestellendeGebinde} onChange={(e) => handleChange(id, e.target.value)} id={id} type="number"></input></td>
+                                    <td key={`${row.original.id}-${cell.column.Header}Gebinde`}><input placeholder={row.original.zuBestellendeGebinde} id={id} type="number"></input></td>
                                 );
                                 } else {
                                 return <td key={`${row.original.id}-${cell.column.Header}Gebinde`} {...cell.getCellProps()}>{cell.render('Cell')}</td>

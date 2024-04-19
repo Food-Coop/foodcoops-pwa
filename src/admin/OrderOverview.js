@@ -233,7 +233,6 @@ export function OrderOverview() {
     const apiCalls = [];
     for(let i = 0; i < discrepancy.length; i++){
         const discrId = discrepancy[i].id;
-        const name = discrepancy[i].bestand.name;
         const inputField = document.getElementById("InputfieldGebinde" + i);
 
         if (inputField !== null && inputField !== undefined && inputField !== 0) {

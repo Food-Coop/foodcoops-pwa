@@ -476,14 +476,15 @@ fetch(BACKEND_URL + GEBINDE + UPDATEDESCREPANCY + id, {
 const readConfig = () =>    
     fetch(BACKEND_URL + CONFIG);
 
-const updateConfig = (data) =>
-    fetch(BACKEND_URL, {
+const updateConfig = (data) => {
+    const params = new URLSearchParams(data).toString();
+    return fetch(`${BACKEND_URL}?${params}`, {
         method: "PUT",
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data),
-});
+    });
+};
 
 //Gebinde übersicht
 const readGebindeOverview = () =>

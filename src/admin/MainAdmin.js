@@ -6,6 +6,7 @@ import Tab from '@mui/material/Tab';
 import { Deadline } from '../deadline/Deadline';
 import { Kontrolle } from './Kontrolle';
 import { OrderOverview } from './OrderOverview';
+import { AdminConfig } from './AdminConfig';
 
 export function MainAdmin(){
     const [value, setValue] = useState(0);
@@ -28,6 +29,7 @@ export function MainAdmin(){
                 >
                 <Tab label="Zu Viel / Zu Wenig" component={Link} to={`${match.url}/zuVielzuWenig`} />
                 <Tab label="Bestellungs-Übersicht" component={Link} to={`${match.url}/OrderOverview`} />
+                <Tab label="Konfiguration" component={Link} to={`${match.url}/config`} />
                 <Tab label="Deadline" component={Link} to={`${match.url}/deadline`} />
                 </Tabs>
             </Paper>
@@ -37,6 +39,9 @@ export function MainAdmin(){
                 </Route>
                 <Route path={`${match.url}/OrderOverview`}>
                     <OrderOverview />
+                </Route>
+                <Route path={`${match.url}/config`}>
+                    <AdminConfig />
                 </Route>
                 <Route exact path={`${match.url}/deadline`}>
                     <Deadline />

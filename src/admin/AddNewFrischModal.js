@@ -1,0 +1,101 @@
+import React, { useEffect, useState } from "react";
+import Button from "react-bootstrap/Button";
+import { LagerModal } from "../lager/LagerModal";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useApi } from "../ApiService";
+import Select from "react-select";
+
+export function AddNewFrischModal(props) {
+  const api = useApi();
+  // const [frischBestand, setFrischBestand] = useState([]);
+  const [selectedDiscrepancy, setSelectedDiscrepancy] = useState(null);
+
+  const close = () => {
+    props.close();
+  };
+
+  const handleSelectChange = selectedOption => {
+    setSelectedDiscrepancy(selectedOption.value);
+};
+
+    const save = async () => {
+        let zuVielzuWenig = document.getElementById("zuVielzuWenigId").value;
+        let discrepancyElement = "";
+        let name = "";
+        if (selectedDiscrepancy === null) {
+            name = options[0].value;
+            discrepancyElement = props.discrepancyForModal.find(item => item.bestand.name === options[0].value);
+        } else {
+            name = selectedDiscrepancy;
+            discrepancyElement = props.discrepancyForModal.find(item => item.bestand.name === selectedDiscrepancy);
+        }
+        if (zuVielzuWenig === "") {
+            zuVielzuWenig = 0;
+        }
+        let response = await api.updateDiscrepancy(discrepancyElement.id, zuVielzuWenig);
+        if (response.ok) {
+            toast.success(name + " wurde erfolgreich zur Liste hinzugefügt.");
+        } else {
+            console.error("Es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.");
+        }
+        props.updateParent();
+        props.close();
+    }
+
+  const title = "Produkt hinzufügen";
+
+  const options = props.discrepancyForModal.map((item) => ({
+    value: item.bestand.name,
+    label: item.bestand.name,
+  }));
+
+  const body = (
+    <div style={{ width: "400px", height: "350px",  }}>
+        <table style={{ width: "40vw"}}>
+            <tr>
+                <td>Produkt:</td>
+                <td><Select
+                    className="basic-single"
+                    classNamePrefix="select"
+                    defaultValue={options[0]}
+                    isClearable={true}
+                    isSearchable={true}
+                    onChange={handleSelectChange}
+                    name="color"
+                    options={options}
+                    styles={{
+                        container: (provided) => ({
+                            ...provided,
+                            width: "100%",
+                        }),
+                        control: (provided) => ({
+                            ...provided,
+                            height: "50px",
+                        }),
+                    }}
+                /></td>
+                <td style={{paddingLeft: "20px"}}>Zu Viel / Zu Wenig: <input id="zuVielzuWenigId" type="number" style={{width: "20%", height: "50px", border: "none", border: "solid 1px #ccc",  borderRadius: "5px"}} /></td>
+            </tr>
+        </table>
+    </div>
+  );
+
+  const footer = (
+    <>
+        <Button variant="success" onClick={save}>Produkt hinzufügen</Button>
+        <Button onClick={close}>Zurück</Button>
+    </>
+  );
+
+  return (
+    <LagerModal
+      title={title}
+      body={body}
+      footer={footer}
+      show={props.show}
+      hide={close}
+      parentProps={props}
+    />
+  );
+}

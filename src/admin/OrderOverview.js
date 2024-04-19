@@ -29,7 +29,7 @@ export function OrderOverview() {
             {
             Header: 'Bestellmenge',
             accessor: 'gewollteMenge',
-            Cell: ({ value }) => <NumberFormatComponent value={value}/>,
+            Cell: ({ value }) => <NumberFormatComponent value={value} includeFractionDigits={false}/>,
             },
             {
             Header: 'Einheit',

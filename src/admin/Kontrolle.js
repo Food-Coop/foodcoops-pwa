@@ -9,11 +9,13 @@ import NumberFormatComponent from '../logic/NumberFormatComponent';
 import {Button} from 'react-bootstrap';
 import {jsPDF} from "jspdf";
 import 'jspdf-autotable';
+import { AddNewFrischModal } from './AddNewFrischModal';
 import '../Table.css';
 
 export function Kontrolle() {
     const api = useApi();
     const [discrepancy, setDiscrepancy] = useState([]);
+    const [discrepancyForModal, setDiscrepancyForModal] = useState([]);
     const [reducerValue, forceUpdate] = React.useReducer(x => x+1, 0);
 
     const columns = React.useMemo(
@@ -68,6 +70,9 @@ export function Kontrolle() {
                   let totalDiscrepancy = mixableDiscrepancy.concat(nonMixableDiscrepancy);
                   const filteredDiscrepancy = totalDiscrepancy.filter(item => item.zuVielzuWenig !== 0);
                   setDiscrepancy(filteredDiscrepancy);
+
+                  const filteredDiscrepancyForModal = json.discrepancy.filter(item => item.zuVielzuWenig === 0);
+                  setDiscrepancyForModal(filteredDiscrepancyForModal);
                 }
               } else {
                 return;
@@ -78,6 +83,10 @@ export function Kontrolle() {
         };
         fetchBestellUebersicht();
     }, [reducerValue]);
+
+    const updateParent = () => {
+      forceUpdate();
+    };
 
     const generatePDF = () => {
       const currentDate = new Date();
@@ -106,13 +115,19 @@ export function Kontrolle() {
           if (discrepancy !== 0 && row.original.bestand.kategorie.mixable) {
               if (currentCategory !== null && row.original.bestand.kategorie.name !== currentCategory) {
                   insgesamtIndexes.push(tableData.length-1);
-                  tableData.push([`Insgesamt Zu Viel / Zu Wenig für Kategorie ${currentCategory}`, currentCategoryTotal, currentEinheit]);
+                  tableData.push([`Insgesamt Zu Viel / Zu Wenig für Kategorie ${currentCategory}`, currentCategoryTotal.toString().replace('.', ','), currentEinheit]);
                   currentCategoryTotal = 0;
               }
     
               const rowData = [];
               row.cells.forEach(cell => {
-                  rowData.push(cell.value);
+                row.cells.forEach(cell => {
+                  if (typeof cell.value === 'number' && cell.value.toString().includes('.')) {
+                    const formattedValue = cell.value.toString().replace('.', ',');
+                    rowData.push(formattedValue);
+                  } else {
+                    rowData.push(cell.value);
+                  }});
               });
               tableData.push(rowData);
     
@@ -124,19 +139,25 @@ export function Kontrolle() {
     
       if (currentCategory !== null) {
           insgesamtIndexes.push(tableData.length-1);
-          tableData.push([`Insgesamt Zu Viel / Zu Wenig für Kategorie ${currentCategory}`, currentCategoryTotal, currentEinheit]);
+          tableData.push([`Insgesamt Zu Viel / Zu Wenig für Kategorie ${currentCategory}`, currentCategoryTotal.toString().replace('.', ','), currentEinheit]);
       }
       
       rows.forEach((row, index) => {
-          const discrepancy = row.cells[1].value;
-          if (discrepancy !== 0 && !row.original.bestand.kategorie.mixable) {
-              const rowData = [];
-              row.cells.forEach(cell => {
-                  rowData.push(cell.value);
-              });
-              tableData.push(rowData);
-          }
+        const discrepancy = row.cells[1].value;
+        if (discrepancy !== 0 && !row.original.bestand.kategorie.mixable) {
+          const rowData = [];
+          row.cells.forEach(cell => {
+            if (typeof cell.value === 'number' && cell.value.toString().includes('.')) {
+              const formattedValue = cell.value.toString().replace('.', ',');
+              rowData.push(formattedValue);
+            } else {
+              rowData.push(cell.value);
+            }
+          });
+          tableData.push(rowData);
+        }
       });
+      
     
       doc.autoTable({
           head: [tableData.shift()],
@@ -164,28 +185,22 @@ export function Kontrolle() {
       const apiCalls = [];
       for(let i = 0; i < discrepancy.length; i++){
         const discrId = discrepancy[i].id;
-        const name = discrepancy[i].bestand.name;
         const inputField = document.getElementById("InputfieldDiscr" + i);
 
         if (inputField !== null && inputField !== undefined && inputField !== 0) {
           const inputValue = inputField.value.trim();
-          let formatedValue;
+          let formatedValue = inputValue;
 
-          if (!isNaN(inputValue) && Number.isInteger(parseFloat(inputValue))) {
-            formatedValue = inputValue + ".0";
-          } else if (!isNaN(inputValue) && isFinite(parseFloat(inputValue))) {
-            formatedValue = inputValue;
-          } else {
-            console.error("Invalid input for discrepancy: " + name);
+          if (inputValue === "") {
             continue;
-          }
-
+          } else {
           const placeholderValue = parseFloat(discrepancy[i].zuVielzuWenig);
 
           if(formatedValue !== placeholderValue){
             apiCalls.push(api.updateDiscrepancy(discrId, formatedValue));
           }
-        }
+          }
+      }
       }
       try {
         const responses = await Promise.all(apiCalls);
@@ -227,7 +242,7 @@ export function Kontrolle() {
             rowsWithTotals.push(
               <tr style={{ borderBottom: '2px solid grey', borderTop: '1px solid' }} key={`total-${currentCategory}`}>
                 <td>Insgesamt Zu Viel / Zu Wenig für Kategorie <em>{currentCategory}</em></td>
-                <td><b>{totalZuVielZuWenig}</b></td>
+                <td><b>{totalZuVielZuWenig.toString().replace('.', ',')}</b></td>
                 <td>{currentEinheit}</td>
               </tr>
             );
@@ -245,7 +260,7 @@ export function Kontrolle() {
               if (cell.column.Header === "Zu Viel / Zu Wenig") {
                 let id = "InputfieldDiscr" + row.index;
                 return (
-                  <td className="word-wrap" key={`${row.original.id}-${cell.column.Header}Discr`}><input placeholder={row.original.zuVielzuWenig} id={id} type="number"></input></td>
+                  <td className="word-wrap" key={`${row.original.id}-${cell.column.Header}Discr`}><input placeholder={(row.original.zuVielzuWenig.toString()).replace('.', ',')} id={id} type="number"></input></td>
                 );
               } else {
                 return <td className="word-wrap" key={`${row.original.id}-${cell.column.Header}Discr`} {...cell.getCellProps()}>{cell.render('Cell')}</td>
@@ -260,7 +275,7 @@ export function Kontrolle() {
       rowsWithTotals.push(
         <tr style={{ borderBottom: '2px solid grey' }} key={`total-${currentCategory}`}>
           <td>Insgesamt Zu Viel / Zu Wenig für Kategorie <em>{currentCategory}</em></td>
-          <td><b>{totalZuVielZuWenig}</b></td>
+          <td><b>{totalZuVielZuWenig.toString().replace('.', ',')}</b></td>
           <td>{currentEinheit}</td>
         </tr>
       );
@@ -290,6 +305,10 @@ export function Kontrolle() {
         );
       }
     }
+    const [showModal, setShowModal] = useState(false);
+
+    const handleShowModal = () => setShowModal(true);
+    const handleCloseModal = () => setShowModal(false);
 
   return (
     <div>
@@ -297,6 +316,11 @@ export function Kontrolle() {
         <Alert severity="info" style={{margin: "0.5em 1em 0.5em 1em"}}>
         Bitte beachten Sie: Wenn Produkte geliefert wurden, jedoch in zu geringer Menge, müssen Sie die Bestellmenge mit einem Minuszeichen vorne angeben. <strong>Zum Beispiel</strong>: Wenn insgesamt <strong>10 Einheiten</strong> eines Produkts bestellt, aber nur <strong>8 Einheiten</strong> geliefert wurden, geben Sie für das Produkt in das Inputfield <strong>-2</strong> ein.
         </Alert>
+        <Button style={{margin: "0 1em 0.5em 1em", float: "left"}} onClick={handleShowModal}>Produkt hinzufügen</Button>
+        <AddNewFrischModal show={showModal}
+        close={handleCloseModal}
+        updateParent={updateParent}
+        discrepancyForModal={discrepancyForModal}/>
         {content()}
         <Button style={{margin: "20px 0.25rem 30px 0.25rem"}} variant="success" onClick={() => submitUpdateDiscr()}>Aktualisieren</Button>
         <Button style={{margin: "20px 0.25rem 30px 0.25rem"}} variant="primary" onClick={() => generatePDF()}>PDF erstellen</Button>

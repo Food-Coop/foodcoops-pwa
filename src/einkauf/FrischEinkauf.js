@@ -122,7 +122,7 @@ export function FrischEinkauf(props) {
           }
         };
         fetchBestellUebersicht();
-    }, [props.forceUpdate, api, keycloak.tokenParsed.preferred_username]);
+    },[props.forceUpdate]);
 
     const discrepancyObj = discrepancy.reduce((obj, item) => {
       obj[item.bestand.name] = item;

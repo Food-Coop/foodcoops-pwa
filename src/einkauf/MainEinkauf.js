@@ -86,7 +86,7 @@ export function MainEinkauf( { isLarge }) {
             })
     };
     fetchConfigData();
-  }, [api]);
+  },[]);
 
   useEffect(() => {
     const total = totalFrischPrice + totalBrotPrice + totalProduktPrice + deliveryCost + totalDiscrepancyPrice;

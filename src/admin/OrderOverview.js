@@ -106,7 +106,7 @@ export function OrderOverview() {
             }
         };
         fetchBestellUebersicht();
-    }, [reducerValue, api]);
+    }, [reducerValue]);
 
     const generateCombinedPDF = () => {
         const doc = new jsPDF();

@@ -81,7 +81,7 @@ export function LagerwareEinkauf(props) {
         };
 
         fetchProdukt();
-    }, [props.forceUpdate]);
+    },[props.forceUpdate]);
 
     useEffect(() => {
         if (props.onPriceChange) {

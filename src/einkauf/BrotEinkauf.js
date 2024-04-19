@@ -74,7 +74,7 @@ export function BrotEinkauf(props) {
           }
         };
         fetchBrotBestellung();
-    }, [props.forceUpdate]);
+    },[props.forceUpdate]);
 
     useEffect(() => {
         if (props.onPriceChange) {

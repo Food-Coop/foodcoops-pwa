@@ -41,7 +41,7 @@ export function AdminConfig() {
                 })
         };
         fetchConfigData();
-    }, [api]);
+    }, []);
 
     const handleSubmit = async () => {
 

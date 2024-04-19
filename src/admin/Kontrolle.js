@@ -64,7 +64,7 @@ export function Kontrolle() {
           }
         };
         fetchBestellUebersicht();
-    }, [reducerValue, api]);
+    }, [reducerValue]);
 
     const generatePDF = () => {
       const doc = new jsPDF();

@@ -7,7 +7,9 @@ import ClickAwayListener from '@mui/material/ClickAwayListener';
 import { LagerModal } from "./LagerModal";
 import ListGroup from 'react-bootstrap/ListGroup';
 import CustomTooltip from "../components/CustomToolTip";
-import './Dialog.css'; // Import the CSS file
+import './Dialog.css';
+import CheckIcon from '@mui/icons-material/Check';
+import CloseIcon from '@mui/icons-material/Close';
 
 export function EditKategorieModal(props) {
     const [mixable, setmixable] = useState(false); 
@@ -86,7 +88,7 @@ export function EditKategorieModal(props) {
                             checked={mixable}
                             onChange={handleCheckboxChange}
                         />
-                        <img alt="delete" src="icons/icons8-checkmark-50.png" className="list-item-delete" onClick={(e) => {
+                        <CheckIcon className="list-item-delete" onClick={e=> {
                             e.preventDefault();
                             const inputElement = e.target.parentElement.parentElement.querySelector("input");
                             submit(inputElement);
@@ -110,7 +112,7 @@ export function EditKategorieModal(props) {
                                             onChange={handleCheckboxChange}
                                             disabled
                                         />
-                                        <img alt="delete" src="icons/icons8-delete-50.png" className="list-item-delete" onClick={e => {
+                                        <CloseIcon className="list-item-delete" onClick={e => {
                                             e.preventDefault();
                                             props.remove({id, name});
                                         }}/>

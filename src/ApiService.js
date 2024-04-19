@@ -62,6 +62,13 @@ export const ApiProvider = (props) => {
         
         readGebindeOverview: props.readGebindeOverview|| readGebindeOverview,
         updateGebindeOverview: props.updateGebindeOverview|| updateGebindeOverview,
+
+        sendTotalBestellUebersicht: props.sendTotalBestellUebersicht || sendTotalBestellUebersicht,
+        sendBrotOrder: props.sendBrotOrder || sendBrotOrder,
+        sendFrischOrder: props.sendFrischOrder || sendFrischOrder,
+        getBestellUebersichtPdf: props.getBestellUebersichtPdf || getBestellUebersichtPdf,
+        getUebersichtBrotPdf: props.getUebersichtBrotPdf || getUebersichtBrotPdf,
+        getUebersichtFrischPdf: props.getUebersichtFrischPdf || getUebersichtFrischPdf,
     };
 
     return (
@@ -133,6 +140,13 @@ export const useApi = () => {
 
         readGebindeOverview,
         updateGebindeOverview,
+
+        sendTotalBestellUebersicht,
+        sendBrotOrder,
+        sendFrischOrder,
+        getBestellUebersichtPdf,
+        getUebersichtBrotPdf,
+        getUebersichtFrischPdf,
     };
 };
 
@@ -158,6 +172,9 @@ const BESTELLUEBERSICHT = "bestellUebersicht/";
 const GEBINDE = "gebinde/";
 const UPDATEDESCREPANCY = "discrepancy/update/tooMuchTooLittle/";
 const CONFIG = "/configuration";
+const SEND = "send/";
+const EMAIL = "email/";
+const DOWNLOAD = "download/";
 const UPDATEGEBINDEOVERVIEW = "discrepancy/update/gebindeAmountToOrder/";
 
 // Produkt
@@ -498,3 +515,40 @@ const updateGebindeOverview = (id, data) =>
         },
         body: data,
 });
+
+//Pdf controller
+const sendTotalBestellUebersicht = (email) =>
+    fetch(BACKEND_URL + EMAIL + SEND + "bestellUebersicht", {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: email,
+    });
+
+const sendBrotOrder = (email) =>
+    fetch(BACKEND_URL + EMAIL + SEND + "brotBestellungen", {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: email,
+    });
+
+const sendFrischOrder = (email) =>
+    fetch(BACKEND_URL + EMAIL + SEND + "frischBestellungen", {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: email,
+    });
+
+const getBestellUebersichtPdf = () =>
+    fetch(BACKEND_URL + PDF + DOWNLOAD + "bestellUebersicht");
+
+const getUebersichtBrotPdf = () =>
+    fetch(BACKEND_URL + PDF + DOWNLOAD + "brotBestellungen");
+
+const getUebersichtFrischPdf = () =>
+    fetch(BACKEND_URL + PDF + DOWNLOAD + "frischBestellungen");

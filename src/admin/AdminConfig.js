@@ -1,20 +1,62 @@
 import React, { useState, useEffect } from 'react';
 import { useApi } from '../ApiService';
-import Alert from '@mui/material/Alert';
 import Button from 'react-bootstrap/Button';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './AdminConfig.css';
+import { Typography } from '@mui/material';
+import IconButton from '@mui/material/IconButton';
+import ClickAwayListener from '@mui/material/ClickAwayListener';
+import CustomTooltip from '../components/CustomToolTip';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 
 export function AdminConfig() {
     const api = useApi();
     const [einkaufEmailText, setEinkaufEmailText] = useState('');
-    const [id, setId] = useState('');
 
     const deliveryCostId = "deliveryCostId";
     const einkaufEmailTextId = "einkaufEmailTextId";
     const emailFromBestellAdminId = "emailFromBestellAdminId";
     const emailFromEinkaufAdminId = "emailFromEinkaufAdminId";
+
+    const [open, setOpen] = React.useState(false);
+
+    const handleTooltipClose = () => {
+      setOpen(false);
+    };
+  
+    const handleTooltipOpen = () => {
+      setOpen(true);
+    };
+
+    const einkaufEmailExplanation = (
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <ClickAwayListener onClickAway={handleTooltipClose}>
+                <div >
+                    <CustomTooltip onClose={handleTooltipClose}
+                        open={open}
+                        disableFocusListener
+                        disableHoverListener
+                        disableTouchListener
+                        title={
+                        <React.Fragment>
+                            <Typography>Das ist der Text, der in der E-Mail steht, die nach einem Einkauf an den Einkäufer geschickt wird.<br />
+                            <b>Hinweis</b><br/>
+                            Platzhalter stehen innerhalb von %-Zeichen und werden durch die entsprechenden Werte ersetzt.<br />
+                            Der Username ist <em>%personID%</em>, das aktuelle Datum <em>%currentDate%</em>.<br />
+                            Eine Auflistung des Frischeinkaufs kann mit <em>%frischEinkauf%</em> eingefügt werden. Ebenso gilt das für <em>%brotEinkauf%</em> und <em>%lagerEinkauf%</em>.<br />
+                            Der Gesamtpreis kann mit <em>%gesamtKosten%</em> eingefügt werden.</Typography>
+                        </React.Fragment>
+                        }
+                        placement="right" arrow>
+                        <IconButton onClick={handleTooltipOpen}>
+                            <HelpOutlineIcon />
+                        </IconButton>
+                    </CustomTooltip>
+                </div>
+            </ClickAwayListener>
+        </div>
+      );
 
     useEffect(() => {
         const fetchConfigData = () => {
@@ -29,11 +71,12 @@ export function AdminConfig() {
                         } else {
                             document.getElementById(emailFromBestellAdminId).value = data.emailFromBestellAdmin;
                         }
-
+                        if (data.emailFromEinkaufAdmin === null) {
+                            document.getElementById(emailFromEinkaufAdminId).value = '';
+                        } else {
+                            document.getElementById(emailFromEinkaufAdminId).value = data.emailFromEinkaufAdmin;
+                        }
                         document.getElementById(einkaufEmailTextId).value = data.einkaufEmailText;
-                        
-                        document.getElementById(emailFromEinkaufAdminId).value = data.emailFromEinkaufAdmin;
-                        setId(data.id);
                     }
                 })
                 .catch(error => {
@@ -88,13 +131,7 @@ export function AdminConfig() {
                         </tr>
                         <tr>
                             <td className='label'>
-                                <label>E-Mail-Text:</label>
-                                <Alert severity="info" style={{margin: "0.5em 1em 0.5em 1em"}}>
-                                    Platzhalter stehen innerhalb von %-Zeichen und werden durch die entsprechenden Werte ersetzt.{<br />}
-                                    Der Username ist %personID%, das aktuelle Datum %currentDate%.{<br />}
-                                    Eine Auflistung des Frischeinkaufs kann mit %frischEinkauf% eingefügt werden. Ebenso gilt das für %brotEinkauf% und %lagerEinkauf%.{<br />}
-                                    Der Gesamtpreis kann mit %gesamtKosten% eingefügt werden.
-                                </Alert>
+                                <label>E-Mail-Text: {einkaufEmailExplanation} </label>
                             </td>
                             <td><textarea className='input' id={einkaufEmailTextId} rows={calculateRows(einkaufEmailText)}/></td>
                         </tr>

@@ -1,48 +1,89 @@
 .container {
     margin: 0;
-    padding: 0;
-    width: 100vw;
-}
-
-.tableAdminConf {
+    padding: 1vw;
     width: 99vw;
 }
 
+.tableAdminConf {
+    padding: 1em;
+    width: 98vw;
+}
+
 .label {
-    width: 30%;
     font-weight: bold;
-    text-align: right;
+    text-align: left;
+    vertical-align: top;
+    
 }
 .label * {
-    margin-top: 12px;
+    margin-right: 20px;
 }
 
-
-@media (max-width: 1600px) {
-    #deliveryCost {
+@media (max-width: 1700px) {
+    #deliveryCostId {
         width: 15%;
     }
-    #emailFromEinkaufAdmin, #emailFromBestellAdmin {
+
+    #emailFromEinkaufAdminId, #emailFromBestellAdminId {
+        width: 50%;
+    }
+    .label {
+        width: 17%;
+    }
+}
+
+@media (max-width: 1600px) {
+    #deliveryCostId {
+        width: 15%;
+    }
+    #emailFromEinkaufAdminId, #emailFromBestellAdminId {
         width: 70%;
+    }
+    .label {
+        width: 19%;
+    }
+}
+
+@media (max-width: 1500px) {
+    .label {
+        width: 21%;
+    }
+}
+
+@media (max-width: 1400px) {
+    .label {
+        width: 23%;
+    }
+}
+
+@media (max-width: 1200px) {
+    .label {
+        width: 25%;
     }
 }
 
 @media (max-width: 1000px) {
-    #deliveryCost {
+    #deliveryCostId {
         width: 30%;
     }
-    #emailFromEinkaufAdmin, #emailFromBestellAdmin {
+    #emailFromEinkaufAdminId, #emailFromBestellAdminId {
         width: 100%;
+    }
+    .label {
+        width: 30%;
     }
 }
 
-@media (min-width: 1600px) {
-    #deliveryCost {
+@media (min-width: 1700px) {
+    #deliveryCostId {
         width: 15%;
     }
 
-    #emailFromEinkaufAdmin, #emailFromBestellAdmin {
+    #emailFromEinkaufAdminId, #emailFromBestellAdminId {
         width: 50%;
+    }
+    .label {
+        width: 15%;
     }
 }
 

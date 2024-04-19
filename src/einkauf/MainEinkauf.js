@@ -29,6 +29,7 @@ export function MainEinkauf( { isLarge }) {
   const [totalPrice, setTotalPrice] = useState(0);
   const { keycloak } = useKeycloak();
   const api = useApi();
+  const [deliveryCostPercentage, setDeliveryCostPercentage] = useState(0);
   const [forceUpdate, setForceUpdate] = React.useReducer(x => x+1, 0);
 
   const zuVielzuWenigTitle = (
@@ -38,7 +39,7 @@ export function MainEinkauf( { isLarge }) {
 
   const handleFrischPriceChange = (price) => {
     setTotalFrischPrice(price);
-    setDeliveryCost((price + totalDiscrepancyPrice) * 0.05);
+    setDeliveryCost((price + totalDiscrepancyPrice) * (deliveryCostPercentage / 100));
   };
 
   const handleBrotPriceChange = (price) => {
@@ -51,7 +52,7 @@ export function MainEinkauf( { isLarge }) {
 
   const handleDiscrepancyPriceChange = (price) => {
     setTotalDiscrepancyPrice(price);
-    setDeliveryCost((price + totalFrischPrice) * 0.05);
+    setDeliveryCost((price + totalFrischPrice) * (deliveryCostPercentage / 100));
   };
 
   const handleFrisch = (frisch) => {
@@ -69,6 +70,23 @@ export function MainEinkauf( { isLarge }) {
   const handleDiscrepancy = (discrepancy) => {
     setDiscrepancy(discrepancy);
   };
+
+  useEffect(() => {
+    const fetchConfigData = () => {
+        api.readConfig()
+            .then(response => response.json())
+            .then(data => {
+                if (data !== null) {
+                    setDeliveryCostPercentage(data.deliverycost);
+                    //document.getElementById(einkaufEmailTextId).value = data.einkaufEmailText;
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching config data:', error);
+            })
+    };
+    fetchConfigData();
+  }, [api]);
 
   useEffect(() => {
     const total = totalFrischPrice + totalBrotPrice + totalProduktPrice + deliveryCost + totalDiscrepancyPrice;
@@ -257,7 +275,7 @@ export function MainEinkauf( { isLarge }) {
             <h4>Zu Viel:</h4>
             <h4>Brot:</h4>
             <h4>Lagerware:</h4>
-            <h4>5 % Lieferkosten:</h4>
+            <h4>{deliveryCostPercentage} % Lieferkosten:</h4>
           </div>
           <div className="total-price">
             <h4><span className={isLarge ? 'price-large' : 'price'}><NumberFormatComponent value={totalFrischPrice.toFixed(2)} /></span> <span className="currency">€</span></h4>

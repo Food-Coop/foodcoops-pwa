@@ -72,7 +72,7 @@ export function AdminConfig() {
         return (
             <div>
                 <div className="container">
-                    <table className="table">
+                    <table className="tableAdminConf">
                         <tbody>
                         <tr>
                             <td className='label'><label>Lieferkosten in %:</label></td>

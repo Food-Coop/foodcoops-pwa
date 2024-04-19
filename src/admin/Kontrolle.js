@@ -155,59 +155,6 @@ export function Kontrolle() {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    let currentCategory = null;
-    let currentEinheit = null;
-    let totalZuVielZuWenig = 0;
-    let rowsWithTotals = [];
-
-    rows.forEach((row, index) => {
-      prepareRow(row);
-      if (row.original.zuVielzuWenig !== 0 && row.original.zuVielzuWenig !== null && row.original.zuVielzuWenig !== undefined) {
-        if (currentCategory !== null && row.original.bestand.kategorie.name !== currentCategory) {
-          // Insert a row with the total for the previous category only if it's mixable
-          if (currentCategory && rows.some(r => r.original.bestand.kategorie.name === currentCategory && r.original.bestand.kategorie.mixable)) {
-            rowsWithTotals.push(
-              <tr style={{ borderBottom: '2px solid grey', borderTop: '1px solid' }} key={`total-${currentCategory}`}>
-                <td>Insgesamt Zu Viel / Zu Wenig für Kategorie <em>{currentCategory}</em></td>
-                <td><b>{totalZuVielZuWenig}</b></td>
-                <td>{currentEinheit}</td>
-              </tr>
-            );
-          }
-          totalZuVielZuWenig = 0;
-        }
-        currentCategory = row.original.bestand.kategorie.name;
-        currentEinheit = row.original.bestand.einheit.name;
-        if (row.original.bestand.kategorie.mixable) {
-          totalZuVielZuWenig += row.original.zuVielzuWenig;
-        }
-        rowsWithTotals.push(
-          <tr {...row.getRowProps()} key={`row-${index}`}>
-            {row.cells.map(cell => {
-              if (cell.column.Header === "Zu Viel / Zu Wenig") {
-                let id = "InputfieldDiscr" + row.index;
-                return (
-                  <td className="word-wrap" key={`${row.original.id}-${cell.column.Header}Discr`}><input placeholder={row.original.zuVielzuWenig} id={id} type="number"></input></td>
-                );
-              } else {
-                return <td className="word-wrap" key={`${row.original.id}-${cell.column.Header}Discr`} {...cell.getCellProps()}>{cell.render('Cell')}</td>
-              }
-            })}
-          </tr>
-        );
-      }
-    });
-    
-    if (currentCategory !== null && rows.some(r => r.original.bestand.kategorie.name === currentCategory && r.original.bestand.kategorie.mixable)) {
-      rowsWithTotals.push(
-        <tr style={{ borderBottom: '2px solid grey' }} key={`total-${currentCategory}`}>
-          <td>Insgesamt Zu Viel / Zu Wenig für Kategorie <em>{currentCategory}</em></td>
-          <td><b>{totalZuVielZuWenig}</b></td>
-          <td>{currentEinheit}</td>
-        </tr>
-      );
-    }
-
     const content = () => {
       if (discrepancy.length === 0) {
         return <p>Lädt...</p>;
@@ -229,7 +176,27 @@ export function Kontrolle() {
               ))}
             </thead>
             <tbody {...getTableBodyProps()}>
-            {rowsWithTotals}
+              {rows.map((row) => {
+                prepareRow(row)
+                if (row.original.zuVielzuWenig === 0 || row.original.zuVielzuWenig === null || row.original.zuVielzuWenig === undefined) {
+                  return null
+                } else {
+                  return (
+                    <tr {...row.getRowProps()}>
+                      {row.cells.map(cell => {
+                          if(cell.column.Header === "Zu Viel / Zu Wenig"){
+                            let id = "InputfieldDiscr" + row.index;
+                            return(
+                              <td className="word-wrap" key={`${row.original.id}-${cell.column.Header}Discr`}><input placeholder={row.original.zuVielzuWenig} id={id} type="number"></input></td>
+                            );
+                          } else {
+                            return <td className="word-wrap" key={`${row.original.id}-${cell.column.Header}Discr`} {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                          }
+                      })}
+                    </tr>
+                  )
+                }
+              })}
             </tbody>
             </BTable>
         );
@@ -240,7 +207,7 @@ export function Kontrolle() {
     <div>
       <div style={{overflowX: "auto", width: "100%"}}>
         <Alert severity="info" style={{margin: "0.5em 1em 0.5em 1em"}}>
-          Bitte beachten Sie: Wenn Produkte geliefert wurden, jedoch in zu geringer Menge, müssen Sie die Bestellmenge mit einem Minuszeichen vorne angeben. <strong>Zum Beispiel</strong>: Wenn insgesamt <strong>10 Einheiten</strong> eines Produkts bestellt, aber nur <strong>8 Einheiten</strong> geliefert wurden, geben Sie für das Produkt in das Inputfield <strong>-2</strong> ein.
+          Bitte beachten Sie: Wenn Produkte geliefert wurden, jedoch in zu geringer Menge, müssen Sie die Bestellmenge mit einem Minuszeichen vorne angeben. <strong>Zum Beispiel</strong>, wenn Sie <strong>10 Einheiten</strong> eines Produkts bestellt haben, aber nur <strong>8 Einheiten</strong> geliefert wurden, geben Sie die Anpassung als <strong>-2</strong> ein.
         </Alert>
         {content()}
         <Button style={{margin: "20px 0.25rem 30px 0.25rem"}} variant="success" onClick={() => submitUpdateDiscr()}>Aktualisieren</Button>

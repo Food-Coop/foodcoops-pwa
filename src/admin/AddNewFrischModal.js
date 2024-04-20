@@ -51,11 +51,10 @@ export function AddNewFrischModal(props) {
   }));
 
   const body = (
-    <div style={{ width: "400px", height: "350px",  }}>
-        <table style={{ width: "40vw"}}>
+    <div style={{ width: "400px", height: "370px",  }}>
+        <table style={{ width: "50vw"}}>
             <tr>
-                <td>Produkt:</td>
-                <td><Select
+                <td style={{ padding: "0 0 10px 0px" }}>Produkt: <Select
                     className="basic-single"
                     classNamePrefix="select"
                     defaultValue={options[0]}
@@ -75,7 +74,9 @@ export function AddNewFrischModal(props) {
                         }),
                     }}
                 /></td>
-                <td style={{paddingLeft: "20px"}}>Zu Viel / Zu Wenig: <input id="zuVielzuWenigId" type="number" style={{width: "20%", height: "50px", border: "none", border: "solid 1px #ccc",  borderRadius: "5px"}} /></td>
+            </tr>
+            <tr>
+              <td>Zu Viel / Zu Wenig: <input id="zuVielzuWenigId" type="number" style={{width: "20%", height: "50px", border: "none", border: "solid 1px #ccc",  borderRadius: "5px"}} /></td>
             </tr>
         </table>
     </div>

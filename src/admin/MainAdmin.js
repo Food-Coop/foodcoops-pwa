@@ -7,6 +7,7 @@ import { Deadline } from '../deadline/Deadline';
 import { Kontrolle } from './Kontrolle';
 import { OrderOverview } from './OrderOverview';
 import { AdminConfig } from './AdminConfig';
+import { PdfUebersicht } from './PdfUebersicht';
 
 export function MainAdmin(){
     const [value, setValue] = useState(0);
@@ -29,6 +30,7 @@ export function MainAdmin(){
                 >
                 <Tab label="Zu Viel / Zu Wenig" component={Link} to={`${match.url}/zuVielzuWenig`} />
                 <Tab label="Bestellungs-Übersicht" component={Link} to={`${match.url}/OrderOverview`} />
+                <Tab label="PDF-Übersicht" component={Link} to={`${match.url}/pdfOverview`} />
                 <Tab label="Konfiguration" component={Link} to={`${match.url}/config`} />
                 <Tab label="Deadline" component={Link} to={`${match.url}/deadline`} />
                 </Tabs>
@@ -39,6 +41,9 @@ export function MainAdmin(){
                 </Route>
                 <Route path={`${match.url}/OrderOverview`}>
                     <OrderOverview />
+                </Route>
+                <Route path={`${match.url}/pdfOverview`}>
+                    <PdfUebersicht />
                 </Route>
                 <Route path={`${match.url}/config`}>
                     <AdminConfig />

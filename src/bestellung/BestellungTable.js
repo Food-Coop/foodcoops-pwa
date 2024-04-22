@@ -132,10 +132,20 @@ export function BestellungTable({ columns, data, skipPageReset }) {
                                         return(
                                             <td className="word-wrap" style={{color: data[row.index].verfuegbarkeit === false ? NotAvailableColor : ''}} key={row.index} {...props} id = {id}>{cell.render('Cell')}</td>
                                         );
-                                    } else if(cell.column.Header === "aktuelle Bestellmenge" || cell.column.Header === "Bestellmenge (alle Mitglieder)" || cell.column.Header === "Gebindegröße"){
+                                    } else if(cell.column.Header === "aktuelle Bestellmenge" || cell.column.Header === "Bestellmenge (alle Mitglieder)"){
                                         return(
                                             <td className="word-wrap" style={{color: data[row.index].verfuegbarkeit === false ? NotAvailableColor : ''}} key={row.index}{...props} >{cell.render('Cell')}</td>
                                         );
+                                    } else if(cell.column.Header === "Gebindegröße"){
+                                        if(data[row.index].spezialfallBestelleinheit === true){
+                                            return(
+                                                <td className="word-wrap" style={{color: data[row.index].verfuegbarkeit === false ? NotAvailableColor : ''}} key={row.index}{...props} >{cell.render('Cell')} (Stück)</td>
+                                            );
+                                        } else {
+                                            return(
+                                                <td className="word-wrap" style={{color: data[row.index].verfuegbarkeit === false ? NotAvailableColor : ''}} key={row.index}{...props} >{cell.render('Cell')}</td>
+                                            );
+                                        }
                                     } else{
                                         return (
                                             <td className="word-wrap" style={{color: data[row.index].verfuegbarkeit === false ? NotAvailableColor : ''}} key={row.index} {...props}>{cell.render('Cell')}</td>

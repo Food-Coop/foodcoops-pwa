@@ -194,6 +194,7 @@ export function FrischEinkauf(props) {
                                   {cell.render('Cell')} 
                                   {discrepancy && discrepancy.zuBestellendeGebinde !== 0 && discrepancy.zuVielzuWenig < 0 ? <span style={{color: 'red'}}> ( <NumberFormatComponent value={discrepancy.zuVielzuWenig} includeFractionDigits={false}/> )</span> : ''}
                                   {discrepancy && discrepancy.zuBestellendeGebinde !== 0 && discrepancy.zuVielzuWenig > 0 ? <span style={{color: 'green'}}> ( <NumberFormatComponent value={discrepancy.zuVielzuWenig} includeFractionDigits={false}/> )</span> : ''}
+                                  {row.original.frischbestand.spezialfallBestelleinheit === true ? ' Stück' : ''}
                                 </td>
                               );
                             } else {

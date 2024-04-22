@@ -167,61 +167,49 @@ export function OrderOverview() {
     };
 
     const generatePDFforBrot = () => {
-        const doc = new jsPDF();
-        doc.text("Bestellübersicht - Brotbestellungen", 10, 10);
-        const tableData = [];
-        const columns = [];
-        brotBestellungHeaderGroups.forEach(headerGroup => {
-            headerGroup.headers.forEach(column => {
-                columns.push(column.Header);
-            });
-        });
-        tableData.push(columns);
-        brotBestellungRows.forEach(row => {
-          //remove rows with discrepancy = 0
-          const brotBestellungOverview = row.cells[1].value;
-          if (brotBestellungOverview !== 0) {
-            const rowData = [];
-            row.cells.forEach(cell => {
-            rowData.push(cell.value);
-            });
-            tableData.push(rowData);
-          }
-        });
-        doc.autoTable({
-            head: [tableData.shift()],
-            body: tableData
-        });
-        doc.save("Bestelluebersicht_Brot_Tabelle.pdf");
-      };
+        api.getUebersichtBrotByte()
+            .then((response) => {
+                return response.json();
+            })
+            .then((json) => {
+                const binaryString = window.atob(json.pdf);
+                const len = binaryString.length;
+                const bytes = new Uint8Array(len);
+                for (let i = 0; i < len; i++) {
+                    bytes[i] = binaryString.charCodeAt(i);
+                }
+                const blob = new Blob([bytes.buffer], {type: "application/pdf"});
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', (json.filename + '.pdf'));
+                document.body.appendChild(link);
+                link.click();
+            })
+            .catch((error) => console.error(error));
+    };
 
     const generatePDF = () => {
-        const doc = new jsPDF();
-        doc.text("Bestellübersicht - Frischbestellungen", 10, 10);
-        const tableData = [];
-        const columns = [];
-        headerGroups.forEach(headerGroup => {
-            headerGroup.headers.forEach(column => {
-                columns.push(column.Header);
-            });
-        });
-        tableData.push(columns);
-        rows.forEach(row => {
-          //remove rows with discrepancy = 0
-          const discrepancy = row.cells[1].value;
-          if (discrepancy !== 0) {
-            const rowData = [];
-            row.cells.forEach(cell => {
-            rowData.push(cell.value);
-            });
-            tableData.push(rowData);
-          }
-        });
-        doc.autoTable({
-            head: [tableData.shift()],
-            body: tableData
-        });
-        doc.save("Bestelluebersicht_Frisch_Tabelle.pdf");
+        api.getUebersichtFrischByte()
+            .then((response) => {
+                return response.json();
+            })
+            .then((json) => {
+                const binaryString = window.atob(json.pdf);
+                const len = binaryString.length;
+                const bytes = new Uint8Array(len);
+                for (let i = 0; i < len; i++) {
+                    bytes[i] = binaryString.charCodeAt(i);
+                }
+                const blob = new Blob([bytes.buffer], {type: "application/pdf"});
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', (json.filename + '.pdf'));
+                document.body.appendChild(link);
+                link.click();
+            })
+            .catch((error) => console.error(error));
       };
 
     const clearInputFields = () => {

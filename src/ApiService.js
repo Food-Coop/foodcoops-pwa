@@ -70,6 +70,9 @@ export const ApiProvider = (props) => {
         getBestellUebersichtPdf: props.getBestellUebersichtPdf || getBestellUebersichtPdf,
         getUebersichtBrotPdf: props.getUebersichtBrotPdf || getUebersichtBrotPdf,
         getUebersichtFrischPdf: props.getUebersichtFrischPdf || getUebersichtFrischPdf,
+        getBestellUebersichtByte: props.getBestellUebersichtByte || getBestellUebersichtByte,
+        getUebersichtBrotByte: props.getUebersichtBrotByte || getUebersichtBrotByte,
+        getUebersichtFrischByte: props.getUebersichtFrischByte || getUebersichtFrischByte,
     };
 
     return (
@@ -149,6 +152,9 @@ export const useApi = () => {
         getBestellUebersichtPdf,
         getUebersichtBrotPdf,
         getUebersichtFrischPdf,
+        getBestellUebersichtByte,
+        getUebersichtBrotByte,
+        getUebersichtFrischByte,
     };
 };
 
@@ -179,6 +185,7 @@ const CONFIG = "/configuration";
 const SEND = "send/";
 const EMAIL = "email/";
 const DOWNLOAD = "download/";
+const BYTE = "byte/";
 const UPDATEGEBINDEOVERVIEW = "update/gebindeAmountToOrder/";
 
 // Produkt
@@ -565,3 +572,12 @@ const getUebersichtBrotPdf = () =>
 
 const getUebersichtFrischPdf = () =>
     fetch(BACKEND_URL + PDF + DOWNLOAD + "frischBestellungen");
+
+const getBestellUebersichtByte = () =>
+    fetch(BACKEND_URL + PDF + BYTE + "bestellUebersicht");
+
+const getUebersichtBrotByte = () =>
+    fetch(BACKEND_URL + PDF + BYTE + "brotBestellungen");
+
+const getUebersichtFrischByte = () =>
+    fetch(BACKEND_URL + PDF + BYTE + "frischBestellungen");

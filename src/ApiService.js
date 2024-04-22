@@ -56,6 +56,7 @@ export const ApiProvider = (props) => {
         readBestellUebersicht: props.readBestellUebersicht || readBestellUebersicht,
         readDiscrepancyOverviwe: props.readDiscrepancyOverviwe || readDiscrepancyOverviwe,
         updateDiscrepancy: props.updateDiscrepancy|| updateDiscrepancy,
+        addDiscrepancyToLastOrderList: props.addDiscrepancyToLastOrderList || addDiscrepancyToLastOrderList,
 
         readConfig: props.readConfig || readConfig,
         updateConfig: props.updateConfig || updateConfig,
@@ -134,6 +135,7 @@ export const useApi = () => {
         readBestellUebersicht,
         readDiscrepancyOverviwe,
         updateDiscrepancy,
+        addDiscrepancyToLastOrderList,
 
         readConfig,
         updateConfig,
@@ -170,12 +172,14 @@ const PDF = "pdf/";
 const BESTANDBUYOBJECT = "einkaufe/create/bestandBuyObject";
 const BESTELLUEBERSICHT = "bestellUebersicht/";
 const GEBINDE = "gebinde/";
-const UPDATEDESCREPANCY = "discrepancy/update/tooMuchTooLittle/";
+const DISCREPANCY = "discrepancy/";
+const ADD = "add/";
+const UPDATEDISCREPANCY = "update/tooMuchTooLittle/";
 const CONFIG = "/configuration";
 const SEND = "send/";
 const EMAIL = "email/";
 const DOWNLOAD = "download/";
-const UPDATEGEBINDEOVERVIEW = "discrepancy/update/gebindeAmountToOrder/";
+const UPDATEGEBINDEOVERVIEW = "update/gebindeAmountToOrder/";
 
 // Produkt
 
@@ -482,7 +486,7 @@ const readDiscrepancyOverviwe = () =>
     fetch(BACKEND_URL + BESTELLUEBERSICHT + LAST);
 
 const updateDiscrepancy = (id, data) =>
-fetch(BACKEND_URL + GEBINDE + UPDATEDESCREPANCY + id, {
+fetch(BACKEND_URL + GEBINDE + DISCREPANCY + UPDATEDISCREPANCY + id, {
     method: 'PUT', 
     headers: {
     'Content-Type': 'application/json',
@@ -503,12 +507,21 @@ const updateConfig = (data) => {
     });
 };
 
+const addDiscrepancyToLastOrderList = (data) =>
+    fetch(BACKEND_URL + GEBINDE + DISCREPANCY + ADD, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    });
+
 //Gebinde übersicht
 const readGebindeOverview = () =>
     fetch(BACKEND_URL + GEBINDE);
 
 const updateGebindeOverview = (id, data) =>
-    fetch(BACKEND_URL + GEBINDE + UPDATEGEBINDEOVERVIEW + id, {
+    fetch(BACKEND_URL + GEBINDE + DISCREPANCY + UPDATEGEBINDEOVERVIEW + id, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',

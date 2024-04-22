@@ -15,7 +15,7 @@ import '../Table.css';
 export function Kontrolle() {
     const api = useApi();
     const [discrepancy, setDiscrepancy] = useState([]);
-    const [discrepancyForModal, setDiscrepancyForModal] = useState([]);
+    const [frischBestandForModal, setFrischBestandForModal] = useState([]);
     const [reducerValue, forceUpdate] = React.useReducer(x => x+1, 0);
 
     const columns = React.useMemo(
@@ -70,9 +70,6 @@ export function Kontrolle() {
                   let totalDiscrepancy = mixableDiscrepancy.concat(nonMixableDiscrepancy);
                   const filteredDiscrepancy = totalDiscrepancy.filter(item => item.zuVielzuWenig !== 0);
                   setDiscrepancy(filteredDiscrepancy);
-
-                  const filteredDiscrepancyForModal = json.discrepancy.filter(item => item.zuVielzuWenig === 0);
-                  setDiscrepancyForModal(filteredDiscrepancyForModal);
                 }
               } else {
                 return;
@@ -82,6 +79,20 @@ export function Kontrolle() {
           }
         };
         fetchBestellUebersicht();
+        const fetchFrischBestandForModal = async () => {
+          try {
+              const response = await api.readFrischBestand();
+              const data = await response.json();
+              if (!data._embedded || data._embedded?.frischBestandRepresentationList.length === 0) {
+                return;
+              } else {
+                setFrischBestandForModal(data._embedded.frischBestandRepresentationList);
+              }
+          } catch (error) {
+              console.error('Error fetching discrepancy:', error);
+          }
+        };
+        fetchFrischBestandForModal();
     }, [reducerValue]);
 
     const updateParent = () => {
@@ -320,7 +331,7 @@ export function Kontrolle() {
         <AddNewFrischModal show={showModal}
         close={handleCloseModal}
         updateParent={updateParent}
-        discrepancyForModal={discrepancyForModal}/>
+        frischBestandForModal={frischBestandForModal}/>
         {content()}
         <Button style={{margin: "20px 0.25rem 30px 0.25rem"}} variant="success" onClick={() => submitUpdateDiscr()}>Aktualisieren</Button>
         <Button style={{margin: "20px 0.25rem 30px 0.25rem"}} variant="primary" onClick={() => generatePDF()}>PDF erstellen</Button>

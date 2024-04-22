@@ -8,7 +8,6 @@ import Select from "react-select";
 
 export function AddNewFrischModal(props) {
   const api = useApi();
-  // const [frischBestand, setFrischBestand] = useState([]);
   const [selectedDiscrepancy, setSelectedDiscrepancy] = useState(null);
 
   const close = () => {
@@ -25,15 +24,23 @@ export function AddNewFrischModal(props) {
         let name = "";
         if (selectedDiscrepancy === null) {
             name = options[0].value;
-            discrepancyElement = props.discrepancyForModal.find(item => item.bestand.name === options[0].value);
+            discrepancyElement = props.frischBestandForModal.find(item => item.name === options[0].value);
         } else {
             name = selectedDiscrepancy;
-            discrepancyElement = props.discrepancyForModal.find(item => item.bestand.name === selectedDiscrepancy);
+            discrepancyElement = props.frischBestandForModal.find(item => item.name === selectedDiscrepancy);
         }
         if (zuVielzuWenig === "") {
             zuVielzuWenig = 0;
         }
-        let response = await api.updateDiscrepancy(discrepancyElement.id, zuVielzuWenig);
+        
+        const discrepancy = {
+            bestand:  { ...discrepancyElement, type: "frisch" },
+            gewollteMenge: 0,
+            zuBestellendeGebinde: 0,
+            zuVielzuWenig: zuVielzuWenig,
+        };
+        console.log(discrepancy);
+        let response = await api.addDiscrepancyToLastOrderList(discrepancy);
         if (response.ok) {
             toast.success(name + " wurde erfolgreich zur Liste hinzugefügt.");
         } else {
@@ -45,9 +52,9 @@ export function AddNewFrischModal(props) {
 
   const title = "Produkt hinzufügen";
 
-  const options = props.discrepancyForModal.map((item) => ({
-    value: item.bestand.name,
-    label: item.bestand.name,
+  const options = props.frischBestandForModal.map((item) => ({
+    value: item.name,
+    label: item.name,
   }));
 
   const body = (

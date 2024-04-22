@@ -261,7 +261,7 @@ export function OrderOverview() {
 
     const contentBrot = () => {
         if (brotBestellungOverview.length === 0) {
-            return <p>Lädt...</p>;
+            return <p>Es gibt aktuell keine Brotbestellungen</p>;
         } else {
             return (
                 <BTable striped bordered hover size="sm" {...getBrotBestellungTableProps()}>
@@ -298,7 +298,7 @@ export function OrderOverview() {
 
     const contentFrisch = () => {
     if (discrepancy.length === 0) {
-        return <p>Lädt...</p>;
+        return <p>Es gibt aktuell keine Frischbestellungen.</p>;
         } else {
         return (
             <BTable striped bordered hover size="sm" {...getTableProps()}>

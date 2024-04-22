@@ -16,6 +16,7 @@ export function Kontrolle() {
     const api = useApi();
     const [discrepancy, setDiscrepancy] = useState([]);
     const [frischBestandForModal, setFrischBestandForModal] = useState([]);
+    const [discrepancyForModal, setDiscrepancyForModal] = useState([]);
     const [reducerValue, forceUpdate] = React.useReducer(x => x+1, 0);
 
     const columns = React.useMemo(
@@ -70,6 +71,8 @@ export function Kontrolle() {
                   let totalDiscrepancy = mixableDiscrepancy.concat(nonMixableDiscrepancy);
                   const filteredDiscrepancy = totalDiscrepancy.filter(item => item.zuVielzuWenig !== 0);
                   setDiscrepancy(filteredDiscrepancy);
+
+                  setDiscrepancyForModal(totalDiscrepancy);
                 }
               } else {
                 return;
@@ -294,25 +297,30 @@ export function Kontrolle() {
 
     const content = () => {
       if (discrepancy.length === 0) {
-        return <p>Lädt...</p>;
+        return <p style={{margin: "5em 1em 0.5em 1em"}}>Es gibt momentan nichts auf der Zu Viel / Zu Wenig-Liste</p>;
       } else {
         return (
-          <BTable striped bordered hover size="sm" {...getTableProps()}>
-            <thead>
-              {headerGroups.map(headerGroup => (
-                <tr {...headerGroup.getHeaderGroupProps()}>
-                  {headerGroup.headers.map(column => (
-                    <th className="word-wrap" key={headerGroup.id + "HeaderDiscr"} {...column.getHeaderProps()}>
+          <div>
+            <BTable striped bordered hover size="sm" {...getTableProps()}>
+              <thead>
+                {headerGroups.map(headerGroup => (
+                  <tr {...headerGroup.getHeaderGroupProps()}>
+                    {headerGroup.headers.map(column => (
+                      <th className="word-wrap" key={headerGroup.id + "HeaderDiscr"} {...column.getHeaderProps()}>
                         {column.render('Header')}
-                    </th>
+                      </th>
+                    ))}
+                  </tr>
                 ))}
-                </tr>
-              ))}
-            </thead>
-            <tbody {...getTableBodyProps()}>
-              {rowsWithTotals}
-            </tbody>
+              </thead>
+              <tbody {...getTableBodyProps()}>
+                {rowsWithTotals}
+              </tbody>
             </BTable>
+            <Button style={{margin: "20px 0.25rem 30px 0.25rem"}} variant="success" onClick={() => submitUpdateDiscr()}>Aktualisieren</Button>
+            <Button style={{margin: "20px 0.25rem 30px 0.25rem"}} variant="primary" onClick={() => generatePDF()}>PDF erstellen</Button>
+            <ToastContainer />
+          </div>
         );
       }
     }
@@ -324,18 +332,16 @@ export function Kontrolle() {
   return (
     <div>
       <div style={{overflowX: "auto", width: "100%"}}>
-        <Alert severity="info" style={{margin: "0.5em 1em 0.5em 1em"}}>
-        Bitte beachten Sie: Wenn Produkte geliefert wurden, jedoch in zu geringer Menge, müssen Sie die Bestellmenge mit einem Minuszeichen vorne angeben. <strong>Zum Beispiel</strong>: Wenn insgesamt <strong>10 Einheiten</strong> eines Produkts bestellt, aber nur <strong>8 Einheiten</strong> geliefert wurden, geben Sie für das Produkt in das Inputfield <strong>-2</strong> ein.
-        </Alert>
-        <Button style={{margin: "0 1em 0.5em 1em", float: "left"}} onClick={handleShowModal}>Produkt hinzufügen</Button>
-        <AddNewFrischModal show={showModal}
-        close={handleCloseModal}
-        updateParent={updateParent}
-        frischBestandForModal={frischBestandForModal}/>
-        {content()}
-        <Button style={{margin: "20px 0.25rem 30px 0.25rem"}} variant="success" onClick={() => submitUpdateDiscr()}>Aktualisieren</Button>
-        <Button style={{margin: "20px 0.25rem 30px 0.25rem"}} variant="primary" onClick={() => generatePDF()}>PDF erstellen</Button>
-        <ToastContainer />
+            <Alert severity="info" style={{margin: "0.5em 1em 0.5em 1em"}}>
+              Bitte beachten Sie: Wenn Produkte geliefert wurden, jedoch in zu geringer Menge, müssen Sie die Bestellmenge mit einem Minuszeichen vorne angeben. <strong>Zum Beispiel</strong>: Wenn insgesamt <strong>10 Einheiten</strong> eines Produkts bestellt, aber nur <strong>8 Einheiten</strong> geliefert wurden, geben Sie für das Produkt in das Inputfield <strong>-2</strong> ein.
+            </Alert>
+            <Button style={{margin: "0 1em 0.5em 1em", float: "left"}} onClick={handleShowModal}>Produkt hinzufügen</Button>
+            <AddNewFrischModal show={showModal}
+              close={handleCloseModal}
+              updateParent={updateParent}
+              frischBestandForModal={frischBestandForModal}
+              discrepancyForModal={discrepancyForModal}/>
+      {content()}
       </div>
     </div>
   );

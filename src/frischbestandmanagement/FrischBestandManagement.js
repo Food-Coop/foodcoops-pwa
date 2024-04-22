@@ -29,6 +29,10 @@ export function FrischBestandManagement() {
                 accessor: 'herkunftsland',
             },
             {
+                Header: 'Verband',
+                accessor: 'verband',
+            },
+            {
                 Header: 'Gebindegröße',
                 accessor: 'gebindegroesse',
                 Cell: ({ value }) => <NumberFormatComponent value={value} includeFractionDigits={false}/>,

@@ -26,6 +26,10 @@ export function Bestellung(){
                 accessor: 'herkunftsland',
             },
             {
+                Header: 'Verband',
+                accessor: 'verband',
+            },
+            {
                 Header: 'Kategorie',
                 accessor: 'kategorie.name',
             },

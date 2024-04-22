@@ -25,6 +25,7 @@ import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import InfoIcon from '@mui/icons-material/Info';
 import ZoomInIcon from '@mui/icons-material/ZoomIn';
 import ZoomOutIcon from '@mui/icons-material/ZoomOut';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import './AppRouter.css';
 import { MainAdmin } from '../admin/MainAdmin';
 
@@ -65,7 +66,7 @@ const AppContent = ({ menuOpen, toggleMenu }) => {
       '/mainBestellung': 'Bestellung',
       '/mainEinkauf': 'Einkauf',
       '/mainManagement': 'Management',
-      '/mainAdmin' : 'Admin-Konfiguration',
+      '/mainAdmin' : 'Konfiguration',
       '/about': 'Impressum',
     };
 
@@ -78,7 +79,7 @@ const AppContent = ({ menuOpen, toggleMenu }) => {
       return 'Produkt-Management';
     }
     if (currentRoute.startsWith('/mainAdmin')) {
-      return 'Admin-Konfiguration';
+      return 'Konfiguration';
     }
 
     return routeToPageName[currentRoute] || 'Home';
@@ -141,10 +142,10 @@ const AppContent = ({ menuOpen, toggleMenu }) => {
               <Link to="/mainAdmin">
                 <ListItemButton sx={{ color: "grey" }}>
                   <ListItemIcon> 
-                    <InventoryIcon/>
+                    <AdminPanelSettingsIcon/>
                   </ListItemIcon>
                   <Typography variant="h6">
-                    Admin-Konfiguration
+                    Konfiguration
                   </Typography>
                 </ListItemButton>
               </Link>

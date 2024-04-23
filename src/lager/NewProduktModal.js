@@ -8,10 +8,8 @@ function defaultData(columns) {
     const capitalize = word => word.replace(/^\w/, c => c.toUpperCase());
     const getName = (accessor, humanName) => typeof humanName === "string" ? humanName : capitalize(accessor);
 
-    //console.log("table columns: " + JSON.stringify(tableColumns));
     const convert = ({Header: humanName, accessor}) => [accessor, {name: getName(accessor, humanName), value: ""}];
     const initial = Object.fromEntries(columns.map(convert));
-    //console.log("table columns after: " + JSON.stringify(initial));
 
     initial["name"].value = "Produktname";
     initial["lagerbestand.istLagerbestand"].value = 0.0;
@@ -48,7 +46,6 @@ export function NewProduktModal(props) {
         }
         if (!result.kategorie?.id) {
             const find = props.kategorien[0];
-            console.log("props.kategorien " + JSON.stringify(props.kategorien));
             let kategorie = {};
             deepAssign("id", kategorie, find.id);
             deepAssign("name", kategorie, find.name);
@@ -67,6 +64,8 @@ export function NewProduktModal(props) {
             // edge case: dropdown value is the id of the einheit but accessor is the name of the einheit
             if (accessor === "lagerbestand.einheit.name") {
                 changed["lagerbestand.einheit.id"] = {name, value};
+            } else if(accessor === "kategorie.name") {
+                changed["kategorie.id"] = {name, value};
             } else {
                 changed[accessor] = {name, value};
             }
@@ -95,8 +94,61 @@ export function NewProduktModal(props) {
                     </select>
                 </div>
             );
+        } else if (accessor === "preis") {
+            return <tr key={accessor}>
+                <td>
+                    <label style={{margin: 0}}>{name}:</label>
+                </td>
+                <td>
+                    <input
+                        name={name}
+                        type="number"
+                        min="0"
+                        value={value}
+                        onChange={function ({target: {value}}) {
+                            const changed = {};
+                            changed[accessor] = {name, value};
+                            return setNewData(prev => ({...prev, ...changed}));
+                        }}/>
+                </td>
+            </tr>;
+        } else if (accessor === "lagerbestand.sollLagerbestand") {
+            return <tr key={accessor}>
+                <td>
+                    <label style={{margin: 0}}>{name}:</label>
+                </td>
+                <td>
+                    <input
+                        name={name}
+                        type="number"
+                        min="0"
+                        value={value}
+                        onChange={function ({target: {value}}) {
+                            const changed = {};
+                            changed[accessor] = {name, value};
+                            return setNewData(prev => ({...prev, ...changed}));
+                        }}/>
+                </td>
+            </tr>;
+        } else if (accessor === "lagerbestand.istLagerbestand") {
+            return <tr key={accessor}>
+                <td>
+                    <label style={{margin: 0}}>{name}:</label>
+                </td>
+                <td>
+                    <input
+                        name={name}
+                        type="number"
+                        min="0"
+                        value={value}
+                        onChange={function ({target: {value}}) {
+                            const changed = {};
+                            changed[accessor] = {name, value};
+                            return setNewData(prev => ({...prev, ...changed}));
+                        }}/>
+                </td>
+            </tr>;
         }
-
         return <tr key={accessor}>
             <td>
                 <label style={{margin: 0}}>{name}:</label>

@@ -1,0 +1,38 @@
+.word-wrap {
+    word-break: break-word;
+}
+
+.bestellung-inputfield-size {
+    width: 200px;
+ }
+
+.brotbestellung-inputfield-size {
+    width: 200px;
+}
+
+.frischEinkauf-inputfield-size {
+    width: 150px;
+}
+.lagerEinkauf-size {
+    width: 150px;
+}
+ #aktuelleBrotBestellmenge {
+    width: 200px;
+}
+@media (max-width: 1100px)  {
+    .bestellung-inputfield-size {
+    width: 170px;
+    }
+    .brotbestellung-inputfield-size {
+        width: 170px;
+    }
+    .einkauf-inputfield-size {
+        width: 100px;
+    }
+}
+
+@media (max-width: 1000px)  {
+    #aktuelleBrotBestellmenge {
+        width: 115px;
+    }
+}

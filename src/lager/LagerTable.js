@@ -1,8 +1,9 @@
-import {useExpanded, useTable} from "react-table";
+import {useExpanded, useTable, useSortBy} from "react-table";
 import BTable from "react-bootstrap/Table";
 import React from "react";
 import {EditProduktModal} from "./EditProduktModal";
 import {EditKategorieModal} from "./EditKategorieModal";
+import '../Table.css';
 
 export function LagerTable({columns, data, skipPageReset, dispatchModal}) {
     const {
@@ -19,7 +20,9 @@ export function LagerTable({columns, data, skipPageReset, dispatchModal}) {
             getSubRows: row => row.produkte,
             autoResetPage: !skipPageReset,
             autoResetExpanded: !skipPageReset,
+            initialState: { sortBy: [{ id: 'kategorie.name'}] },
         },
+        useSortBy,
         useExpanded
     )
 
@@ -29,8 +32,11 @@ export function LagerTable({columns, data, skipPageReset, dispatchModal}) {
             {headerGroups.map(headerGroup => (
                 <tr {...headerGroup.getHeaderGroupProps()}>
                     {headerGroup.headers.map(column => (
-                        <th {...column.getHeaderProps()}>
+                        <th className="word-wrap" {...column.getHeaderProps(column.getSortByToggleProps())}>
                             {column.render('Header')}
+                            <span>
+                                {column.isSorted ? (column.isSortedDesc ? ' ↓' : ' ↑') : ''}
+                            </span>
                         </th>
                     ))}
                 </tr>
@@ -57,7 +63,7 @@ export function LagerTable({columns, data, skipPageReset, dispatchModal}) {
                                     }
 
                                     return (
-                                        <td {...props}>
+                                        <td className="word-wrap" {...props}>
                                             {cell.render('Cell')}
                                         </td>
                                     )

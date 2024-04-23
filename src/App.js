@@ -7,11 +7,11 @@ import {AppRouter} from "./router/AppRouter";
 
 export default function App() {
     return (
-        <ReactKeycloakProvider authClient={keycloak}>
-            <div className="App">
-                <AppRouter/>
-            </div>
-        </ReactKeycloakProvider>
+            <ReactKeycloakProvider authClient={keycloak}>
+                <div className="App">
+                    <AppRouter/>
+                </div>
+            </ReactKeycloakProvider>
     );
 }
 

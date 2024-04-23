@@ -1,0 +1,7 @@
+input[type='checkbox'] {
+    width: var(--checkbox-size);
+    height: var(--checkbox-size);
+    border-radius:5px;
+    margin: 10px 40px;
+    border:2px solid #555;
+}

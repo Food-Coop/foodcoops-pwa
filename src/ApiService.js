@@ -1,9 +1,5 @@
 import React from 'react';
 
-const {createContext, useContext} = React;
-
-const ApiContext = createContext(null);
-
 export const ApiProvider = (props) => {
     const value = {
         createProdukt: props.createProdukt || createProdukt,
@@ -26,6 +22,7 @@ export const ApiProvider = (props) => {
         readFrischBestellungBetweenDatesProPerson: props.readFrischBestellungBetweenDatesProPerson || readFrischBestellungBetweenDatesProPerson,
         createFrischBestellung: props.createFrischBestellung || createFrischBestellung,
         updateFrischBestellung: props.updateFrischBestellung || updateFrischBestellung,
+        deleteFrischBestellung: props.deleteFrischBestellung || deleteFrischBestellung,
         
         readFrischBestand: props.readFrischBestand || readFrischBestand,
         createFrischBestand: props.createFrischBestand || createFrischBestand,
@@ -43,10 +40,39 @@ export const ApiProvider = (props) => {
         readBrotBestellungBetweenDatesProPerson: props.readBrotBestellungBetweenDatesProPerson || readBrotBestellungBetweenDatesProPerson,
         createBrotBestellung: props.createBrotBestellung || createBrotBestellung,
         updateBrotBestellung: props.updateBrotBestellung || updateBrotBestellung,
+        deleteBrotBestellung: props.deleteBrotBestellung || deleteBrotBestellung,
 
         readDeadline: props.readDeadline || readDeadline,
         readLastDeadline: props.readLastDeadline || readLastDeadline,
+        readCurrentDeadline: props.readCurrentDeadline || readCurrentDeadline,
         createDeadline: props.createDeadline || createDeadline,
+
+        readEinkauf: props.readEinkauf || readEinkauf,
+        createEinkaufPdf: props.createEinkaufPdf || createEinkaufPdf,
+        createEinkauf: props.createEinkauf || createEinkauf,
+        deleteEinkauf: props.deleteEinkauf || deleteEinkauf,
+        createBestandBuyObject: props.createBestandBuyObject || createBestandBuyObject,
+
+        readBestellUebersicht: props.readBestellUebersicht || readBestellUebersicht,
+        readDiscrepancyOverviwe: props.readDiscrepancyOverviwe || readDiscrepancyOverviwe,
+        updateDiscrepancy: props.updateDiscrepancy|| updateDiscrepancy,
+        addDiscrepancyToLastOrderList: props.addDiscrepancyToLastOrderList || addDiscrepancyToLastOrderList,
+
+        readConfig: props.readConfig || readConfig,
+        updateConfig: props.updateConfig || updateConfig,
+        
+        readGebindeOverview: props.readGebindeOverview|| readGebindeOverview,
+        updateGebindeOverview: props.updateGebindeOverview|| updateGebindeOverview,
+
+        sendTotalBestellUebersicht: props.sendTotalBestellUebersicht || sendTotalBestellUebersicht,
+        sendBrotOrder: props.sendBrotOrder || sendBrotOrder,
+        sendFrischOrder: props.sendFrischOrder || sendFrischOrder,
+        getBestellUebersichtPdf: props.getBestellUebersichtPdf || getBestellUebersichtPdf,
+        getUebersichtBrotPdf: props.getUebersichtBrotPdf || getUebersichtBrotPdf,
+        getUebersichtFrischPdf: props.getUebersichtFrischPdf || getUebersichtFrischPdf,
+        getBestellUebersichtByte: props.getBestellUebersichtByte || getBestellUebersichtByte,
+        getUebersichtBrotByte: props.getUebersichtBrotByte || getUebersichtBrotByte,
+        getUebersichtFrischByte: props.getUebersichtFrischByte || getUebersichtFrischByte,
     };
 
     return (
@@ -78,6 +104,7 @@ export const useApi = () => {
         readFrischBestellungBetweenDatesProPerson,
         createFrischBestellung,
         updateFrischBestellung,
+        deleteFrischBestellung,
 
         readFrischBestand,
         createFrischBestand,
@@ -95,27 +122,71 @@ export const useApi = () => {
         readBrotBestellungBetweenDatesProPerson,
         createBrotBestellung,
         updateBrotBestellung,
+        deleteBrotBestellung,
 
         readDeadline,
         readLastDeadline,
-        createDeadline
+        readCurrentDeadline,
+        createDeadline,
+
+        readEinkauf,
+        createEinkaufPdf,
+        createEinkauf,
+        deleteEinkauf,
+        createBestandBuyObject,
+
+        readBestellUebersicht,
+        readDiscrepancyOverviwe,
+        updateDiscrepancy,
+        addDiscrepancyToLastOrderList,
+
+        readConfig,
+        updateConfig,
+
+        readGebindeOverview,
+        updateGebindeOverview,
+
+        sendTotalBestellUebersicht,
+        sendBrotOrder,
+        sendFrischOrder,
+        getBestellUebersichtPdf,
+        getUebersichtBrotPdf,
+        getUebersichtFrischPdf,
+        getBestellUebersichtByte,
+        getUebersichtBrotByte,
+        getUebersichtFrischByte,
     };
 };
 
 //const OLD_BACKEND_URL = "https://foodcoops-backend.herokuapp.com/";
-const BACKEND_URL = "http://kohlrettig.ddns.net:8080/";
+const BACKEND_URL = "http://152.53.32.66:8080/";
 const KATEGORIEN = "kategorien/";
 const PRODUKTE = "produkte/";
 const EINHEITEN = "einheiten/";
 const FRISCHBESTELLUNG =  "frischBestellung/";
-const DATUM = "datum/"
-const MENGE = "menge/"
+const DATUM = "datum/";
+const MENGE = "menge/";
 const FRISCHBESTAND = "frischBestand/";
 const PERSON = "person/";
 const BROTBESTAND = "brotBestand/";
 const BROTBESTELLUNG = "brotBestellung/";
-const DEADLINE = "deadline/"
+const DEADLINE = "deadline/";
 const LAST = "last/";
+const CURRENT = "getEndDateOfDeadline/";
+const EINKAUF = "einkauf/";
+const PDF = "pdf/";
+const BESTANDBUYOBJECT = "einkaufe/create/bestandBuyObject";
+const BESTELLUEBERSICHT = "bestellUebersicht/";
+const GEBINDE = "gebinde/";
+const DISCREPANCY = "discrepancy/";
+const ADD = "add/";
+const UPDATEDISCREPANCY = "update/tooMuchTooLittle/";
+const CONFIG = "/configuration";
+const SEND = "send/";
+const EMAIL = "email/";
+const DOWNLOAD = "download/";
+const BYTE = "byte/";
+const UPDATEGEBINDEOVERVIEW = "update/gebindeAmountToOrder/";
 
 // Produkt
 
@@ -155,14 +226,16 @@ const readKategorie = (id = undefined) => id ?
     fetch(BACKEND_URL + KATEGORIEN + id) :
     fetch(BACKEND_URL + KATEGORIEN);
 
-const createKategorie = (name, icon) =>
-    fetch(BACKEND_URL + KATEGORIEN, {
+const createKategorie = (name, icon, mixable) => {
+    console.log("Kategorie: ", name, icon, mixable);
+    return fetch(BACKEND_URL + KATEGORIEN, {
         method: "POST",
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({id: "", name, icon}),
+        body: JSON.stringify({ id: "", name, icon, mixable }),
     });
+}
 
 const updateKategorie = (id, name) =>
     fetch(BACKEND_URL + KATEGORIEN + id, {
@@ -207,7 +280,7 @@ const deleteEinheit = (id) =>
 // FrischBestellung
 
 const readFrischBestellung = () => 
-    fetch(BACKEND_URL + FRISCHBESTELLUNG + DATUM);
+    fetch(BACKEND_URL + FRISCHBESTELLUNG);
 
 const createFrischBestellung = (data) =>
     fetch(BACKEND_URL + FRISCHBESTELLUNG, {
@@ -235,6 +308,14 @@ const readFrischBestellungProProdukt = () =>
 
 const readFrischBestellungBetweenDatesProPerson = (person_id) => 
     fetch(BACKEND_URL + FRISCHBESTELLUNG + PERSON + person_id)
+
+const deleteFrischBestellung = (id) =>
+    fetch(BACKEND_URL + FRISCHBESTELLUNG + id, {
+        method: "DELETE",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
 
 // Frischbestand
 
@@ -300,6 +381,14 @@ const readBrotBestellungProProdukt = () =>
 const readBrotBestellungBetweenDatesProPerson = (person_id) => 
     fetch(BACKEND_URL + BROTBESTELLUNG + PERSON + person_id)
 
+const deleteBrotBestellung = (id) =>
+    fetch(BACKEND_URL + BROTBESTELLUNG + id, {
+        method: "DELETE",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
+
 // Brotbestand
 
 const readBrotBestand = (id = undefined) => id ?
@@ -341,6 +430,9 @@ const readDeadline = (id = undefined) => id ?
 const readLastDeadline = () =>
     fetch(BACKEND_URL + DEADLINE + LAST);
 
+const readCurrentDeadline = (id) =>
+    fetch(BACKEND_URL + DEADLINE + CURRENT + id);
+
 const createDeadline = (data) =>
     fetch(BACKEND_URL + DEADLINE, {
         method: "POST",
@@ -349,3 +441,143 @@ const createDeadline = (data) =>
         },
         body: JSON.stringify({...data, id: "undefined"}),
     });
+
+// Einkauf
+
+const readEinkauf = (id = undefined) => id ?
+    fetch(BACKEND_URL + EINKAUF + id) :
+    fetch(BACKEND_URL + EINKAUF);
+
+const createEinkaufPdf = (id, email) =>
+    fetch(BACKEND_URL + EINKAUF + PDF + id, {
+        method: 'POST', 
+        headers: {
+        'Content-Type': 'application/json',
+        },
+        body: email,
+});
+
+const createEinkauf = (data) =>
+    fetch(BACKEND_URL + EINKAUF, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({...data, id: "undefined"}),
+    });
+
+const deleteEinkauf = (id) =>
+    fetch(BACKEND_URL + EINKAUF + id, {
+        method: "DELETE",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
+
+const createBestandBuyObject = (data) =>
+    fetch(BACKEND_URL + BESTANDBUYOBJECT, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({...data, id: "undefined"}),
+    });
+
+
+// Bestellübersicht
+const readBestellUebersicht = () =>
+    fetch(BACKEND_URL + BESTELLUEBERSICHT + LAST);
+
+//Zu viel zu venig Übersicht
+const readDiscrepancyOverviwe = () =>
+    fetch(BACKEND_URL + BESTELLUEBERSICHT + LAST);
+
+const updateDiscrepancy = (id, data) =>
+fetch(BACKEND_URL + GEBINDE + DISCREPANCY + UPDATEDISCREPANCY + id, {
+    method: 'PUT', 
+    headers: {
+    'Content-Type': 'application/json',
+    },
+    body: data,
+});
+
+const readConfig = () =>    
+    fetch(BACKEND_URL + CONFIG);
+
+const updateConfig = (data) => {
+    const params = new URLSearchParams(data).toString();
+    return fetch(`${BACKEND_URL}?${params}`, {
+        method: "PUT",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
+};
+
+const addDiscrepancyToLastOrderList = (data) =>
+    fetch(BACKEND_URL + GEBINDE + DISCREPANCY + ADD, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    });
+
+//Gebinde übersicht
+const readGebindeOverview = () =>
+    fetch(BACKEND_URL + GEBINDE);
+
+const updateGebindeOverview = (id, data) =>
+    fetch(BACKEND_URL + GEBINDE + DISCREPANCY + UPDATEGEBINDEOVERVIEW + id, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: data,
+});
+
+//Pdf controller
+const sendTotalBestellUebersicht = (email) =>
+    fetch(BACKEND_URL + EMAIL + SEND + "bestellUebersicht", {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: email,
+    });
+
+const sendBrotOrder = (email) =>
+    fetch(BACKEND_URL + EMAIL + SEND + "brotBestellungen", {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: email,
+    });
+
+const sendFrischOrder = (email) =>
+    fetch(BACKEND_URL + EMAIL + SEND + "frischBestellungen", {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: email,
+    });
+
+const getBestellUebersichtPdf = () =>
+    fetch(BACKEND_URL + PDF + DOWNLOAD + "bestellUebersicht");
+
+const getUebersichtBrotPdf = () =>
+    fetch(BACKEND_URL + PDF + DOWNLOAD + "brotBestellungen");
+
+const getUebersichtFrischPdf = () =>
+    fetch(BACKEND_URL + PDF + DOWNLOAD + "frischBestellungen");
+
+const getBestellUebersichtByte = () =>
+    fetch(BACKEND_URL + PDF + BYTE + "bestellUebersicht");
+
+const getUebersichtBrotByte = () =>
+    fetch(BACKEND_URL + PDF + BYTE + "brotBestellungen");
+
+const getUebersichtFrischByte = () =>
+    fetch(BACKEND_URL + PDF + BYTE + "frischBestellungen");

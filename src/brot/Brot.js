@@ -1,10 +1,15 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Button from 'react-bootstrap/Button';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import Alert from '@mui/material/Alert';
 import { useApi } from '../ApiService';
 import {useKeycloak} from "@react-keycloak/web";
 import { BrotTable } from './BrotTable';
-import { deepAssign } from '../util'
+import { deepAssign } from '../util';
+import { DeadlineLogic } from '../deadline/DeadlineLogic';
+import NumberFormatComponent from '../logic/NumberFormatComponent';
 
 export function Brot(){
     const columns = React.useMemo(
@@ -17,30 +22,36 @@ export function Brot(){
                 accessor: 'name',
             },
             {
-                Header: 'Gewicht',
+                Header: 'Gewicht in g',
                 accessor: 'gewicht',
+                Cell: ({ value }) => <NumberFormatComponent value={value} includeFractionDigits={false} />,
             },
             {
-                Header: 'Preis',
+                Header: 'Preis in €',
                 accessor: 'preis',
+                Cell: ({ value }) => <NumberFormatComponent value={value} />,
+                
+            },
+            {
+                Header: 'aktuelle Bestellmenge',
+                accessor: 'bestellmengeNeu',
+                Cell: ({ value }) => <NumberFormatComponent value={isNaN(value) ? 0 : value} includeFractionDigits={false}/>,
             },
             {
                 Header: 'Bestellmenge',
                 accessor: 'bestellmenge',
+                Cell: ({ value }) => <NumberFormatComponent value={value} />,
             }
         ]
     );
 
     const [brotBestellung, setBrotBestellung] = React.useState([]);
-    const [brotBestellungBetweenDatesProPerson, setBrotBestellungBetweenDatesProPerson] = React.useState([]);
+    const [lastWeekBrotBestellung, setLastWeekBrotBestellung] = React.useState([]);
     const [isLoading, setIsLoading] = React.useState(true);
     const [isAlsoLoading, setIsAlsoLoading] = React.useState(true);
-    const [isAlsoLoading2, setIsAlsoLoading2] = React.useState(true);
-    const [isLoadingDeadline, setIsLoadingDeadline] = React.useState(true);
     const [data, setData] = React.useState([]);
     const [reducerValue, forceUpdate] = React.useReducer(x => x+1, 0);
     const [brotBestellungSumme, setBrotBestellungSumme] = React.useState([]);
-    const [lastdeadline, setLastDeadline] = React.useState([]);
 
     const api = useApi();
     const {keycloak} = useKeycloak();
@@ -68,16 +79,6 @@ export function Brot(){
                 }
             );
             let person_id = keycloak.tokenParsed.preferred_username;
-            api.readBrotBestellungBetweenDatesProPerson(person_id)
-                .then((r) => r.json())
-                .then((r) => {
-                    setBrotBestellungBetweenDatesProPerson(old => {
-                        let n = r?._embedded?.brotBestellungRepresentationList;
-                        return n === undefined ? old : n;
-                    });
-                    setIsAlsoLoading2(false);
-                }
-            );
             api.readBrotBestellungProPerson(person_id)
                 .then(r => r.json())
                 .then(r => {
@@ -87,157 +88,125 @@ export function Brot(){
                     }
                 );
             });
-            api.readLastDeadline()
+            api.readBrotBestellungBetweenDatesProPerson(person_id)
                 .then(r => r.json())
                 .then(r => {
-                    setLastDeadline(old => {
-                        const n = r?._embedded?.deadlineRepresentationList;
+                    setLastWeekBrotBestellung(old => {
+                        const n = r?._embedded?.brotBestellungRepresentationList
                         return n === undefined ? old : n;
-                    });
-                    setIsLoadingDeadline(false);
-                });
+                    }
+                );
+            });
         }, [reducerValue]
     )
 
     const checkAlreadyOrdered = (brotBestandId) =>{
         for(let j = 0; j < brotBestellung.length; j++){
-            if(brotBestandId == brotBestellung[j].brotbestand.id){
+            if(brotBestandId === brotBestellung[j].brotbestand.id){
                 return brotBestellung[j].id;
             }
         }
         return null;
     }
 
-    const submitBestellung = () => {
+    const clearInputFields = () => {
+        for (let i = 0; i < data.length; i++) {
+            let bestellId = "Inputfield" + i;
+            document.getElementById(bestellId).value = "";
+        }
+    }
+
+    const submitBestellung = async () => {
         const result = {};
         let preis = 0;
+        let successMessage = "Ihre Bestellung wurde übermittelt. Vielen Dank!";
+        let errorOccurred = false;
+        const apiCalls = [];
+    
         for (let i = 0; i < data.length; i++) {
-            let produktId = "ProduktId" + i;
-            let brotBestandId = document.getElementById(produktId).innerText;
+            let brotBestandId = data[i].id;
             let personId = keycloak.tokenParsed.preferred_username;
             let datum = new Date();
             let bestellId = "Inputfield" + i;
             let bestellmenge = document.getElementById(bestellId).value;
-            console.log(bestellId)
-            console.log("1: " + document.getElementById(bestellId));
-            //Check if Bestellmenge is valid
-            if (bestellmenge == "") {
-            } 
-            else {
+    
+            // Check if Bestellmenge is valid
+            if (bestellmenge !== "") {
                 const {_links, ...supported} = data[i];
                 deepAssign("person_id", result, personId);
-                deepAssign("brotbestand", result, supported);
+                deepAssign("brotbestand", result, { ...supported, type: "brot" });
                 deepAssign("bestellmenge", result, bestellmenge);
                 deepAssign("datum", result, datum);
-
-                //Überprüfe ob bereits eine Bestellung in dieser Woche getätigt wurde
+                deepAssign("type", result, "brot");
+    
+                // Überprüfe ob bereits eine Bestellung in dieser Woche getätigt wurde
                 let check = checkAlreadyOrdered(brotBestandId);
-                if(check != null){
-                    //Bestellung updaten
-                    console.log(bestellId)
-                    console.log("2: " + bestellmenge <= 10);
-                    if (bestellmenge <= 10) {
-                        console.log("3: " + bestellmenge);
-                        (async function () {
-                            const response = await api.updateBrotBestellung(result, check);
-                            if(response.ok) {
-                                forceUpdate();
-                            }
-                            else{
-                                alert("Das Updaten einer Brotbestellung war aufgrund eines Fehlers nicht erfolgreich. Bitte versuchen Sie es erneut.");
-                            }
-                        })();
-                        
+                if (check != null) {
+                    if (bestellmenge === "0") {
+                        // Bestellung löschen
+                        apiCalls.push(api.deleteBrotBestellung(check));
+                    } else {
+                        // Bestellung updaten
+                        apiCalls.push(api.updateBrotBestellung(result, check));
                     }
-                    else {
-                        let artikel = "ProduktName" + i;
-                        let artikelname = document.getElementById(artikel).innerText;
-                        if(window.confirm("Möchten Sie wirklich " + bestellmenge + " " + artikelname + " bestellen?")){
-                            (async function () {
-                                const response = await api.updateBrotBestellung(result, check);
-                                if(response.ok) {
-                                    forceUpdate();
-                                }
-                                else{
-                                    alert("Das Updaten einer Brotbestellung war aufgrund eines Fehlers nicht erfolgreich. Bitte versuchen Sie es erneut.");
-                                }
-                            })();
-                        }
-                        else{
-                            alert("Okay, dieses Produkt wird nicht bestellt. Alle anderen schon.");
-                        }
-                    }
+                } else {
+                    // Neue Bestellung abgeben
+                    apiCalls.push(api.createBrotBestellung(result));
                 }
-
-                else{
-                    //Neue Bestellung abgeben
-                    if (bestellmenge <= 10) {
-                        (async function () {
-                            const response = await api.createBrotBestellung(result);
-                            if(response.ok) {
-                                forceUpdate();
-                            }
-                            else{
-                                alert("Das Abgeben einer Brotbestellung war aufgrund eines Fehlers nicht erfolgreich. Bitte versuchen Sie es erneut.");
-                            }
-                        })();
-                    }
-                    else {
-                        let artikel = "ProduktName" + i;
-                        let artikelname = document.getElementById(artikel).innerText;
-                        if(window.confirm("Möchten Sie wirklich " + bestellmenge + " " + artikelname + " bestellen?")){
-                            (async function () {
-                                const response = await api.createBrotBestellung(result);
-                                if(response.ok) {
-                                    forceUpdate();
-                                }
-                                else{
-                                    alert("Das Abgeben einer Brotbestellung war aufgrund eines Fehlers nicht erfolgreich. Bitte versuchen Sie es erneut.");
-                                }
-                            })();
-                        }
-                        else{
-                            alert("Okay, dieses Produkt wird nicht bestellt. Alle anderen schon.");
-                        }
-                    }
-                }
-                
             }
         }
-        forceUpdate();
-        document.getElementById("preis").innerHTML = "Preis: " + preis + "€";
-        alert("Ihre Bestellung wurde übermittelt. Vielen Dank!");
+    
+        try {
+            const responses = await Promise.all(apiCalls);
+            for (const response of responses) {
+              if (!(response.ok || response.status === 201 || response.status === 204)) {
+                console.log(response.status);
+                errorOccurred = true;
+                break;
+              }
+            }
+
+            if (!errorOccurred) {
+              toast.success(successMessage);
+            } else {
+              toast.error("Es gab einen Fehler beim Übermitteln Ihrer Bestellung. Bitte versuchen Sie es erneut.");
+            }
+          } catch (error) {
+            errorOccurred = true;
+            toast.error("Es gab einen Fehler beim Übermitteln Ihrer Bestellung. Bitte versuchen Sie es erneut.");
+            console.log(error);
+          }
+          
+          forceUpdate();
+          clearInputFields();
+          document.getElementById("preis").innerHTML = "Preis: " + preis + " €";
+          window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     const content = () => {
-        if (isLoading || isAlsoLoading || isAlsoLoading2) {
-            return (
-                <div className="spinner-border" role="status" style={{margin: "5rem"}}>
-                    <span className="sr-only">Loading...</span>
-                </div>
-            );
+        if (isLoading || isAlsoLoading) {
+            return null;
         }
 
         for(let i = 0; i < data.length; i++){
             for(let j = 0; j < brotBestellungSumme.length; j++){
-                if(data[j].id === brotBestellungSumme[j].brotbestand.id){
-                    deepAssign("bestellsumme", data[j], brotBestellungSumme[j].bestellmenge);
+                if(data[i] && data[i].id === brotBestellungSumme[j].brotbestand.id){
+                    deepAssign("bestellsumme", data[i], brotBestellungSumme[j].bestellmenge);
                 }
-                else{
-                    deepAssign("bestellsumme", data[j], 0);
+                else if(data[i]){
+                    deepAssign("bestellsumme", data[i], 0);
                 } 
             }
-            for(let j = 0; j < brotBestellungBetweenDatesProPerson.length; j++){
-                if(data[j].id === brotBestellungBetweenDatesProPerson[j].brotbestand.id){
-                    deepAssign("bestellmengeAlt", data[j], brotBestellungBetweenDatesProPerson[j].bestellmenge);
+            for(let j = 0; j < lastWeekBrotBestellung.length; j++){
+                if(data[i].id === lastWeekBrotBestellung[j].brotbestand.id){
+                    deepAssign("bestellmengeAlt", data[i], lastWeekBrotBestellung[j].bestellmenge);
                 }    
             }
             for(let j = 0; j < brotBestellung.length; j++){
-                if(checkAlreadyOrdered(data[j].id)){
-                    deepAssign("bestellmengeNeu", data[j], brotBestellung[j].bestellmenge);
-                }   
+                if(data[i] && checkAlreadyOrdered(data[i].id)){
+                    deepAssign("bestellmengeNeu", data[i], brotBestellung[j].bestellmenge);
+                }
             }
-            
         }
 
         return (
@@ -247,112 +216,17 @@ export function Brot(){
         );
     }
 
-    const getDeadline = () => {
-        let n = 7;
-        //n = 7 => nächste Deadline, n = 0 => letzte Deadline, n = -7 => vorletzte Deadline, ...
-        if (isLoadingDeadline) {
-            return (
-                <div className="spinner-border" role="status" style={{margin: "5rem"}}>
-                    <span className="sr-only">Loading...</span>
-                </div>
-            );
-        }
-        else{
-            let datum = new Date();
-            let heute = new Date(datum.getFullYear(), datum.getMonth(), datum.getDate());
-            switch(lastdeadline[0].weekday) {
-                case "Montag":
-                    if(heute.getDay() == 1){
-                        n = n + 1 - 7;
-                    }
-                    else{
-                        n = n + 1;
-                    }
-                    break;
-                case "Dienstag":
-                    if(heute.getDay() == 2){
-                        n = n + 2 - 7;
-                    }
-                    else{
-                        n = n + 2;
-                    }
-                    break;
-                case "Mittwoch":
-                    if(heute.getDay() < 3){
-                        n = n + 3 - 7;
-                    }
-                    else{
-                        n = n + 3;
-                    }
-                    break;
-                case "Donnerstag":
-                    if(heute.getDay() < 4){
-                        n = n + 4 - 7;
-                    }
-                    else{
-                        n = n + 4;
-                    }
-                    break;
-                case "Freitag":
-                    if(heute.getDay() < 5){
-                        n = n + 5 - 7;
-                    }
-                    else{
-                        n = n + 5;
-                    }
-                    break;
-                case "Samstag":
-                    if(heute.getDay() < 6){
-                        n = n + 6 - 7;
-                    }
-                    else{
-                        n = n + 6;
-                    }
-                    break;
-                case "Sonntag":
-                    if(heute.getDay() < 7){
-                        n = n + 7 - 7;
-                    }
-                    else{
-                        n = n + 7;
-                    }
-                    break;
-            }
-            let timeNow = datum.getHours() + ":" + datum.getMinutes() + ":" + datum.getSeconds()
-         
-            let wochentag = datum.getDay();
-            if(wochentag == 1){wochentag = "Montag";}
-            else if(wochentag == 2){wochentag = "Dienstag";}
-            else if(wochentag == 3){wochentag = "Mittwoch";}
-            else if(wochentag == 4){wochentag = "Donnerstag";}
-            else if(wochentag == 5){wochentag = "Freitag";}
-            else if(wochentag == 6){wochentag = "Samstag";}
-            else{wochentag = "Sonntag";}
-            
-            if(lastdeadline[0].time < timeNow && lastdeadline[0].weekday == wochentag){
-                n = n + 7;
-            }
-            var deadline = new Date(heute.setDate(heute.getDate()-heute.getDay() + n));
-            
-            let date = deadline;
-            let year = date.getFullYear();
-            let month = date.getMonth() + 1;
-            let day = date.getDate();
-            date = "Deadline: " + day + "." + month + "." + year + " " + lastdeadline[0].time + " Uhr";
-            return (
-                <div>{date}</div>
-            );
-        }
-    }
-
-
     return(
         <div>
             <div style={{overflowX: "auto", width: "100%"}}>
-                {getDeadline()}
+                <DeadlineLogic />
+                <Alert severity="info" style={{margin: "0.5em 1em 0.5em 1em"}}> 
+                    Die aktuelle Bestellmenge eines Produktes kann geändert werden, indem die neue Bestellmenge in das Eingabefeld eingetragen wird und anschließend auf "Bestellung bestätigen" geklickt wird.
+                </Alert>
                 {content()}
                 <h4 id = "preis"></h4>
-                <Button style={{margin:"0.25rem"}} variant="success" onClick={() => submitBestellung()}>Submit Bestellung</Button>
+                <Button style={{margin: "20px 0.25rem 30px 0.25rem"}} variant="success" onClick={() => submitBestellung()}>Bestellung bestätigen</Button>
+                <ToastContainer />
             </div>
         </div>
     );

@@ -1,0 +1,32 @@
+.firstDiv {
+    width: 400px;
+    height: 370px;
+}
+
+.tableInModal {
+    width: 50vw;
+}
+
+@media (max-width: 600px) {
+    .tableInModal {
+        width: 70vw;
+    }
+}
+
+@media (min-width: 850px) {
+    .tableInModal {
+        width: 40vw;
+    }
+}
+
+@media (min-width: 1150px) {
+    .tableInModal {
+        width: 40vw;
+    }
+}
+
+@media (min-width: 1450px) {
+    .tableInModal {
+        width: 30vw;
+    }
+}

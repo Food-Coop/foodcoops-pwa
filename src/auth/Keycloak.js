@@ -1,7 +1,7 @@
 import Keycloak from "keycloak-js";
 
 const keycloakConfig = {
-    url: "http://kohlrettig.ddns.net:9090/",
+    url: "http://152.53.32.66:8089/",
     realm: "foodcoop",
     clientId: "foodcoop-pwa"
 }

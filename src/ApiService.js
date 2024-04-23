@@ -159,7 +159,7 @@ export const useApi = () => {
 };
 
 //const OLD_BACKEND_URL = "https://foodcoops-backend.herokuapp.com/";
-const BACKEND_URL = "http://152.53.32.66:8080/";
+const BACKEND_URL = "http://152.53.32.66:8081/";
 const KATEGORIEN = "kategorien/";
 const PRODUKTE = "produkte/";
 const EINHEITEN = "einheiten/";

@@ -264,7 +264,7 @@ export function Lager() {
                 <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("KategorienModal")}>Kategorie erstellen</Button>
                 <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("NewProduktModal")}>Produkt erstellen</Button>
                 <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("EinheitenModal")}>Einheiten erstellen</Button>
-                <Button style={{margin:"0.25rem"}} variant="success" onClick={() => window.open("http://152.53.32.66:8080/externeliste")}>Externe Einkaufsliste</Button>
+                <Button style={{margin:"0.25rem"}} variant="success" onClick={() => window.open("http://152.53.32.66:8081/externeliste")}>Externe Einkaufsliste</Button>
             </Row>
             <div style={{overflowX: "auto", width: "100%"}}>
                 {content()}

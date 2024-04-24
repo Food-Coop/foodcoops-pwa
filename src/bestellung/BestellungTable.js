@@ -87,7 +87,8 @@ export function BestellungTable({ columns, data, skipPageReset }) {
             </ClickAwayListener>
                 <Button style={{margin: "0.5em 1em 0.5em 0"}} variant="primary" onClick={() => setValuesToBestellungVorwoche()}>Bestellmenge Vorwoche laden</Button>
             </div>
-        <BTable striped bordered hover size="sm" {...getTableProps()}>
+            <div className="tableFixHead">
+            <BTable striped bordered hover size="sm" {...getTableProps()}>
             <thead>
             {headerGroups.map(headerGroup => (
                 <tr {...headerGroup.getHeaderGroupProps()}>
@@ -157,6 +158,7 @@ export function BestellungTable({ columns, data, skipPageReset }) {
             })}
             </tbody>
         </BTable>
+        </div>
         </div>
     )
 }

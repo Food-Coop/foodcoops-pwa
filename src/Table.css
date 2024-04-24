@@ -2,6 +2,19 @@
     word-break: break-word;
 }
 
+.tableFixHead { 
+    overflow: auto;
+    height: 52vh; 
+}
+
+.tableFixHead thead th { 
+    position: sticky; top: 0; z-index: 1; 
+}
+
+BTable  { border-collapse: collapse; width: 100%; }
+th, td { padding: 8px 16px; }
+th     { background:#eee; }
+
 .bestellung-inputfield-size {
     width: 200px;
  }

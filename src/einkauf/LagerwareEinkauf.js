@@ -45,7 +45,7 @@ export function LagerwareEinkauf(props) {
         rows,
         prepareRow,
         
-      } = useTable({ columns, data: produkt, initialState: { sortBy: [{ id: 'name' }] }, }, useSortBy)
+      } = useTable({ columns, data: produkt, }, useSortBy)
 
     const handleChange = (e, max, name) => {
       let value = e.target.value;

@@ -71,7 +71,7 @@ export function OrderOverview() {
         rows,
         prepareRow,
         
-    } = useTable({ columns, data: discrepancy, initialState: { sortBy: [{ id: 'bestand.name' }] }, }, useSortBy)
+    } = useTable({ columns, data: discrepancy, }, useSortBy)
 
     const {
         getTableProps: getBrotBestellungTableProps,

@@ -17,7 +17,6 @@ export function FrischBestandTable({ columns, data, skipPageReset, dispatchModal
             getSubRows: row => row.produkte,
             autoResetPage: !skipPageReset,
             autoResetExpanded: !skipPageReset,
-            initialState: { sortBy: [{ id: 'kategorie.name'}] },
         },
         useSortBy,
         useExpanded,

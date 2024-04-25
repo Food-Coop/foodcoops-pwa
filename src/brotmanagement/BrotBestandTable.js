@@ -17,7 +17,6 @@ export function BrotBestandTable({ columns, data, skipPageReset, dispatchModal }
             getSubRows: row => row.produkte,
             autoResetPage: !skipPageReset,
             autoResetExpanded: !skipPageReset,
-            initialState: { sortBy: [{ id: 'name'}] },
         },
         useSortBy,
         useExpanded,

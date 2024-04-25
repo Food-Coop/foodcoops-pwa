@@ -55,7 +55,7 @@ export function ZuVielZuWenigEinkauf(props) {
       rows,
       prepareRow,
       
-    } = useTable({ columns, data: discrepancy, initialState: { sortBy: [{ id: 'bestand.kategorie.name' }] }, }, useSortBy)
+    } = useTable({ columns, data: discrepancy, }, useSortBy)
     
     const handleChange = () => {
         let preis = 0;

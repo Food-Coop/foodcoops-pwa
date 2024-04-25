@@ -45,7 +45,7 @@ export function BrotEinkauf(props) {
         rows,
         prepareRow,
         
-      } = useTable({ columns, data: brotBestellung, initialState: { sortBy: [{ id: 'brotbestand.name' }] }, }, useSortBy)
+      } = useTable({ columns, data: brotBestellung, }, useSortBy)
 
     const handleChange = () => {
         let preis = 0;

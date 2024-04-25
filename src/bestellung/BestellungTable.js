@@ -24,7 +24,6 @@ export function BestellungTable({ columns, data, skipPageReset }) {
             getSubRows: row => row.produkte,
             autoResetPage: !skipPageReset,
             autoResetExpanded: !skipPageReset,
-            initialState: { sortBy: [{ id: 'kategorie.name' }] },
         },
         useSortBy,
         useExpanded

@@ -59,7 +59,7 @@ export function FrischEinkauf(props) {
         rows,
         prepareRow,
         
-      } = useTable({ columns, data: frischBestellung, initialState: { sortBy: [{ id: 'frischbestand.kategorie.name' }] }, }, useSortBy)
+      } = useTable({ columns, data: frischBestellung, }, useSortBy)
 
     const handleChange = () => {
         let preis = 0;

@@ -24,7 +24,6 @@ export function BrotTable({ columns, data, skipPageReset }) {
             getSubRows: row => row.produkte,
             autoResetPage: !skipPageReset,
             autoResetExpanded: !skipPageReset,
-            initialState: { sortBy: [{ id: 'name' }] },
         },
         useSortBy, 
         useExpanded
@@ -88,6 +87,7 @@ export function BrotTable({ columns, data, skipPageReset }) {
             </ClickAwayListener>
                 <Button style={{margin: "0.5em 1em 0.5em 0"}} variant="primary" onClick={() => setValuesToBestellungVorwoche()}>Bestellmenge Vorwoche laden</Button>
             </div>
+            <div className="tableFixHead">
         <BTable striped bordered hover size="sm" {...getTableProps()}>
             <thead>
             {headerGroups.map(headerGroup => (
@@ -150,6 +150,7 @@ export function BrotTable({ columns, data, skipPageReset }) {
             })}
             </tbody>
         </BTable>
+        </div>
         </div>
     )
 }

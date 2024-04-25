@@ -244,7 +244,7 @@ export function Bestellung(){
                 </Alert>
                 {content()}
                 <h4 id = "preis"></h4>
-                <Button style={{margin: "1vh 0.25rem 1vh 0.25rem"}} variant="success" onClick={() => submitBestellung()}>Bestellung bestätigen</Button>
+                <Button className="buttonForSubmitting" variant="success" onClick={() => submitBestellung()}>Bestellung bestätigen</Button>
                 <ToastContainer />
             </div>
         </div>

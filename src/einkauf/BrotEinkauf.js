@@ -93,6 +93,7 @@ export function BrotEinkauf(props) {
         return null;
       } else {
       return (
+        <div className="tableFixHead">
         <BTable striped bordered hover size="sm" {...getTableProps()}>
             <thead>
               {headerGroups.map(headerGroup => (
@@ -133,6 +134,7 @@ export function BrotEinkauf(props) {
               })}
             </tbody>
             </BTable>
+            </div>
         );
       }
     }

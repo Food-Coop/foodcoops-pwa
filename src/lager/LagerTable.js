@@ -27,6 +27,7 @@ export function LagerTable({columns, data, skipPageReset, dispatchModal}) {
     )
 
     return (
+        <div className="tableFixHead tFH-management">
         <BTable striped bordered hover size="sm" {...getTableProps()}>
             <thead>
             {headerGroups.map(headerGroup => (
@@ -73,5 +74,6 @@ export function LagerTable({columns, data, skipPageReset, dispatchModal}) {
             })}
             </tbody>
         </BTable>
+        </div>
     )
 }

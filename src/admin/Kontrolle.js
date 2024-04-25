@@ -300,7 +300,7 @@ export function Kontrolle() {
         return <p style={{margin: "5em 1em 0.5em 1em"}}>Es gibt momentan nichts auf der Zu Viel / Zu Wenig-Liste</p>;
       } else {
         return (
-          <div>
+          <div className="tableFixHead tFH-kontrolle">
             <BTable striped bordered hover size="sm" {...getTableProps()}>
               <thead>
                 {headerGroups.map(headerGroup => (
@@ -317,9 +317,6 @@ export function Kontrolle() {
                 {rowsWithTotals}
               </tbody>
             </BTable>
-            <Button style={{margin: "20px 0.25rem 30px 0.25rem"}} variant="success" onClick={() => submitUpdateDiscr()}>Aktualisieren</Button>
-            <Button style={{margin: "20px 0.25rem 30px 0.25rem"}} variant="primary" onClick={() => generatePDF()}>PDF erstellen</Button>
-            <ToastContainer />
           </div>
         );
       }
@@ -335,13 +332,18 @@ export function Kontrolle() {
             <Alert severity="info" style={{margin: "0.5em 1em 0.5em 1em"}}>
               Bitte beachten Sie: Wenn Produkte geliefert wurden, jedoch in zu geringer Menge, müssen Sie die Bestellmenge mit einem Minuszeichen vorne angeben. <strong>Zum Beispiel</strong>: Wenn insgesamt <strong>10 Einheiten</strong> eines Produkts bestellt, aber nur <strong>8 Einheiten</strong> geliefert wurden, geben Sie für das Produkt in das Inputfield <strong>-2</strong> ein.
             </Alert>
+            <div>
             <Button style={{margin: "0 1em 0.5em 1em", float: "left"}} onClick={handleShowModal}>Produkt hinzufügen</Button>
+            </div>
             <AddNewFrischModal show={showModal}
               close={handleCloseModal}
               updateParent={updateParent}
               frischBestandForModal={frischBestandForModal}
               discrepancyForModal={discrepancyForModal}/>
-      {content()}
+            {content()}
+            <Button className='buttonForSubmitting' variant="success" onClick={() => submitUpdateDiscr()}>Aktualisieren</Button>
+            <Button className='buttonForSubmitting' variant="primary" onClick={() => generatePDF()}>PDF erstellen</Button>
+            <ToastContainer />
       </div>
     </div>
   );

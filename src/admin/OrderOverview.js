@@ -264,6 +264,7 @@ export function OrderOverview() {
             return <p>Es gibt aktuell keine Brotbestellungen</p>;
         } else {
             return (
+                <div className="tableFixHead">
                 <BTable striped bordered hover size="sm" {...getBrotBestellungTableProps()}>
                     <thead>
                         {brotBestellungHeaderGroups.map(headerGroup => (
@@ -292,6 +293,7 @@ export function OrderOverview() {
                         })}
                     </tbody>
                 </BTable>
+                </div>
             );
         }
     };
@@ -301,6 +303,7 @@ export function OrderOverview() {
         return <p>Es gibt aktuell keine Frischbestellungen.</p>;
         } else {
         return (
+            <div className="tableFixHead">
             <BTable striped bordered hover size="sm" {...getTableProps()}>
             <thead>
                 {headerGroups.map(headerGroup => (
@@ -337,6 +340,7 @@ export function OrderOverview() {
                 )}
             </tbody>
             </BTable>
+            </div>
         );
         }
     }

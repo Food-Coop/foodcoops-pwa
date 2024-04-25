@@ -108,6 +108,7 @@ export function ZuVielZuWenigEinkauf(props) {
         return null;
       } else {
         return (
+        <div className="tableFixHead">
         <BTable striped bordered hover size="sm" {...getTableProps()}>
           <thead>
             {headerGroups.map(headerGroup => (
@@ -152,6 +153,7 @@ export function ZuVielZuWenigEinkauf(props) {
             })}
           </tbody>
           </BTable>
+          </div>
     );
     }
   }

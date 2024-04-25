@@ -31,7 +31,7 @@ export function EditFrischBestandModal(props) {
         ...newData
     };
 
-    const title = "FrischBestand bearbeiten";
+    const title = "Frischprodukt bearbeiten";
 
     const mapper = ([accessor, {name, value}]) => {
         if (accessor === "einheit.name") {
@@ -84,7 +84,7 @@ export function EditFrischBestandModal(props) {
                 </td>
             </tr>
         }
-        if (accessor === "verfuegbarkeit") {
+        if (accessor === "verfuegbarkeit" || accessor === "spezialfallBestelleinheit") {
             return <tr key={accessor}>
                 <td>
                     <label style={{margin: 0}}>{name}:</label>
@@ -163,7 +163,7 @@ export function EditFrischBestandModal(props) {
         .map(mapper);
 
     const footer = <>
-        <Button variant="danger" onClick={remove}>FrischBestand löschen</Button>
+        <Button variant="danger" onClick={remove}>Produkt löschen</Button>
         <Button onClick={close}>Änderungen verwerfen</Button>
         <Button onClick={save}>Änderungen übernehmen</Button>
     </>;

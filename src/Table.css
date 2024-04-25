@@ -8,17 +8,20 @@
 
 .tableFixHead { 
     overflow: auto;
-    height: calc(100vh - 398px - 6px);
+    height: auto; 
+    max-height: calc(100vh - 480px - 6px);
 }
 
 .tFH-kontrolle {
     width: 100vw;
     height: calc(100vh - 335px);
+    max-height: calc(100vh - 335px);
 }
 
 .tFH-management {
     overflow: auto;
     height: calc(100vh - 250px);
+    max-height: calc(100vh - 250px);
 }
 
 .tableFixHead thead th::after  {
@@ -38,7 +41,6 @@
 }
 
 BTable  { border-collapse: collapse; width: 100%; }
-th, td { padding: 8px 16px; }
 th     { background:#eee; }
 
 .bestellung-inputfield-size {

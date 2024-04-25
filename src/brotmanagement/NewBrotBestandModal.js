@@ -14,6 +14,7 @@ function defaultData(columns) {
     initial["name"].value = "Name";
     initial["verfuegbarkeit"].value = 1;
     initial["preis"].value = 0;
+    initial["gewicht"].value = 0;
 
     return initial;
 }
@@ -43,7 +44,7 @@ export function NewBrotBestandModal(props) {
         close();
     };
 
-    const title = "BrotBestand erstellen";
+    const title = "Brotprodukt erstellen";
 
     const mapper = ([accessor, {name, value}]) => {
         const onChange = function ({target: {value}}) {
@@ -54,7 +55,7 @@ export function NewBrotBestandModal(props) {
         };
         let edit = <input
                 name={name}
-                value={value}
+                placeholder={value}
                 onChange={onChange}
                 style={{width: "100%"}}/>;
         if (accessor === "verfuegbarkeit") {
@@ -73,7 +74,7 @@ export function NewBrotBestandModal(props) {
                         name={name}
                         type="number"
                         min="0"
-                        value={value}
+                        placeholder={value}
                         onChange={function ({target: {value}}) {
                             const changed = {};
                             changed[accessor] = {name, value};
@@ -91,7 +92,7 @@ export function NewBrotBestandModal(props) {
                         name={name}
                         type="number"
                         min="0"
-                        value={value}
+                        placeholder={value}
                         onChange={function ({target: {value}}) {
                             const changed = {};
                             changed[accessor] = {name, value};

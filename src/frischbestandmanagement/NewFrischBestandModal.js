@@ -13,6 +13,7 @@ function defaultData(columns) {
     initial["name"].value = "Name";
     initial["verfuegbarkeit"].value = 1;
     initial["herkunftsland"].value = "DE";
+    initial["verband"].value = "DB";
     initial["gebindegroesse"].value = 0;
     initial["preis"].value = 0;
 
@@ -56,7 +57,7 @@ export function NewFrischBestandModal(props) {
         close();
     };
 
-    const title = "FrischBestand erstellen";
+    const title = "Frischprodukt erstellen";
 
     const mapper = ([accessor, {name, value}]) => {
         const onChange = function ({target: {value}}) {
@@ -77,10 +78,10 @@ export function NewFrischBestandModal(props) {
         };
         let edit = <input
                 name={name}
-                value={value}
+                placeholder={value}
                 onChange={onChange}
                 style={{width: "100%"}}/>;
-        if (accessor === "verfuegbarkeit") {
+        if (accessor === "verfuegbarkeit" || accessor === "spezialfallBestelleinheit") {
             edit = <input
                 type="checkbox"
                 checked={value}
@@ -113,7 +114,7 @@ export function NewFrischBestandModal(props) {
                         name={name}
                         type="number"
                         min="0"
-                        value={value}
+                        placeholder={value}
                         onChange={function ({target: {value}}) {
                             const changed = {};
                             changed[accessor] = {name, value};
@@ -132,7 +133,7 @@ export function NewFrischBestandModal(props) {
                         name={name}
                         type="number"
                         min="0"
-                        value={value}
+                        placeholder={value}
                         onChange={function ({target: {value}}) {
                             const changed = {};
                             changed[accessor] = {name, value};

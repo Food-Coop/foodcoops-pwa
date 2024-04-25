@@ -12,8 +12,9 @@ function defaultData(columns) {
     const initial = Object.fromEntries(columns.map(convert));
 
     initial["name"].value = "Produktname";
-    initial["lagerbestand.istLagerbestand"].value = 0.0;
-    initial["lagerbestand.sollLagerbestand"].value = 0.0;
+    initial["lagerbestand.istLagerbestand"].value = 0;
+    initial["lagerbestand.sollLagerbestand"].value = 0;
+    initial["preis"].value = 0;
 
     return initial;
 }
@@ -74,7 +75,7 @@ export function NewProduktModal(props) {
         };
         let edit = <input
                 name={name}
-                value={value}
+                placeholder={value}
                 onChange={onChange}
                 style={{width: "100%"}}/>;
 
@@ -104,7 +105,7 @@ export function NewProduktModal(props) {
                         name={name}
                         type="number"
                         min="0"
-                        value={value}
+                        placeholder={value}
                         onChange={function ({target: {value}}) {
                             const changed = {};
                             changed[accessor] = {name, value};
@@ -122,7 +123,7 @@ export function NewProduktModal(props) {
                         name={name}
                         type="number"
                         min="0"
-                        value={value}
+                        placeholder={value}
                         onChange={function ({target: {value}}) {
                             const changed = {};
                             changed[accessor] = {name, value};
@@ -140,7 +141,7 @@ export function NewProduktModal(props) {
                         name={name}
                         type="number"
                         min="0"
-                        value={value}
+                        placeholder={value}
                         onChange={function ({target: {value}}) {
                             const changed = {};
                             changed[accessor] = {name, value};

@@ -31,7 +31,7 @@ export function EditBrotBestandModal(props) {
         ...newData
     };
 
-    const title = "BrotBestand bearbeiten";
+    const title = "Brotprodukt bearbeiten";
 
     const mapper = ([accessor, {name, value}]) => {
         if (accessor === "verfuegbarkeit") {
@@ -111,7 +111,7 @@ export function EditBrotBestandModal(props) {
         .map(mapper);
 
     const footer = <>
-        <Button variant="danger" onClick={remove}>BrotBestand löschen</Button>
+        <Button variant="danger" onClick={remove}>Produkt löschen</Button>
         <Button onClick={close}>Änderungen verwerfen</Button>
         <Button onClick={save}>Änderungen übernehmen</Button>
     </>;

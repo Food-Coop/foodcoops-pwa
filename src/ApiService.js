@@ -52,6 +52,7 @@ export const ApiProvider = (props) => {
         createEinkauf: props.createEinkauf || createEinkauf,
         deleteEinkauf: props.deleteEinkauf || deleteEinkauf,
         createBestandBuyObject: props.createBestandBuyObject || createBestandBuyObject,
+        sendMailToEinkaufsmanagement: props.sendMailToEinkaufsmanagement || sendMailToEinkaufsmanagement,
 
         readBestellUebersicht: props.readBestellUebersicht || readBestellUebersicht,
         readDiscrepancyOverviwe: props.readDiscrepancyOverviwe || readDiscrepancyOverviwe,
@@ -134,6 +135,7 @@ export const useApi = () => {
         createEinkauf,
         deleteEinkauf,
         createBestandBuyObject,
+        sendMailToEinkaufsmanagement,
 
         readBestellUebersicht,
         readDiscrepancyOverviwe,
@@ -174,6 +176,7 @@ const DEADLINE = "deadline/";
 const LAST = "last/";
 const CURRENT = "getEndDateOfDeadline/";
 const EINKAUF = "einkauf/";
+const MAILTOEINKAUFSMANAGEMENT = "mailToEinkaufsmanagement/";
 const PDF = "pdf/";
 const BESTANDBUYOBJECT = "einkaufe/create/bestandBuyObject";
 const BESTELLUEBERSICHT = "bestellUebersicht/";
@@ -481,6 +484,15 @@ const createBestandBuyObject = (data) =>
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({...data, id: "undefined"}),
+    });
+
+const sendMailToEinkaufsmanagement = (id, data) =>
+    fetch(BACKEND_URL + EINKAUF + MAILTOEINKAUFSMANAGEMENT + id, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
     });
 
 

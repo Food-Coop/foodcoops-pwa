@@ -9,7 +9,7 @@
 .tableFixHead { 
     overflow: auto;
     height: auto; 
-    max-height: calc(100vh - 480px - 6px);
+    max-height: calc(100vh - 430px - 6px);
 }
 
 .tFH-kontrolle {

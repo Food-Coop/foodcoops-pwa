@@ -46,7 +46,7 @@ export function FrischBestandManagement() {
                 accessor: 'einheit.name',
             },
             {
-                Header: 'Spezialfall',
+                Header: 'Spezialfall Bestelleinheit',
                 accessor: 'spezialfallBestelleinheit',
             },
             {

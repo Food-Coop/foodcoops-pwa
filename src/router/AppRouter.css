@@ -33,14 +33,26 @@
     height: 100px;
     width: 100px;
   }
-  .CurrentSiteName {
+
+  .HeaderSpacer {
     position: absolute;
     right: 40%;
     left: 40%;
+  }
+
+  .CurrentUserName {
+    font-family: 'Arial', sans-serif;
+    color: #333;
+    font-size: var(--current-user-name-font-size);
+    margin-top: 0%;
+  }
+
+  .CurrentSiteName {
     font-family: 'Arial', sans-serif;
     text-transform: uppercase;
     color: #333;
     font-size: var(--current-site-name-font-size);
+    margin-bottom: 0%;
   }
 
   @media (max-width: 1220px) {

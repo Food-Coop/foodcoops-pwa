@@ -291,7 +291,7 @@ export function MainEinkauf( { isLarge }) {
           <h4><span className={isLarge ? 'price-large' : 'price'}><NumberFormatComponent value={totalPrice.toFixed(2)} /></span> <span className="currency">€</span></h4>
         </div>
         <Button className="confirm-button" variant="success" onClick={submitEinkauf}>
-          Einkauf bestätigen	
+          Einkauf bestätigen als <b>{keycloak.tokenParsed.preferred_username}</b>
         </Button>
         <ToastContainer/>
       </div>

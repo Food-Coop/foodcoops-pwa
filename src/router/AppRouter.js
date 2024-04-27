@@ -54,7 +54,8 @@ const AppContent = ({ menuOpen, toggleMenu }) => {
 
   useEffect(() => {
     document.documentElement.style.setProperty('--font-size', isLarge ? '1.5em' : '1em');
-    document.documentElement.style.setProperty('--current-site-name-font-size', isLarge ? '1.5em' : '34px');
+    document.documentElement.style.setProperty('--current-site-name-font-size', isLarge ? '1.5em' : '30px');
+    document.documentElement.style.setProperty('--current-user-name-font-size', isLarge ? '1.1em' : '20px');
     document.documentElement.style.setProperty('--deadline-font-size', isLarge ? '1.5em' : '20px');
     document.documentElement.style.setProperty('--zuVielzuWenigFrischEinkauf-font-size', isLarge ? '1em' : '15px');
     document.documentElement.style.setProperty('--checkbox-size', isLarge ? '30px' : '15px');
@@ -185,7 +186,12 @@ const AppContent = ({ menuOpen, toggleMenu }) => {
             {itemsList()}
           </div>
         </Drawer>
-        <h1 className='CurrentSiteName'>{getPageName()}</h1>
+        <span className='HeaderSpacer'>
+          <h1 className='CurrentSiteName'>{getPageName()}</h1> 
+          <span className='CurrentUserName'>
+            {keycloak.tokenParsed ? `(${keycloak.tokenParsed.preferred_username})` : ''}
+        </span>
+        </span>
         <Link to="/home">
           <img className="LogoImage" src="manifest-icon-512.png" alt="logo" />
         </Link>

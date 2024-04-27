@@ -225,7 +225,7 @@ export function Brot(){
                 </Alert>
                 {content()}
                 <h4 id = "preis"></h4>
-                <Button className='buttonForSubmitting' variant="success" onClick={() => submitBestellung()}>Bestellung bestätigen</Button>
+                <Button className='buttonForSubmitting' variant="success" onClick={() => submitBestellung()}>Bestellung bestätigen als <b>{keycloak.tokenParsed.preferred_username}</b></Button>
                 <ToastContainer />
             </div>
         </div>

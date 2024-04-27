@@ -79,7 +79,6 @@ export function MainEinkauf( { isLarge }) {
             .then(data => {
                 if (data !== null) {
                     setDeliveryCostPercentage(data.deliverycost);
-                    //document.getElementById(einkaufEmailTextId).value = data.einkaufEmailText;
                 }
             })
             .catch(error => {

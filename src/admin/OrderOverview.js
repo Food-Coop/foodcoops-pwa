@@ -328,7 +328,7 @@ export function OrderOverview() {
                                 if(cell.column.Header === "Zu bestellende Gebinde"){
                                 let id = "InputfieldGebinde" + row.index;
                                 return(
-                                    <td key={`${row.original.id}-${cell.column.Header}Gebinde`}><input placeholder={row.original.zuBestellendeGebinde} id={id} type="number"></input></td>
+                                    <td key={`${row.original.id}-${cell.column.Header}Gebinde`}><input placeholder={(row.original.zuBestellendeGebinde.toString()).replace('.', ',')} id={id} type="number"></input></td>
                                 );
                                 } else {
                                 return <td key={`${row.original.id}-${cell.column.Header}Gebinde`} {...cell.getCellProps()}>{cell.render('Cell')}</td>

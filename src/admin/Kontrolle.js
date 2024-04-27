@@ -128,8 +128,9 @@ export function Kontrolle() {
           const discrepancy = row.cells[1].value;
           if (discrepancy !== 0 && row.original.bestand.kategorie.mixable) {
               if (currentCategory !== null && row.original.bestand.kategorie.name !== currentCategory) {
+                  let formattedTotal = Number.isInteger(currentCategoryTotal) ? currentCategoryTotal : currentCategoryTotal.toFixed(2);
                   insgesamtIndexes.push(tableData.length-1);
-                  tableData.push([`Insgesamt Zu Viel / Zu Wenig für Kategorie ${currentCategory}`, currentCategoryTotal.toString().replace('.', ','), currentEinheit]);
+                  tableData.push([`Insgesamt Zu Viel / Zu Wenig für Kategorie ${currentCategory}`, formattedTotal.toString().replace('.', ','), currentEinheit]);
                   currentCategoryTotal = 0;
               }
     
@@ -152,8 +153,9 @@ export function Kontrolle() {
       });
     
       if (currentCategory !== null) {
-          insgesamtIndexes.push(tableData.length-1);
-          tableData.push([`Insgesamt Zu Viel / Zu Wenig für Kategorie ${currentCategory}`, currentCategoryTotal.toString().replace('.', ','), currentEinheit]);
+        let formattedTotal = Number.isInteger(currentCategoryTotal) ? currentCategoryTotal : currentCategoryTotal.toFixed(2);
+        insgesamtIndexes.push(tableData.length-1);
+        tableData.push([`Insgesamt Zu Viel / Zu Wenig für Kategorie ${currentCategory}`, formattedTotal.toString().replace('.', ','), currentEinheit]);
       }
       
       rows.forEach((row, index) => {
@@ -180,7 +182,7 @@ export function Kontrolle() {
             if (data.section === 'body' && insgesamtIndexes.includes(data.row.index)) {
               doc.setDrawColor(0);
               doc.setLineWidth(1);
-              doc.line(data.cell.x, data.cell.y + data.cell.height, data.cell.x + data.cell.width, data.cell.y + data.cell.height); // Bottom border
+              doc.line(data.cell.x, data.cell.y + data.cell.height, data.cell.x + data.cell.width, data.cell.y + data.cell.height);
             }
           }
       });
@@ -256,7 +258,7 @@ export function Kontrolle() {
             rowsWithTotals.push(
               <tr style={{ borderBottom: '2px solid grey', borderTop: '1px solid' }} key={`total-${currentCategory}`}>
                 <td>Insgesamt Zu Viel / Zu Wenig für Kategorie <em>{currentCategory}</em></td>
-                <td><b>{totalZuVielZuWenig.toString().replace('.', ',')}</b></td>
+                <td><b><NumberFormatComponent value={totalZuVielZuWenig} includeFractionDigits={false}/></b></td>
                 <td>{currentEinheit}</td>
               </tr>
             );
@@ -289,7 +291,7 @@ export function Kontrolle() {
       rowsWithTotals.push(
         <tr style={{ borderBottom: '2px solid grey' }} key={`total-${currentCategory}`}>
           <td>Insgesamt Zu Viel / Zu Wenig für Kategorie <em>{currentCategory}</em></td>
-          <td><b>{totalZuVielZuWenig.toString().replace('.', ',')}</b></td>
+          <td><b><NumberFormatComponent value={totalZuVielZuWenig} includeFractionDigits={false}/></b></td>
           <td>{currentEinheit}</td>
         </tr>
       );

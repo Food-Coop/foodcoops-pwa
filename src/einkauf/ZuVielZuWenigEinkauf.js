@@ -119,7 +119,7 @@ export function ZuVielZuWenigEinkauf(props) {
     };
 
     const content = () => {
-      if (discrepancy.length === 0) {
+      if (discrepancy.length === 0 || !discrepancy.some(item => item.zuVielzuWenig > 0)) {
         return null;
       } else {
         return (

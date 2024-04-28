@@ -245,7 +245,7 @@ export function MainEinkauf( { isLarge }) {
           </AccordionSummary>
           <AccordionDetails>
             <ZuVielZuWenigEinkauf onPriceChange={handleDiscrepancyPriceChange} handleDiscrepancy={handleDiscrepancy} forceUpdate={forceUpdate}/>
-            {discrepancy.length === 0 ? (
+            {(discrepancy.length === 0 || !discrepancy.some(item => item.zuVielzuWenig > 0)) ? (
               "Es gibt diese Woche keine Produkte auf der Zu Viel-Liste."
             ) : (
               <h5>Zu Viel-Preis: <NumberFormatComponent value={totalDiscrepancyPrice.toFixed(2)} /> €</h5>

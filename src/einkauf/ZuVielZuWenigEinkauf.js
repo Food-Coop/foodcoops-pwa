@@ -167,11 +167,17 @@ export function ZuVielZuWenigEinkauf(props) {
                           );
                         } else if (cell.column.Header === "Insgesamt Zu Viel / Zu Wenig für die Kategorie") {
                           let sum = calculateSum(rows, row.original.bestand.kategorie.name);
-                          return(
+                          if (row.original.bestand.kategorie.mixable) {
+                            return(
                               <td className="word-wrap" key={`${row.original.id}-${cell.column.Header}ZuViel`} style={{color: row.original.bestand.verfuegbarkeit === false ? NotAvailableColor : ''}}>
-                                  <NumberFormatComponent value={sum} includeFractionDigits={false}/>
+                                <NumberFormatComponent value={sum} includeFractionDigits={false}/>
                               </td>
-                          );
+                            );
+                          } else {
+                            return(
+                              <td className="word-wrap" key={`${row.original.id}-${cell.column.Header}ZuViel`} style={{color: row.original.bestand.verfuegbarkeit === false ? NotAvailableColor : ''}}></td>
+                            ); 
+                          }
                         } else if(cell.column.Header === "zu Viel"){
                           return(
                             <td className="word-wrap" key={`${row.original.id}-${cell.column.Header}ZuViel`} style={{color: row.original.bestand.verfuegbarkeit === false ? NotAvailableColor : ''}} {...cell.getCellProps()}>{cell.render('Cell')}</td>

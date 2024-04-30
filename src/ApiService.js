@@ -68,12 +68,15 @@ export const ApiProvider = (props) => {
         sendTotalBestellUebersicht: props.sendTotalBestellUebersicht || sendTotalBestellUebersicht,
         sendBrotOrder: props.sendBrotOrder || sendBrotOrder,
         sendFrischOrder: props.sendFrischOrder || sendFrischOrder,
+        sendBreadOrderWithPersons: props.sendBreadOrderWithPersons || sendBreadOrderWithPersons,
+        sendInventoryStatus: props.sendInventoryStatus || sendInventoryStatus,
         getBestellUebersichtPdf: props.getBestellUebersichtPdf || getBestellUebersichtPdf,
         getUebersichtBrotPdf: props.getUebersichtBrotPdf || getUebersichtBrotPdf,
         getUebersichtFrischPdf: props.getUebersichtFrischPdf || getUebersichtFrischPdf,
         getBestellUebersichtByte: props.getBestellUebersichtByte || getBestellUebersichtByte,
         getUebersichtBrotByte: props.getUebersichtBrotByte || getUebersichtBrotByte,
         getUebersichtFrischByte: props.getUebersichtFrischByte || getUebersichtFrischByte,
+        getBreadWithPersonPDFasByte: props.getBreadWithPersonPDFasByte || getBreadWithPersonPDFasByte,
     };
 
     return (
@@ -151,12 +154,15 @@ export const useApi = () => {
         sendTotalBestellUebersicht,
         sendBrotOrder,
         sendFrischOrder,
+        sendBreadOrderWithPersons,
+        sendInventoryStatus,
         getBestellUebersichtPdf,
         getUebersichtBrotPdf,
         getUebersichtFrischPdf,
         getBestellUebersichtByte,
         getUebersichtBrotByte,
         getUebersichtFrischByte,
+        getBreadWithPersonPDFasByte,
     };
 };
 
@@ -576,6 +582,24 @@ const sendFrischOrder = (email) =>
         body: email,
     });
 
+const sendBreadOrderWithPersons = (email) =>
+    fetch(BACKEND_URL + EMAIL + SEND + "brotBestellungenMitPersonen", {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: email,
+    });
+
+const sendInventoryStatus = (email, base64String) =>
+    fetch(BACKEND_URL + EMAIL + SEND + "lagerbestand" + email, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: base64String,
+    });
+
 const getBestellUebersichtPdf = () =>
     fetch(BACKEND_URL + PDF + DOWNLOAD + "bestellUebersicht");
 
@@ -593,3 +617,6 @@ const getUebersichtBrotByte = () =>
 
 const getUebersichtFrischByte = () =>
     fetch(BACKEND_URL + PDF + BYTE + "frischBestellungen");
+
+const getBreadWithPersonPDFasByte = () =>
+    fetch(BACKEND_URL + PDF + BYTE + "brotMitPerson");

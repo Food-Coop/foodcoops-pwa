@@ -24,7 +24,6 @@ export function BestellungTable({ columns, data, skipPageReset }) {
             getSubRows: row => row.produkte,
             autoResetPage: !skipPageReset,
             autoResetExpanded: !skipPageReset,
-            initialState: { sortBy: [{ id: 'kategorie.name' }] },
         },
         useSortBy,
         useExpanded
@@ -87,7 +86,8 @@ export function BestellungTable({ columns, data, skipPageReset }) {
             </ClickAwayListener>
                 <Button style={{margin: "0.5em 1em 0.5em 0"}} variant="primary" onClick={() => setValuesToBestellungVorwoche()}>Bestellmenge Vorwoche laden</Button>
             </div>
-        <BTable striped bordered hover size="sm" {...getTableProps()}>
+            <div className="tableFixHead">
+            <BTable striped bordered hover size="sm" {...getTableProps()}>
             <thead>
             {headerGroups.map(headerGroup => (
                 <tr {...headerGroup.getHeaderGroupProps()}>
@@ -130,22 +130,17 @@ export function BestellungTable({ columns, data, skipPageReset }) {
                                     } else if(cell.column.Header === "Preis in €"){
                                         let id = "PreisId" + row.index;
                                         return(
-                                            <td className="word-wrap" style={{color: data[row.index].verfuegbarkeit === false ? NotAvailableColor : ''}} key={row.index} {...props} id = {id}>{cell.render('Cell')}</td>
+                                            <td className="word-wrap" style={{color: data[row.index].verfuegbarkeit === false ? NotAvailableColor : ''}} key={row.index} {...props}>
+                                                <span id = {id}>{cell.render('Cell')}</span>
+                                                <span>{data[row.index].spezialfallBestelleinheit === true ? ' (Kg)' : ''}</span>
+                                            </td>
                                         );
-                                    } else if(cell.column.Header === "aktuelle Bestellmenge" || cell.column.Header === "Bestellmenge (alle Mitglieder)"){
+                                    } else if(cell.column.Header === "Einheit"){
                                         return(
-                                            <td className="word-wrap" style={{color: data[row.index].verfuegbarkeit === false ? NotAvailableColor : ''}} key={row.index}{...props} >{cell.render('Cell')}</td>
+                                            <td className="word-wrap" style={{color: data[row.index].verfuegbarkeit === false ? NotAvailableColor : ''}} key={row.index}{...props} >
+                                              {data[row.index].spezialfallBestelleinheit === true ? <span style={{fontWeight: 'bold', color: 'red'}}>Stück</span> : cell.render('Cell')} 
+                                            </td>
                                         );
-                                    } else if(cell.column.Header === "Gebindegröße"){
-                                        if(data[row.index].spezialfallBestelleinheit === true){
-                                            return(
-                                                <td className="word-wrap" style={{color: data[row.index].verfuegbarkeit === false ? NotAvailableColor : ''}} key={row.index}{...props} >{cell.render('Cell')} (Stück)</td>
-                                            );
-                                        } else {
-                                            return(
-                                                <td className="word-wrap" style={{color: data[row.index].verfuegbarkeit === false ? NotAvailableColor : ''}} key={row.index}{...props} >{cell.render('Cell')}</td>
-                                            );
-                                        }
                                     } else{
                                         return (
                                             <td className="word-wrap" style={{color: data[row.index].verfuegbarkeit === false ? NotAvailableColor : ''}} key={row.index} {...props}>{cell.render('Cell')}</td>
@@ -157,6 +152,7 @@ export function BestellungTable({ columns, data, skipPageReset }) {
             })}
             </tbody>
         </BTable>
+        </div>
         </div>
     )
 }

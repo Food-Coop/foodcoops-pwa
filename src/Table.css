@@ -2,6 +2,47 @@
     word-break: break-word;
 }
 
+.buttonForSubmitting {
+    margin: 2px 0.25rem 4px 0.25rem;
+}
+
+.tableFixHead { 
+    overflow: auto;
+    height: auto; 
+    max-height: calc(100vh - 430px - 6px);
+}
+
+.tFH-kontrolle {
+    width: 100vw;
+    height: calc(100vh - 335px);
+    max-height: calc(100vh - 335px);
+}
+
+.tFH-management {
+    overflow: auto;
+    height: calc(100vh - 250px);
+    max-height: calc(100vh - 250px);
+}
+
+.tableFixHead thead th::after  {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.tableFixHead thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+BTable  { border-collapse: collapse; width: 100%; }
+th     { background:#eee; }
+
 .bestellung-inputfield-size {
     width: 200px;
  }

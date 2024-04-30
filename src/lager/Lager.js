@@ -12,6 +12,9 @@ import {NewProduktModal} from './NewProduktModal';
 import {deepAssign, deepClone} from '../util';
 import {EditEinheitenModal} from "./EditEinheitenModal";
 import NumberFormatComponent from '../logic/NumberFormatComponent';
+import {jsPDF} from "jspdf";
+import autoTable from 'jspdf-autotable';
+import { useKeycloak } from "@react-keycloak/web";
 
 export function Lager() {
 
@@ -56,6 +59,7 @@ export function Lager() {
     const [reducerValue, forceUpdate] = React.useReducer(x => x+1, 0);
 
     const api = useApi();
+    const { keycloak } = useKeycloak();
 
     React.useEffect(
         () => {
@@ -241,6 +245,31 @@ export function Lager() {
         })
     }
 
+    const createPDF = () => {
+        const doc = new jsPDF();
+
+        const currentDate = new Date();
+        const formattedDate1 = `${currentDate.getDate()}.${currentDate.getMonth()+1}.${currentDate.getFullYear()}`;
+        const formattedDate2 = `${currentDate.getDate()}-${currentDate.getMonth()+1}-${currentDate.getFullYear()}`;
+        
+        doc.text("Einkaufsliste Lager " +formattedDate1, 14, 10);
+        const pdfData = data.map(row => {
+            const productName = row.name;
+            const sollLagerbestand = row.lagerbestand.sollLagerbestand;
+            const istLagerbestand = row.lagerbestand.istLagerbestand;
+            const differenz = sollLagerbestand - istLagerbestand;
+            return {productName, differenz};
+        })
+        .filter(({ differenz }) => differenz !== 0)
+        .map(({ productName, differenz }) => [productName, differenz]);;
+
+        doc.autoTable({
+            head: [['Produktname', 'Fehlende Menge']],
+            body: pdfData,
+        });
+        doc.save(`Einkaufsliste-Lager-${formattedDate2}.pdf`);
+    }
+    
     const content = () => {
         if (isLoading) {
             return (
@@ -264,7 +293,8 @@ export function Lager() {
                 <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("KategorienModal")}>Kategorie erstellen</Button>
                 <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("NewProduktModal")}>Produkt erstellen</Button>
                 <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("EinheitenModal")}>Einheiten erstellen</Button>
-                <Button style={{margin:"0.25rem"}} variant="success" onClick={() => window.open("http://152.53.32.66:8080/externeliste")}>Externe Einkaufsliste</Button>
+                <Button style={{margin:"0.25rem"}} onClick={createPDF}>Download Einkaufsliste</Button>
+                
             </Row>
             <div style={{overflowX: "auto", width: "100%"}}>
                 {content()}

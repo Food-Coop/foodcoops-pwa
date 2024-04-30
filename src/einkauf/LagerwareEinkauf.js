@@ -45,7 +45,7 @@ export function LagerwareEinkauf(props) {
         rows,
         prepareRow,
         
-      } = useTable({ columns, data: produkt, initialState: { sortBy: [{ id: 'name' }] }, }, useSortBy)
+      } = useTable({ columns, data: produkt, }, useSortBy)
 
     const handleChange = (e, max, name) => {
       let value = e.target.value;
@@ -100,6 +100,7 @@ export function LagerwareEinkauf(props) {
         return null;
       } else {
         return (
+          <div className="tableFixHead">
         <BTable striped bordered hover size="sm" {...getTableProps()}>
           <thead>
             {headerGroups.map(headerGroup => (
@@ -140,6 +141,7 @@ export function LagerwareEinkauf(props) {
             })}
           </tbody>
           </BTable>
+          </div>
     );
   }}
 

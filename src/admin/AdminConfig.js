@@ -12,14 +12,17 @@ import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 
 export function AdminConfig() {
     const api = useApi();
-    const [einkaufEmailText, setEinkaufEmailText] = useState('');
 
     const deliveryCostId = "deliveryCostId";
+    const thresholdId = "thresholdId";
     const einkaufEmailTextId = "einkaufEmailTextId";
-    const emailFromBestellAdminId = "emailFromBestellAdminId";
-    const emailFromEinkaufAdminId = "emailFromEinkaufAdminId";
+    const einkaufsmanagementEmailTextId = "einkaufsmanagementEmailTextId";
+    const lagermeisterEmailTextId = "lagermeisterEmailTextId";
 
     const [open, setOpen] = React.useState(false);
+    const [open2, setOpen2] = React.useState(false);
+    const [open3, setOpen3] = React.useState(false);
+    const [open4, setOpen4] = React.useState(false);
 
     const handleTooltipClose = () => {
       setOpen(false);
@@ -27,6 +30,30 @@ export function AdminConfig() {
   
     const handleTooltipOpen = () => {
       setOpen(true);
+    };
+
+    const handleTooltipClose2 = () => {
+        setOpen2(false);
+    };
+
+    const handleTooltipOpen2 = () => {
+        setOpen2(true);
+    };
+
+    const handleTooltipClose3 = () => {
+        setOpen3(false);
+    };
+
+    const handleTooltipOpen3 = () => {
+        setOpen3(true);
+    };
+
+    const handleTooltipClose4 = () => {
+        setOpen4(false);
+    };
+
+    const handleTooltipOpen4 = () => {
+        setOpen4(true);
     };
 
     const einkaufEmailExplanation = (
@@ -58,25 +85,103 @@ export function AdminConfig() {
         </div>
       );
 
+      const einkaufsmanagementEmailExplanation = (
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <ClickAwayListener onClickAway={handleTooltipClose2}>
+                <div >
+                    <CustomTooltip onClose={handleTooltipClose2}
+                        open={open2}
+                        disableFocusListener
+                        disableHoverListener
+                        disableTouchListener
+                        title={
+                        <React.Fragment>
+                            <Typography>Das ist der Text, der in der E-Mail steht, die nach einem Einkauf eines Mitglieds an die Leute des Einkaufsmanagement geschickt wird.<br />
+                            <b>Hinweis</b><br/>
+                            Platzhalter stehen innerhalb von %-Zeichen und werden durch die entsprechenden Werte ersetzt.<br />
+                            Der Username ist <em>%personID%</em>, das aktuelle Datum <em>%currentDate%</em>.<br />
+                            Die Kosten des Frischeinkaufs können mit <em>%frischKosten%</em> eingefügt werden. Ebenso gilt das für <em>%brotKosten%, %lagerKosten%, %zuVielKosten%, %lieferKosten%</em> und <em>%gesamtKosten%</em>.
+                            </Typography>
+                        </React.Fragment>
+                        }
+                        placement="right" arrow>
+                        <IconButton onClick={handleTooltipOpen2}>
+                            <HelpOutlineIcon />
+                        </IconButton>
+                    </CustomTooltip>
+                </div>
+            </ClickAwayListener>
+        </div>
+    );
+    
+    const lagermeisterEmailExplanation = (
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <ClickAwayListener onClickAway={handleTooltipClose3}>
+                <div >
+                    <CustomTooltip onClose={handleTooltipClose3}
+                        open={open3}
+                        disableFocusListener
+                        disableHoverListener
+                        disableTouchListener
+                        title={
+                        <React.Fragment>
+                            <Typography>Das ist der Text, der in der E-Mail steht, die an den Lagermeister geschickt wird, wenn dieser den aktuellen Lagerbestand der Trockenware anfordert.<br />
+                            <b>Hinweis</b><br/>
+                            Platzhalter stehen innerhalb von %-Zeichen und werden durch die entsprechenden Werte ersetzt.<br />
+                            Der Username ist <em>%personID%</em>.
+                            </Typography>
+                        </React.Fragment>
+                        }
+                        placement="right" arrow>
+                        <IconButton onClick={handleTooltipOpen3}>
+                            <HelpOutlineIcon />
+                        </IconButton>
+                    </CustomTooltip>
+                </div>
+            </ClickAwayListener>
+        </div>
+    );
+
+    const thresholdExplanation = (
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <ClickAwayListener onClickAway={handleTooltipClose4}>
+                <div >
+                    <CustomTooltip onClose={handleTooltipClose4}
+                        open={open4}
+                        disableFocusListener
+                        disableHoverListener
+                        disableTouchListener
+                        title={
+                        <React.Fragment>
+                            <Typography>
+                                Der Threshold ist der Schwellwert ab dem ein Gebinde bestellt werden soll.<br/>
+                                <b>Beispiel</b><br/>
+                                Wenn der Schwellwert bei 80 % liegt, wird bei einer Gebindegröße von 10 kg ein Gebinde bestellt, wenn die insgesamte Bestellmenge 8 kg beträgt.
+                            </Typography>
+                        </React.Fragment>
+                        }
+                        placement="right" arrow>
+                        <IconButton onClick={handleTooltipOpen4}>
+                            <HelpOutlineIcon />
+                        </IconButton>
+                    </CustomTooltip>
+                </div>
+            </ClickAwayListener>
+        </div>
+    );
+
     useEffect(() => {
         const fetchConfigData = () => {
             api.readConfig()
                 .then(response => response.json())
                 .then(data => {
                     if (data !== null) {
-                        setEinkaufEmailText(data.einkaufEmailText);
                         document.getElementById(deliveryCostId).value = data.deliverycost;
-                        if (data.emailFromBestellAdmin === null) {
-                            document.getElementById(emailFromBestellAdminId).value = '';
-                        } else {
-                            document.getElementById(emailFromBestellAdminId).value = data.emailFromBestellAdmin;
-                        }
-                        if (data.emailFromEinkaufAdmin === null) {
-                            document.getElementById(emailFromEinkaufAdminId).value = '';
-                        } else {
-                            document.getElementById(emailFromEinkaufAdminId).value = data.emailFromEinkaufAdmin;
-                        }
+                        document.getElementById(thresholdId).value = data.threshold;
+                        
                         document.getElementById(einkaufEmailTextId).value = data.einkaufEmailText;
+                        document.getElementById(einkaufsmanagementEmailTextId).value = data.einkaufsmanagementEmailText;
+                        document.getElementById(lagermeisterEmailTextId).value = data.lagermeisterEmailText;
                     }
                 })
                 .catch(error => {
@@ -89,13 +194,13 @@ export function AdminConfig() {
     const handleSubmit = async () => {
 
         let param1 = document.getElementById(deliveryCostId)?.value;
-        let param2 = document.getElementById(emailFromEinkaufAdminId)?.value;
-        let param3 = document.getElementById(emailFromEinkaufAdminId)?.value;
-        let param4 = document.getElementById(einkaufEmailTextId)?.value;
-        console.log(param1, param2, param3, param4);
+        let param2 = document.getElementById(thresholdId)?.value;
+        let param3 = document.getElementById(einkaufEmailTextId)?.value;
+        let param4 = document.getElementById(einkaufsmanagementEmailTextId)?.value;
+        let param5 = document.getElementById(lagermeisterEmailTextId)?.value;
     
         try {
-            const response = await api.updateConfig({ deliverycost: param1, emailFromBestellAdmin: param2, emailFromEinkaufAdmin: param3, einkaufEmailText: param4});
+            const response = await api.updateConfig({ deliverycost: param1, threshold: param2, einkaufEmailText: param3, einkaufsmanagementEmailText: param4, lagermeisterEmailText: param5});
             if (response.ok) {
                 toast.success('Die Daten wurden erfolgreich aktualisiert.');
             } else {
@@ -104,11 +209,6 @@ export function AdminConfig() {
         } catch (error) {
             console.error('Error updating config data:', error);
         }
-    };
-
-    const calculateRows = text => {
-        const lineBreaks = (text.match(/\n/g) || []).length;
-        return lineBreaks + 1;
     };
 
     const content = () => {
@@ -122,18 +222,26 @@ export function AdminConfig() {
                             <td><input className='input' id={deliveryCostId} type="number"/></td>
                         </tr>
                         <tr>
-                            <td className='label'><label>E-Mail des Bestellungs-Admin:</label></td>
-                            <td><input className='input' id={emailFromBestellAdminId} type="text"/></td>
-                        </tr>
-                        <tr>
-                            <td className='label'><label>E-Mail des Einkaufs-Admin:</label></td>
-                            <td><input className='input' id={emailFromEinkaufAdminId} type="text"/></td>
+                            <td className='label'><label>Threshold in %: {thresholdExplanation}</label></td>
+                            <td><input className='input' id={thresholdId} type="number"/></td>
                         </tr>
                         <tr>
                             <td className='label'>
-                                <label>E-Mail-Text: {einkaufEmailExplanation} </label>
+                                <label>E-Mail-Text für Einkauf: {einkaufEmailExplanation} </label>
                             </td>
-                            <td><textarea className='input' id={einkaufEmailTextId} rows={calculateRows(einkaufEmailText)}/></td>
+                            <td><textarea className='input' id={einkaufEmailTextId} rows="10"/></td>
+                        </tr>
+                        <tr>
+                            <td className='label'>
+                                <label>E-Mail-Text für Einkaufsmanagement: {einkaufsmanagementEmailExplanation}</label>
+                            </td>
+                            <td><textarea className='input' id={einkaufsmanagementEmailTextId} rows="10"/></td>
+                        </tr>
+                        <tr>
+                            <td className='label'>
+                                <label>E-Mail-Text für Lagermeister: {lagermeisterEmailExplanation}</label>
+                            </td>
+                            <td><textarea className='input' id={lagermeisterEmailTextId} rows="10"/></td>
                         </tr>
                         </tbody>
                     </table>

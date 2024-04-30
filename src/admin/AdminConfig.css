@@ -20,7 +20,7 @@
 }
 
 @media (max-width: 1700px) {
-    #deliveryCostId {
+    #deliveryCostId, #thresholdId {
         width: 15%;
     }
 
@@ -33,7 +33,7 @@
 }
 
 @media (max-width: 1600px) {
-    #deliveryCostId {
+    #deliveryCostId, #thresholdId {
         width: 15%;
     }
     #emailFromEinkaufAdminId, #emailFromBestellAdminId {
@@ -63,7 +63,7 @@
 }
 
 @media (max-width: 1000px) {
-    #deliveryCostId {
+    #deliveryCostId, #thresholdId {
         width: 30%;
     }
     #emailFromEinkaufAdminId, #emailFromBestellAdminId {
@@ -75,7 +75,7 @@
 }
 
 @media (min-width: 1700px) {
-    #deliveryCostId {
+    #deliveryCostId, #thresholdId {
         width: 15%;
     }
 

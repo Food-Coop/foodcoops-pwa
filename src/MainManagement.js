@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Switch, Route, Link, Redirect, useRouteMatch} 
 import Paper from '@mui/material/Paper';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import { Deadline } from './deadline/Deadline';
 import { Lager } from './lager/Lager';
 import { FrischBestandManagement } from './frischbestandmanagement/FrischBestandManagement';
 import { BrotBestandManagement } from './brotmanagement/BrotBestandManagement';
@@ -30,7 +29,6 @@ export function MainManagement(){
                 <Tab label="Lager" component={Link} to={`${match.url}/lager`} />
                 <Tab label="Frisch" component={Link} to={`${match.url}/frischbestandmanagement`} />
                 <Tab label="Brot" component={Link} to={`${match.url}/brotbestandmanagement`} />
-                <Tab label="Deadline" component={Link} to={`${match.url}/deadline`} />
                 </Tabs>
             </Paper>
             <Switch>
@@ -42,9 +40,6 @@ export function MainManagement(){
                 </Route>
                 <Route exact path={`${match.url}/brotbestandmanagement`}>
                     <BrotBestandManagement />
-                </Route>
-                <Route exact path={`${match.url}/deadline`}>
-                    <Deadline />
                 </Route>
                 <Route>
                     <Redirect to={`${match.url}/lager`}/>

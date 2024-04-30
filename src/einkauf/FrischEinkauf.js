@@ -59,7 +59,7 @@ export function FrischEinkauf(props) {
         rows,
         prepareRow,
         
-      } = useTable({ columns, data: frischBestellung, initialState: { sortBy: [{ id: 'frischbestand.kategorie.name' }] }, }, useSortBy)
+      } = useTable({ columns, data: frischBestellung, }, useSortBy)
 
     const handleChange = () => {
         let preis = 0;
@@ -146,6 +146,7 @@ export function FrischEinkauf(props) {
         return null;
       } else {
         return (
+          <div className="tableFixHead">
           <BTable striped bordered hover size="sm" {...getTableProps()}>
             <thead>
               {headerGroups.map(headerGroup => (
@@ -175,7 +176,10 @@ export function FrischEinkauf(props) {
                             if (cell.column.Header === "Preis in €"){
                               let id = "PreisIdFrisch" + row.index;
                               return(
-                                <td className="word-wrap" key={`${row.original.id}-${cell.column.Header}Frisch`} style={{color: row.original.frischbestand.verfuegbarkeit === false ? NotAvailableColor : '' || discrepancy.zuBestellendeGebinde === 0 ? NotAvailableColor : '' }} id={id} >{cell.render('Cell')}</td>
+                                <td className="word-wrap" key={`${row.original.id}-${cell.column.Header}Frisch`} style={{color: row.original.frischbestand.verfuegbarkeit === false ? NotAvailableColor : '' || discrepancy.zuBestellendeGebinde === 0 ? NotAvailableColor : '' }}>
+                                  <span id = {id}>{cell.render('Cell')}</span>
+                                  <span>{row.original.frischbestand.spezialfallBestelleinheit === true ? ' (Kg)' : ''}</span>
+                                </td>
                               );
                             } else if(cell.column.Header === "genommene Menge"){
                               let id = "InputfieldFrisch" + row.index;
@@ -188,6 +192,12 @@ export function FrischEinkauf(props) {
                                   <td className="word-wrap" key={`${row.original.id}-${cell.column.Header}Frisch`}><input className='einkauf-inputfield-size' id={id} type="number" min="0" step={getStepValue(row.original.frischbestand.einheit.name)} onChange={() => handleChange()} disabled={row.original.frischbestand.verfuegbarkeit === false} ></input></td>
                                 );
                               }
+                            } else if(cell.column.Header === "Einheit"){
+                              return(
+                                  <td className="word-wrap" style={{color: row.original.frischbestand.verfuegbarkeit === false ? NotAvailableColor : ''}} key={row.index}{...props} >
+                                    {row.original.frischbestand.spezialfallBestelleinheit === true ? <span style={{fontWeight: 'bold', color: 'red'}}>{cell.render('Cell')}</span> : cell.render('Cell')} 
+                                  </td>
+                              );
                             } else if(cell.column.Header === "Bestellmenge"){
                               return (
                                 <td className="word-wrap" key={`${row.original.id}-${cell.column.Header}Frisch`} style={{color: row.original.frischbestand.verfuegbarkeit === false ? NotAvailableColor : '' || discrepancy.zuBestellendeGebinde === 0 ? NotAvailableColor : '' }} {...cell.getCellProps()}>
@@ -211,6 +221,7 @@ export function FrischEinkauf(props) {
               }})}
             </tbody>
             </BTable>
+            </div>
         );
       }
     }

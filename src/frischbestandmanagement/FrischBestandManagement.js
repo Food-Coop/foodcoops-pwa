@@ -38,12 +38,16 @@ export function FrischBestandManagement() {
                 Cell: ({ value }) => <NumberFormatComponent value={value} includeFractionDigits={false}/>,
             },
             {
+                Header: 'Kategorie',
+                accessor: 'kategorie.name',
+            },
+            {
                 Header: 'Einheit',
                 accessor: 'einheit.name',
             },
             {
-                Header: 'Kategorie',
-                accessor: 'kategorie.name',
+                Header: 'Spezialfall Bestelleinheit',
+                accessor: 'spezialfallBestelleinheit',
             },
             {
                 Header: 'Preis in €',
@@ -104,11 +108,11 @@ export function FrischBestandManagement() {
         (async function () {
             const response = await api.updateFrischBestand(frischBestand.id, changedData)
             if(response.ok) {
-                toast.success("Das Updaten des Frischbestandes \"" + frischBestand.name + "\" war erfolgreich.");
+                toast.success("Das Updaten des Produktes \"" + frischBestand.name + "\" war erfolgreich.");
                 forceUpdate();
             }
             else{
-                toast.error("Das Updaten des Frischbestandes \"" + frischBestand.name + "\" war aufgrund einer fehlerhaften Eingabe nicht erfolgreich.");
+                toast.error("Das Updaten des Produktes \"" + frischBestand.name + "\" war aufgrund einer fehlerhaften Eingabe nicht erfolgreich.");
             }
         })();
     }
@@ -122,15 +126,15 @@ export function FrischBestandManagement() {
                 if (response.ok) {
                     setSkipPageReset(true);
                     setData(deepClone(old));
-                    toast.success("Das Löschen des Frischbestandes \"" + frischBestand.name + "\" war erfolgreich.");
+                    toast.success("Das Löschen des Produktes \"" + frischBestand.name + "\" war erfolgreich.");
                 } else {
                     const text = await response.text();
-                    toast.error("Das Löschen des Frischbestandes \"" + frischBestand.name + "\" war nicht erfolgreich. Möglicherweise gibt es Bestellungen.");
+                    toast.error("Das Löschen des Produktes \"" + frischBestand.name + "\" war nicht erfolgreich. Möglicherweise gibt es Bestellungen.");
                 }
                 forceUpdate();
             } catch (error) {
                 console.error("Error deleting:", error);
-                toast.error("Ein Fehler ist aufgetreten beim Löschen des Frischbestandes \"" + frischBestand.name + "\"");
+                toast.error("Ein Fehler ist aufgetreten beim Löschen des Produktes \"" + frischBestand.name + "\"");
             }
         })();
     }    
@@ -141,13 +145,13 @@ export function FrischBestandManagement() {
             const response = await api.createFrischBestand(data1);
             if(response.ok) {
                 const newFrischBestand = await response.json();
-                    toast.success("Das Erstellen des Frischbestandes \"" + data1.name + "\" war erfolgreich.");
+                    toast.success("Das Erstellen des Produktes \"" + data1.name + "\" war erfolgreich.");
                     setSkipPageReset(true);
                     setData(old => deepClone([...old, newFrischBestand]));
                     forceUpdate();
             }
             else{
-                toast.error("Das Erstellen des Frischbestandes \"" + data1.name + "\" war nicht erfolgreich. Bitte versuchen Sie es erneut!");
+                toast.error("Das Erstellen des Produktes \"" + data1.name + "\" war nicht erfolgreich. Bitte versuchen Sie es erneut!");
             }
         })();
     };
@@ -272,7 +276,7 @@ export function FrischBestandManagement() {
         <div>
             <Row style={{margin: "1rem"}}>
                 <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("KategorienModal")}>Kategorie erstellen</Button>
-                <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("NewFrischBestandModal")}>Frischbestand erstellen</Button>
+                <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("NewFrischBestandModal")}>Frischprodukt erstellen</Button>
                 <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("EinheitenModal")}>Einheiten erstellen</Button>
             </Row>
 

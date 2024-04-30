@@ -52,6 +52,7 @@ export const ApiProvider = (props) => {
         createEinkauf: props.createEinkauf || createEinkauf,
         deleteEinkauf: props.deleteEinkauf || deleteEinkauf,
         createBestandBuyObject: props.createBestandBuyObject || createBestandBuyObject,
+        sendMailToEinkaufsmanagement: props.sendMailToEinkaufsmanagement || sendMailToEinkaufsmanagement,
 
         readBestellUebersicht: props.readBestellUebersicht || readBestellUebersicht,
         readDiscrepancyOverviwe: props.readDiscrepancyOverviwe || readDiscrepancyOverviwe,
@@ -67,12 +68,15 @@ export const ApiProvider = (props) => {
         sendTotalBestellUebersicht: props.sendTotalBestellUebersicht || sendTotalBestellUebersicht,
         sendBrotOrder: props.sendBrotOrder || sendBrotOrder,
         sendFrischOrder: props.sendFrischOrder || sendFrischOrder,
+        sendBreadOrderWithPersons: props.sendBreadOrderWithPersons || sendBreadOrderWithPersons,
+        sendInventoryStatus: props.sendInventoryStatus || sendInventoryStatus,
         getBestellUebersichtPdf: props.getBestellUebersichtPdf || getBestellUebersichtPdf,
         getUebersichtBrotPdf: props.getUebersichtBrotPdf || getUebersichtBrotPdf,
         getUebersichtFrischPdf: props.getUebersichtFrischPdf || getUebersichtFrischPdf,
         getBestellUebersichtByte: props.getBestellUebersichtByte || getBestellUebersichtByte,
         getUebersichtBrotByte: props.getUebersichtBrotByte || getUebersichtBrotByte,
         getUebersichtFrischByte: props.getUebersichtFrischByte || getUebersichtFrischByte,
+        getBreadWithPersonPDFasByte: props.getBreadWithPersonPDFasByte || getBreadWithPersonPDFasByte,
     };
 
     return (
@@ -134,6 +138,7 @@ export const useApi = () => {
         createEinkauf,
         deleteEinkauf,
         createBestandBuyObject,
+        sendMailToEinkaufsmanagement,
 
         readBestellUebersicht,
         readDiscrepancyOverviwe,
@@ -149,17 +154,20 @@ export const useApi = () => {
         sendTotalBestellUebersicht,
         sendBrotOrder,
         sendFrischOrder,
+        sendBreadOrderWithPersons,
+        sendInventoryStatus,
         getBestellUebersichtPdf,
         getUebersichtBrotPdf,
         getUebersichtFrischPdf,
         getBestellUebersichtByte,
         getUebersichtBrotByte,
         getUebersichtFrischByte,
+        getBreadWithPersonPDFasByte,
     };
 };
 
 //const OLD_BACKEND_URL = "https://foodcoops-backend.herokuapp.com/";
-const BACKEND_URL = "http://152.53.32.66:8080/";
+const BACKEND_URL = "http://152.53.32.66:8081/";
 const KATEGORIEN = "kategorien/";
 const PRODUKTE = "produkte/";
 const EINHEITEN = "einheiten/";
@@ -174,6 +182,7 @@ const DEADLINE = "deadline/";
 const LAST = "last/";
 const CURRENT = "getEndDateOfDeadline/";
 const EINKAUF = "einkauf/";
+const MAILTOEINKAUFSMANAGEMENT = "mailToEinkaufsmanagement/";
 const PDF = "pdf/";
 const BESTANDBUYOBJECT = "einkaufe/create/bestandBuyObject";
 const BESTELLUEBERSICHT = "bestellUebersicht/";
@@ -483,6 +492,15 @@ const createBestandBuyObject = (data) =>
         body: JSON.stringify({...data, id: "undefined"}),
     });
 
+const sendMailToEinkaufsmanagement = (id, data) =>
+    fetch(BACKEND_URL + EINKAUF + MAILTOEINKAUFSMANAGEMENT + id, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    });
+
 
 // Bestellübersicht
 const readBestellUebersicht = () =>
@@ -564,6 +582,24 @@ const sendFrischOrder = (email) =>
         body: email,
     });
 
+const sendBreadOrderWithPersons = (email) =>
+    fetch(BACKEND_URL + EMAIL + SEND + "brotBestellungenMitPersonen", {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: email,
+    });
+
+const sendInventoryStatus = (email, base64String) =>
+    fetch(BACKEND_URL + EMAIL + SEND + "lagerbestand/" + email, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: base64String,
+    });
+
 const getBestellUebersichtPdf = () =>
     fetch(BACKEND_URL + PDF + DOWNLOAD + "bestellUebersicht");
 
@@ -581,3 +617,6 @@ const getUebersichtBrotByte = () =>
 
 const getUebersichtFrischByte = () =>
     fetch(BACKEND_URL + PDF + BYTE + "frischBestellungen");
+
+const getBreadWithPersonPDFasByte = () =>
+    fetch(BACKEND_URL + PDF + BYTE + "brotMitPerson");

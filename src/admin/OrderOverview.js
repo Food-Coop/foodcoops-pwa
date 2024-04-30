@@ -71,7 +71,7 @@ export function OrderOverview() {
         rows,
         prepareRow,
         
-    } = useTable({ columns, data: discrepancy, initialState: { sortBy: [{ id: 'bestand.name' }] }, }, useSortBy)
+    } = useTable({ columns, data: discrepancy, }, useSortBy)
 
     const {
         getTableProps: getBrotBestellungTableProps,
@@ -264,6 +264,7 @@ export function OrderOverview() {
             return <p>Es gibt aktuell keine Brotbestellungen</p>;
         } else {
             return (
+                <div className="tableFixHead">
                 <BTable striped bordered hover size="sm" {...getBrotBestellungTableProps()}>
                     <thead>
                         {brotBestellungHeaderGroups.map(headerGroup => (
@@ -292,6 +293,7 @@ export function OrderOverview() {
                         })}
                     </tbody>
                 </BTable>
+                </div>
             );
         }
     };
@@ -301,6 +303,7 @@ export function OrderOverview() {
         return <p>Es gibt aktuell keine Frischbestellungen.</p>;
         } else {
         return (
+            <div className="tableFixHead">
             <BTable striped bordered hover size="sm" {...getTableProps()}>
             <thead>
                 {headerGroups.map(headerGroup => (
@@ -325,7 +328,7 @@ export function OrderOverview() {
                                 if(cell.column.Header === "Zu bestellende Gebinde"){
                                 let id = "InputfieldGebinde" + row.index;
                                 return(
-                                    <td key={`${row.original.id}-${cell.column.Header}Gebinde`}><input placeholder={row.original.zuBestellendeGebinde} id={id} type="number"></input></td>
+                                    <td key={`${row.original.id}-${cell.column.Header}Gebinde`}><input placeholder={(row.original.zuBestellendeGebinde.toString()).replace('.', ',')} id={id} type="number"></input></td>
                                 );
                                 } else {
                                 return <td key={`${row.original.id}-${cell.column.Header}Gebinde`} {...cell.getCellProps()}>{cell.render('Cell')}</td>
@@ -337,6 +340,7 @@ export function OrderOverview() {
                 )}
             </tbody>
             </BTable>
+            </div>
         );
         }
     }

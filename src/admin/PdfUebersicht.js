@@ -83,6 +83,40 @@ export function PdfUebersicht() {
         }
     }
 
+    const handleDownloadBrotFoodcoop = () => {
+        api.getBreadWithPersonPDFasByte()
+        .then((response) => {
+            return response.json();
+        })
+        .then((json) => {
+            const binaryString = window.atob(json.pdf);
+            const len = binaryString.length;
+            const bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            const blob = new Blob([bytes.buffer], {type: "application/pdf"});
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', (json.filename + '.pdf'));
+            document.body.appendChild(link);
+            link.click();
+        })
+        .catch((error) => console.error(error));
+    }
+
+    const handleEmailBrotFoodcoop = async () => {
+        let email = keycloak.tokenParsed.email;
+        let response = await api.sendBreadOrderWithPersons(email);
+        console.log(response);
+        if (response.ok) {
+            toast.success("Die E-Mail wurde erfolgreich versendet.");
+        } else {
+            toast.error("Es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.");
+        }
+    }
+
     const content = () => {
         return (
             <div>
@@ -102,13 +136,26 @@ export function PdfUebersicht() {
                     </Accordion>
                     <Accordion defaultExpanded>
                         <AccordionSummary aria-controls="panel1-content" id="panel1-header"  expandIcon={<ExpandMoreIcon />}>
-                            <Typography variant="h6" gutterBottom>Alle aktuellen Brotbestellungen</Typography>
+                            <Typography variant="h6" gutterBottom>Alle aktuellen Brotbestellungen (für den Fasanenbäcker)</Typography>
                         </AccordionSummary>
                         <AccordionDetails>
                         <Button style={{margin: "20px 0.25rem 30px 0.25rem"}} className="button" onClick={handleDownloadBrot}>
                             Download
                         </Button>
                         <Button style={{margin: "20px 0.25rem 30px 0.25rem"}} variant="success" className="button" onClick={handleEmailBrot}>
+                            Als Email an mich versenden
+                        </Button>
+                        </AccordionDetails>
+                    </Accordion>
+                    <Accordion defaultExpanded>
+                        <AccordionSummary aria-controls="panel1-content" id="panel1-header"  expandIcon={<ExpandMoreIcon />}>
+                            <Typography variant="h6" gutterBottom>Alle aktuellen Brotbestellungen (zum Aushängen in der Foodcoop)</Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                        <Button style={{margin: "20px 0.25rem 30px 0.25rem"}} className="button" onClick={handleDownloadBrotFoodcoop}>
+                            Download
+                        </Button>
+                        <Button style={{margin: "20px 0.25rem 30px 0.25rem"}} variant="success" className="button" onClick={handleEmailBrotFoodcoop}>
                             Als Email an mich versenden
                         </Button>
                         </AccordionDetails>

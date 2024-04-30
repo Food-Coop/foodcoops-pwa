@@ -17,20 +17,22 @@ export function FrischBestandTable({ columns, data, skipPageReset, dispatchModal
             getSubRows: row => row.produkte,
             autoResetPage: !skipPageReset,
             autoResetExpanded: !skipPageReset,
-            initialState: { sortBy: [{ id: 'kategorie.name'}] },
         },
         useSortBy,
         useExpanded,
     );
 
     return (
+        <div className="tableFixHead tFH-management">
         <BTable striped bordered hover size="sm" {...getTableProps()}>
             <thead>
                 {headerGroups.map(headerGroup => (
                     <tr {...headerGroup.getHeaderGroupProps()}>
                         {headerGroup.headers.map(column => (
                             <th className="word-wrap" {...column.getHeaderProps(column.getSortByToggleProps())}>
-                                {column.render('Header')}
+                                {column.id === 'spezialfallBestelleinheit' ? 
+                                    <>Spezialfall<br />Bestelleinheit</> : 
+                                    column.render('Header')}
                                 <span>
                                     {column.isSorted ? (column.isSortedDesc ? ' ↓' : ' ↑') : ''}
                                 </span>
@@ -50,7 +52,7 @@ export function FrischBestandTable({ columns, data, skipPageReset, dispatchModal
                                 props.style = { ...props.style, cursor: "pointer" };
                                 return (
                                     <td className="word-wrap" {...props}>
-                                        {cell.column.id === 'verfuegbarkeit' ? (cell.value ? 'Ja' : 'Nein') : cell.render('Cell')}
+                                        {cell.column.id === 'verfuegbarkeit' || cell.column.id === 'spezialfallBestelleinheit' ? (cell.value ? 'Ja' : 'Nein') : cell.render('Cell')}
                                     </td>
                                 )
                             })}
@@ -59,5 +61,6 @@ export function FrischBestandTable({ columns, data, skipPageReset, dispatchModal
                 })}
             </tbody>
         </BTable>
+        </div>
     )
 }

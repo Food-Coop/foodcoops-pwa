@@ -68,11 +68,11 @@ export function BrotBestandManagement() {
         (async function () {
             const response = await api.updateBrotBestand(brotBestand.id, changedData)
             if(response.ok) {
-                toast.success("Das Updaten des Brotbestandes \"" + brotBestand.name + "\" war erfolgreich.");
+                toast.success("Das Updaten des Produktes \"" + brotBestand.name + "\" war erfolgreich.");
                 forceUpdate();
             }
             else{
-                toast.error("Das Updaten des Brotbestandes \"" + brotBestand.name + "\" war aufgrund einer fehlerhaften Eingabe nicht erfolgreich.");
+                toast.error("Das Updaten des Produktes \"" + brotBestand.name + "\" war aufgrund einer fehlerhaften Eingabe nicht erfolgreich.");
             }
         })();
     }
@@ -87,14 +87,14 @@ export function BrotBestandManagement() {
                     const newData = [...data];
                     newData.splice(rowId, 1);
                     setData(newData);
-                    toast.success("Das Löschen des Brotbestandes \"" + brotBestand.name + "\" war erfolgreich.");
+                    toast.success("Das Löschen des Produktes \"" + brotBestand.name + "\" war erfolgreich.");
                 } else {
-                    toast.error("Das Löschen des Brotbestandes \"" + brotBestand.name + "\" war nicht erfolgreich. Möglicherweise gibt es Bestellungen.");
+                    toast.error("Das Löschen des Produktes \"" + brotBestand.name + "\" war nicht erfolgreich. Möglicherweise gibt es Bestellungen.");
                 }
                 forceUpdate();
             } catch (error) {
                 console.error("Error deleting:", error);
-                toast.error("Ein Fehler ist aufgetreten beim Löschen des Brotbestandes \"" + brotBestand.name + "\"");
+                toast.error("Ein Fehler ist aufgetreten beim Löschen des Produktes \"" + brotBestand.name + "\"");
             }
         })();
     }
@@ -105,13 +105,13 @@ export function BrotBestandManagement() {
             const response = await api.createBrotBestand(data1);
             if(response.ok) {
                 const newBrotBestand = await response.json();
-                    toast.success("Das Erstellen des Brotbestandes \"" + data1.name + "\" war erfolgreich.");
+                    toast.success("Das Erstellen des Produktes \"" + data1.name + "\" war erfolgreich.");
                     setSkipPageReset(true);
                     setData(old => deepClone([...old, newBrotBestand]));
                     forceUpdate();
             }
             else{
-                toast.error("Das Erstellen des Brotbestandes \"" + data1.name + "\" war nicht erfolgreich. Bitte versuchen Sie es erneut!");
+                toast.error("Das Erstellen des Produktes \"" + data1.name + "\" war nicht erfolgreich. Bitte versuchen Sie es erneut!");
             }
         })();
     };
@@ -169,7 +169,7 @@ export function BrotBestandManagement() {
     return(
         <div>
             <Row style={{margin: "1rem"}}>
-                <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("NewBrotBestandModal")}>Brotbestand erstellen</Button>
+                <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("NewBrotBestandModal")}>Brotprodukt erstellen</Button>
             </Row>
 
             <div style={{overflowX: "auto", width: "100%"}}>

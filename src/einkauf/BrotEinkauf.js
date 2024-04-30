@@ -45,7 +45,7 @@ export function BrotEinkauf(props) {
         rows,
         prepareRow,
         
-      } = useTable({ columns, data: brotBestellung, initialState: { sortBy: [{ id: 'brotbestand.name' }] }, }, useSortBy)
+      } = useTable({ columns, data: brotBestellung, }, useSortBy)
 
     const handleChange = () => {
         let preis = 0;
@@ -93,6 +93,7 @@ export function BrotEinkauf(props) {
         return null;
       } else {
       return (
+        <div className="tableFixHead">
         <BTable striped bordered hover size="sm" {...getTableProps()}>
             <thead>
               {headerGroups.map(headerGroup => (
@@ -133,6 +134,7 @@ export function BrotEinkauf(props) {
               })}
             </tbody>
             </BTable>
+            </div>
         );
       }
     }

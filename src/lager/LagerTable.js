@@ -20,13 +20,13 @@ export function LagerTable({columns, data, skipPageReset, dispatchModal}) {
             getSubRows: row => row.produkte,
             autoResetPage: !skipPageReset,
             autoResetExpanded: !skipPageReset,
-            initialState: { sortBy: [{ id: 'kategorie.name'}] },
         },
         useSortBy,
         useExpanded
     )
 
     return (
+        <div className="tableFixHead tFH-management">
         <BTable striped bordered hover size="sm" {...getTableProps()}>
             <thead>
             {headerGroups.map(headerGroup => (
@@ -73,5 +73,6 @@ export function LagerTable({columns, data, skipPageReset, dispatchModal}) {
             })}
             </tbody>
         </BTable>
+        </div>
     )
 }

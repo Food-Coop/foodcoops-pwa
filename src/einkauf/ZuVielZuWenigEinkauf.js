@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useApi } from '../ApiService';
 import BTable from "react-bootstrap/Table";
+import Alert from '@mui/material/Alert';
 import { useTable, useSortBy } from 'react-table';
 import NumberFormatComponent from '../logic/NumberFormatComponent';
 import '../Table.css';
@@ -33,6 +34,10 @@ export function ZuVielZuWenigEinkauf(props) {
             Cell: ({ value }) => <NumberFormatComponent value={value} includeFractionDigits={false}/>,
           },
           {
+            Header: 'Insgesamt Zu Viel / Zu Wenig für die Kategorie',
+            accessor: 'insgesamtzuVielzuWenig',
+          },
+          {
             Header: 'genommene Menge',
             accessor: 'menge',
             Cell: ({ value }) => <NumberFormatComponent value={value}/>,
@@ -55,7 +60,7 @@ export function ZuVielZuWenigEinkauf(props) {
       rows,
       prepareRow,
       
-    } = useTable({ columns, data: discrepancy, initialState: { sortBy: [{ id: 'bestand.kategorie.name' }] }, }, useSortBy)
+    } = useTable({ columns, data: discrepancy, }, useSortBy)
     
     const handleChange = () => {
         let preis = 0;
@@ -78,8 +83,8 @@ export function ZuVielZuWenigEinkauf(props) {
                 if (json.discrepancy === 0) {
                   return;
                 } else {
-                  const filteredDiscrepancy = json.discrepancy.filter(item => item.zuVielzuWenig > 0);
-                  setDiscrepancy(filteredDiscrepancy);
+                  //const filteredDiscrepancy = json.discrepancy.filter(item => item.zuVielzuWenig > 0);
+                  setDiscrepancy(json.discrepancy);
                 }
               } else {
                 return;
@@ -103,55 +108,92 @@ export function ZuVielZuWenigEinkauf(props) {
         }        
     }, [discrepancy]);
 
+    const calculateSum = (rows, kategorie) => {
+      let sum = 0;
+      rows.forEach(row => {
+          if (row.original.bestand.kategorie.name === kategorie && row.original.bestand.kategorie.mixable) {
+              sum += row.original.zuVielzuWenig;
+          }
+      });
+      return sum;
+    };
+
     const content = () => {
-      if (discrepancy.length === 0) {
+      if (discrepancy.length === 0 || !discrepancy.some(item => item.zuVielzuWenig > 0)) {
         return null;
       } else {
         return (
-        <BTable striped bordered hover size="sm" {...getTableProps()}>
-          <thead>
-            {headerGroups.map(headerGroup => (
-              <tr {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map(column => (
-                  <th className="word-wrap" key={headerGroup.id + "HeaderZuViel"} {...column.getHeaderProps(column.getSortByToggleProps())}>
-                    {column.render('Header')}
-                    <span>
-                        {column.isSorted ? (column.isSortedDesc ? ' ↓' : ' ↑') : ''}
-                    </span>
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </thead>
-          <tbody {...getTableBodyProps()}>
-            {rows.map((row) => {
-              prepareRow(row)
-              return (
-                <tr {...row.getRowProps()}>
-                  {row.cells.map(cell => {
-                    if (cell.column.Header === "Preis in €"){
-                      let id = "PreisIdDiscrepancy" + row.index;
-                      return(
-                       <td className="word-wrap" key={`${row.original.id}-${cell.column.Header}ZuViel`} style={{color: row.original.bestand.verfuegbarkeit === false ? NotAvailableColor : ''}} id={id} >{cell.render('Cell')}</td>
-                      );
-                    } else if(cell.column.Header === "genommene Menge"){
-                      let id = "InputfieldDiscrepancy" + row.index;
-                      return(
-                        <td className="word-wrap" key={`${row.original.id}-${cell.column.Header}ZuViel`}><input className='einkauf-inputfield-size' id={id} type="number" min="0" onChange={() => handleChange()} disabled={row.original.bestand.verfuegbarkeit === false}></input></td>
-                      );
-                    } else if(cell.column.Header === "zu Viel"){
-                      return(
-                        <td className="word-wrap" key={`${row.original.id}-${cell.column.Header}ZuViel`} style={{color: row.original.bestand.verfuegbarkeit === false ? NotAvailableColor : ''}} {...cell.getCellProps()}>{cell.render('Cell')}</td>
-                      );
-                    } else {
-                      return <td className="word-wrap" key={`${row.original.id}-${cell.column.Header}ZuViel`} style={{color: row.original.bestand.verfuegbarkeit === false ? NotAvailableColor : ''}} {...cell.getCellProps()}>{cell.render('Cell')}</td>
-                    }
-                  })}
+        <div>
+          <Alert severity="info" style={{margin: "0 0 1em 0"}}>
+            "Insgesamt Zu Viel / Zu Wenig für die Kategorie" zeigt an, wieviel von einer mischbaren Kategorie (z.B. Äpfel, Kartoffeln) insgesamt zu viel oder zu wenig geliefert wurde.<br/>
+            Beispiel: Es wurden insgesamt 14 kg an Äpfeln bestellt - unabhängig von der Sorte. Es wurden 12 kg geliefert. Dann steht hier -2 kg.
+          </Alert>
+          <div className="tableFixHead">
+          <BTable striped bordered hover size="sm" {...getTableProps()}>
+            <thead>
+              {headerGroups.map(headerGroup => (
+                <tr {...headerGroup.getHeaderGroupProps()}>
+                  {headerGroup.headers.map(column => (
+                    <th className="word-wrap" key={headerGroup.id + "HeaderZuViel"} {...column.getHeaderProps(column.getSortByToggleProps())}>
+                      {column.id === 'insgesamtzuVielzuWenig' ? 
+                        <>Insgesamt Zu Viel /<br/>Zu Wenig für die <br/> Kategorie</> : 
+                        column.id === 'gewollteMenge' ?
+                        <>insgesamte <br /> Bestellmenge</> :
+                        column.render('Header')}
+                      <span>
+                          {column.isSorted ? (column.isSortedDesc ? ' ↓' : ' ↑') : ''}
+                      </span>
+                    </th>
+                  ))}
                 </tr>
-              )
-            })}
-          </tbody>
-          </BTable>
+              ))}
+            </thead>
+            <tbody {...getTableBodyProps()}>
+              {rows.map((row) => {
+                if (row.original.zuVielzuWenig > 0) {
+                  prepareRow(row)
+                  return (
+                    <tr {...row.getRowProps()}>
+                      {row.cells.map(cell => {
+                        if (cell.column.Header === "Preis in €"){
+                          let id = "PreisIdDiscrepancy" + row.index;
+                          return(
+                          <td className="word-wrap" key={`${row.original.id}-${cell.column.Header}ZuViel`} style={{color: row.original.bestand.verfuegbarkeit === false ? NotAvailableColor : ''}} id={id} >{cell.render('Cell')}</td>
+                          );
+                        } else if(cell.column.Header === "genommene Menge"){
+                          let id = "InputfieldDiscrepancy" + row.index;
+                          return(
+                            <td className="word-wrap" key={`${row.original.id}-${cell.column.Header}ZuViel`}><input className='einkauf-inputfield-size' id={id} type="number" min="0" onChange={() => handleChange()} disabled={row.original.bestand.verfuegbarkeit === false}></input></td>
+                          );
+                        } else if (cell.column.Header === "Insgesamt Zu Viel / Zu Wenig für die Kategorie") {
+                          let sum = calculateSum(rows, row.original.bestand.kategorie.name);
+                          if (row.original.bestand.kategorie.mixable) {
+                            return(
+                              <td className="word-wrap" key={`${row.original.id}-${cell.column.Header}ZuViel`} style={{color: row.original.bestand.verfuegbarkeit === false ? NotAvailableColor : ''}}>
+                                <NumberFormatComponent value={sum} includeFractionDigits={false}/>
+                              </td>
+                            );
+                          } else {
+                            return(
+                              <td className="word-wrap" key={`${row.original.id}-${cell.column.Header}ZuViel`} style={{color: row.original.bestand.verfuegbarkeit === false ? NotAvailableColor : ''}}></td>
+                            ); 
+                          }
+                        } else if(cell.column.Header === "zu Viel"){
+                          return(
+                            <td className="word-wrap" key={`${row.original.id}-${cell.column.Header}ZuViel`} style={{color: row.original.bestand.verfuegbarkeit === false ? NotAvailableColor : ''}} {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                          );
+                        } else {
+                          return <td className="word-wrap" key={`${row.original.id}-${cell.column.Header}ZuViel`} style={{color: row.original.bestand.verfuegbarkeit === false ? NotAvailableColor : ''}} {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                        }
+                      })}
+                    </tr>
+                  )
+                }
+              })}
+            </tbody>
+            </BTable>
+            </div>
+          </div>
     );
     }
   }

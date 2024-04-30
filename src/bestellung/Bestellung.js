@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Button from 'react-bootstrap/Button';
 import { ToastContainer, toast } from 'react-toastify';
@@ -72,6 +72,7 @@ export function Bestellung(){
     const [data, setData] = React.useState([]);
     const [reducerValue, forceUpdate] = React.useReducer(x => x+1, 0);
     const [frischBestellungSumme, setFrischBestellungSumme] = React.useState([]);
+    const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
 
     const api = useApi();
     const {keycloak} = useKeycloak();
@@ -189,6 +190,7 @@ export function Bestellung(){
 
         if (!errorOccurred) {
           toast.success(successMessage);
+            setIsLogoutDialogOpen(true);
         } else {
             toast.error("Es gab einen Fehler beim Übermitteln Ihrer Bestellung. Bitte versuchen Sie es erneut.");
           }
@@ -244,7 +246,7 @@ export function Bestellung(){
                 </Alert>
                 {content()}
                 <h4 id = "preis"></h4>
-                <Button style={{margin: "20px 0.25rem 30px 0.25rem"}} variant="success" onClick={() => submitBestellung()}>Bestellung bestätigen</Button>
+                <Button className="buttonForSubmitting" variant="success" onClick={() => submitBestellung()}>Bestellung bestätigen als <b>{keycloak.tokenParsed.preferred_username}</b></Button>
                 <ToastContainer />
             </div>
         </div>

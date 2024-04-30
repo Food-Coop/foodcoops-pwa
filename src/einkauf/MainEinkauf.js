@@ -13,6 +13,7 @@ import { FrischEinkauf } from './FrischEinkauf';
 import { LagerwareEinkauf } from './LagerwareEinkauf';
 import { ZuVielZuWenigEinkauf } from './ZuVielZuWenigEinkauf';
 import { useApi } from '../ApiService';
+import { getUsersOfRole } from "../auth/Keycloak";
 import NumberFormatComponent from '../logic/NumberFormatComponent';
 import './MainEinkauf.css';
 
@@ -78,7 +79,6 @@ export function MainEinkauf( { isLarge }) {
             .then(data => {
                 if (data !== null) {
                     setDeliveryCostPercentage(data.deliverycost);
-                    //document.getElementById(einkaufEmailTextId).value = data.einkaufEmailText;
                 }
             })
             .catch(error => {
@@ -175,7 +175,6 @@ export function MainEinkauf( { isLarge }) {
               amount: einkaufsmenge,
               discrepancy: discrepancy[i]
             };
-            console.log(discrepancyEinkauf);
             discrepancyEinkaufe.push(discrepancyEinkauf);
         }
     }
@@ -191,17 +190,29 @@ export function MainEinkauf( { isLarge }) {
         personId: person_id,
       };
       const response = await api.createEinkauf(einkaufData);
-      console.log(einkaufData);
 
       if (response.ok) {
         const responseData = await response.json();
-        console.log("Einkauf ID: ", responseData.id); 
         setForceUpdate();
         clearInputFields();
         window.scrollTo({ top: 0, behavior: 'smooth' });
         toast.success("Ihr Einkauf wurde übermittelt. Vielen Dank!");
         const emailResponse = await api.createEinkaufPdf(responseData.id, email);
-        if (!emailResponse.ok) {
+        
+        let mailToEinkaufsmanagement = [];
+          const users = await getUsersOfRole('Einkaufsmanagement');
+          users.forEach(user => {
+            if (user.email) {
+                const Management = {
+                    email: user.email,
+                    username: user.username
+                };
+                mailToEinkaufsmanagement.push(Management);
+            }
+        });
+          const responseEmail = await api.sendMailToEinkaufsmanagement(responseData.id, mailToEinkaufsmanagement);
+
+        if (!emailResponse.ok || !responseEmail.ok) {
           toast.info("Ihre Einkaufsbestätigung konnte nicht per E-Mail versendet werden.");
         }
       } else {
@@ -234,7 +245,7 @@ export function MainEinkauf( { isLarge }) {
           </AccordionSummary>
           <AccordionDetails>
             <ZuVielZuWenigEinkauf onPriceChange={handleDiscrepancyPriceChange} handleDiscrepancy={handleDiscrepancy} forceUpdate={forceUpdate}/>
-            {discrepancy.length === 0 ? (
+            {(discrepancy.length === 0 || !discrepancy.some(item => item.zuVielzuWenig > 0)) ? (
               "Es gibt diese Woche keine Produkte auf der Zu Viel-Liste."
             ) : (
               <h5>Zu Viel-Preis: <NumberFormatComponent value={totalDiscrepancyPrice.toFixed(2)} /> €</h5>
@@ -291,7 +302,7 @@ export function MainEinkauf( { isLarge }) {
           <h4><span className={isLarge ? 'price-large' : 'price'}><NumberFormatComponent value={totalPrice.toFixed(2)} /></span> <span className="currency">€</span></h4>
         </div>
         <Button className="confirm-button" variant="success" onClick={submitEinkauf}>
-          Einkauf bestätigen	
+          Einkauf bestätigen als <b>{keycloak.tokenParsed.preferred_username}</b>
         </Button>
         <ToastContainer/>
       </div>

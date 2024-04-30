@@ -150,7 +150,7 @@ export function ZuVielZuWenigEinkauf(props) {
             </thead>
             <tbody {...getTableBodyProps()}>
               {rows.map((row) => {
-                if (row.original.zuVielzuWenig > 0) {
+                //if (row.original.zuVielzuWenig > 0) {
                   prepareRow(row)
                   return (
                     <tr {...row.getRowProps()}>
@@ -188,7 +188,7 @@ export function ZuVielZuWenigEinkauf(props) {
                       })}
                     </tr>
                   )
-                }
+                //}
               })}
             </tbody>
             </BTable>

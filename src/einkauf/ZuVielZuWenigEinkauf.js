@@ -125,7 +125,7 @@ export function ZuVielZuWenigEinkauf(props) {
         return (
         <div>
           <Alert severity="info" style={{margin: "0 0 1em 0"}}>
-            "Insgesamt Zu Viel / Zu Wenig für die Kategorie" zeigt an, wieviel von der Kategorie insgesamt zu viel oder zu wenig geliefert wurde.<br/>
+            "Insgesamt Zu Viel / Zu Wenig für die Kategorie" zeigt an, wieviel von einer mischbaren Kategorie (z.B. Äpfel, Kartoffeln) insgesamt zu viel oder zu wenig geliefert wurde.<br/>
             Beispiel: Es wurden insgesamt 14 kg an Äpfeln bestellt - unabhängig von der Sorte. Es wurden 12 kg geliefert. Dann steht hier -2 kg.
           </Alert>
           <div className="tableFixHead">

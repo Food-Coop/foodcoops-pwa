@@ -248,21 +248,26 @@ export function Lager() {
     const createPDF = () => {
         const doc = new jsPDF();
 
-        autoTable(doc, {
-            theme: 'striped',
-            head: [columns.map(col => col.Header)],
-            body: data.map(row => columns.map(col => {
-                try {
-                    const cellData = col.accessor.split(".").reduce((o, i) => o[i], row);
-                    return cellData instanceof Object ? JSON.stringify(cellData) : cellData;
-                } catch (error) {
-                    console.error('Fehler beim Zugriff auf die Daten:', col.accessor, error);
-                    return "";
-                }
-            })),
-        });
+        const currentDate = new Date();
+        const formattedDate1 = `${currentDate.getDate()}.${currentDate.getMonth()+1}.${currentDate.getFullYear()}`;
+        const formattedDate2 = `${currentDate.getDate()}-${currentDate.getMonth()+1}-${currentDate.getFullYear()}`;
+        
+        doc.text("Einkaufsliste Lager " +formattedDate1, 14, 10);
+        const pdfData = data.map(row => {
+            const productName = row.name;
+            const sollLagerbestand = row.lagerbestand.sollLagerbestand;
+            const istLagerbestand = row.lagerbestand.istLagerbestand;
+            const differenz = sollLagerbestand - istLagerbestand;
+            return {productName, differenz};
+        })
+        .filter(({ differenz }) => differenz !== 0)
+        .map(({ productName, differenz }) => [productName, differenz]);;
 
-        doc.save("Externe_Einkaufsliste.pdf");
+        doc.autoTable({
+            head: [['Produktname', 'Fehlende Menge']],
+            body: pdfData,
+        });
+        doc.save(`Einkaufsliste-Lager-${formattedDate2}.pdf`);
     }
     
     const content = () => {
@@ -288,7 +293,7 @@ export function Lager() {
                 <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("KategorienModal")}>Kategorie erstellen</Button>
                 <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("NewProduktModal")}>Produkt erstellen</Button>
                 <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("EinheitenModal")}>Einheiten erstellen</Button>
-                <Button style={{margin:"0.25rem"}} onClick={createPDF}>Externe Einkaufsliste</Button>
+                <Button style={{margin:"0.25rem"}} onClick={createPDF}>Download Einkaufsliste</Button>
                 
             </Row>
             <div style={{overflowX: "auto", width: "100%"}}>

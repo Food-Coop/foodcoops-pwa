@@ -12,6 +12,9 @@ import {NewProduktModal} from './NewProduktModal';
 import {deepAssign, deepClone} from '../util';
 import {EditEinheitenModal} from "./EditEinheitenModal";
 import NumberFormatComponent from '../logic/NumberFormatComponent';
+import {jsPDF} from "jspdf";
+import autoTable from 'jspdf-autotable';
+import { useKeycloak } from "@react-keycloak/web";
 
 export function Lager() {
 
@@ -56,6 +59,7 @@ export function Lager() {
     const [reducerValue, forceUpdate] = React.useReducer(x => x+1, 0);
 
     const api = useApi();
+    const { keycloak } = useKeycloak();
 
     React.useEffect(
         () => {
@@ -241,6 +245,56 @@ export function Lager() {
         })
     }
 
+    const createPDF = () => {
+        const doc = new jsPDF();
+
+        autoTable(doc, {
+            theme: 'striped',
+            head: [columns.map(col => col.Header)],
+            body: data.map(row => columns.map(col => {
+                try {
+                    const cellData = col.accessor.split(".").reduce((o, i) => o[i], row);
+                    return cellData instanceof Object ? JSON.stringify(cellData) : cellData;
+                } catch (error) {
+                    console.error('Fehler beim Zugriff auf die Daten:', col.accessor, error);
+                    return "";
+                }
+            })),
+        });
+
+        doc.save("Externe_Einkaufsliste.pdf");
+    }
+
+    /*const sendListviaMail = () => {
+        let email = keycloak.tokenParsed.email;
+        const doc = new jsPDF();
+    
+        autoTable(doc, {
+            theme: 'striped',
+            head: [columns.map(col => col.Header)],
+            body: data.map(row => columns.map(col => {
+                try {
+                    const cellData = col.accessor.split(".").reduce((o, i) => o[i], row);
+                    return cellData instanceof Object ? JSON.stringify(cellData) : cellData;
+                } catch (error) {
+                    console.error('Fehler beim Zugriff auf die Daten:', col.accessor, error);
+                    return "";
+                }
+            })),
+        });
+    
+        // Save PDF as base64 string
+        const pdfData = doc.output();
+        const reader = new FileReader();
+        reader.readAsDataURL(new Blob([pdfData], { type: 'application/pdf' }));
+        reader.onloadend = () => {
+            const base64String = reader.result.split(',')[1];
+            // Now you can send the base64 string via your API method
+            console.log(base64String);
+            //api.sendInventoryStatus(email, base64String);
+        };
+    }*/
+    
     const content = () => {
         if (isLoading) {
             return (
@@ -264,7 +318,9 @@ export function Lager() {
                 <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("KategorienModal")}>Kategorie erstellen</Button>
                 <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("NewProduktModal")}>Produkt erstellen</Button>
                 <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("EinheitenModal")}>Einheiten erstellen</Button>
-                <Button style={{margin:"0.25rem"}} variant="success" onClick={() => window.open("http://152.53.32.66:8081/externeliste")}>Externe Einkaufsliste</Button>
+                <Button style={{margin:"0.25rem"}} onClick={createPDF}>Externe Einkaufsliste</Button>
+                <Button style={{margin:"0.25rem"}} onClick={sendListviaMail}>Externe Einkaufsliste als Email an mich versenden</Button>
+                
             </Row>
             <div style={{overflowX: "auto", width: "100%"}}>
                 {content()}

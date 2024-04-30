@@ -592,7 +592,7 @@ const sendBreadOrderWithPersons = (email) =>
     });
 
 const sendInventoryStatus = (email, base64String) =>
-    fetch(BACKEND_URL + EMAIL + SEND + "lagerbestand" + email, {
+    fetch(BACKEND_URL + EMAIL + SEND + "lagerbestand/" + email, {
         method: "POST",
         headers: {
             'Content-Type': 'application/json',

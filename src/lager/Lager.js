@@ -2,6 +2,8 @@ import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import {LagerTable} from "./LagerTable";
 import {EditProduktModal} from "./EditProduktModal";
 import {EditKategorieModal} from "./EditKategorieModal";
@@ -9,12 +11,13 @@ import {useApi} from '../ApiService';
 import {NewProduktModal} from './NewProduktModal';
 import {deepAssign, deepClone} from '../util';
 import {EditEinheitenModal} from "./EditEinheitenModal";
+import NumberFormatComponent from '../logic/NumberFormatComponent';
+import {jsPDF} from "jspdf";
+import autoTable from 'jspdf-autotable';
+import { useKeycloak } from "@react-keycloak/web";
 
 export function Lager() {
 
-    /* Creates Columns,
-    first part selects image and displays it
-     */
     const columns = React.useMemo(
         () => [
             {
@@ -24,10 +27,12 @@ export function Lager() {
             {
                 Header: 'Ist Lagerbestand',
                 accessor: 'lagerbestand.istLagerbestand',
+                Cell: ({ value }) => <NumberFormatComponent value={value} includeFractionDigits={false}/>,
             },
             {
                 Header: 'Soll Lagerbestand',
                 accessor: 'lagerbestand.sollLagerbestand',
+                Cell: ({ value }) => <NumberFormatComponent value={value} includeFractionDigits={false}/>,
             },
             {
                 Header: 'Einheit',
@@ -36,6 +41,11 @@ export function Lager() {
             {
                 Header: 'Kategorie',
                 accessor: 'kategorie.name',
+            },
+            {
+                Header: 'Preis in €',
+                accessor: 'preis',
+                Cell: ({ value }) => <NumberFormatComponent value={value}/>,
             },
         ],
         []
@@ -49,6 +59,7 @@ export function Lager() {
     const [reducerValue, forceUpdate] = React.useReducer(x => x+1, 0);
 
     const api = useApi();
+    const { keycloak } = useKeycloak();
 
     React.useEffect(
         () => {
@@ -87,25 +98,32 @@ export function Lager() {
         for (const [accessor, {value}] of Object.entries(patch)) {
             deepAssign(accessor, changedData, value);
         }
+        changedData.type = "lager";
         (async function () {
             const response = await api.updateProdukt(produkt.id, changedData);
             if(response.ok){
+                toast.success("Das Updaten des Produktes \"" + produkt.name + "\" war erfolgreich.");
                 forceUpdate();
             }
-            else{alert("Das Updaten des Produktes war aufgrund einer fehlerhaften Eingabe nicht erfolgreich.");}
+            else{
+                toast.error("Das Updaten des Produktes \"" + produkt.name + "\" war aufgrund einer fehlerhaften Eingabe nicht erfolgreich.");
+            }
         })();
     };
 
-    const newKategorie = ({icon, name}) => {
+    const newKategorie = ({icon, name, mixable}) => {
         (async function () {
-            const response = await api.createKategorie(name, icon);
+            const response = await api.createKategorie(name, icon, mixable);
             if(response.ok) {
+                toast.success("Das Erstellen der Kategorie \"" + name + "\" war erfolgreich.");
                 setSkipPageReset(true);
                 const newKategorie = await response.json();
                 setKategorien(old => [newKategorie, ...old]);
                 forceUpdate();
             }
-            else{alert("Das Erstellen einer Kategorie war nicht erfolgreich. Bitte versuchen Sie es erneut!");}
+            else{
+                toast.error("Das Erstellen der Kategorie \"" + name + "\" war nicht erfolgreich. Bitte versuchen Sie es erneut!");
+            }
         })();
     };
 
@@ -113,59 +131,64 @@ export function Lager() {
         (async function () {
             const response = await api.deleteKategorie(id);
             if(response.ok) {
+                toast.success("Das Löschen der Kategorie war erfolgreich.");
                 setKategorien(old => old.filter(e => e.id !== id));
                 forceUpdate();
             }
-            else{alert("Das Löschen der Kategorie war nicht erfolgreich. Möglicherweise wird sie noch von einem FrischBestand oder einem Produkt verwendet.");}
+            else{
+                toast.error("Das Löschen der Kategorie war nicht erfolgreich. Möglicherweise wird sie noch von einem FrischBestand oder einem Produkt verwendet.");
+            }
         })();
     };
 
     const deleteProdukt = (rowId) => {
+        const produkt = data[rowId];
         const old = data;
         (async function () {
-            const response = await api.deleteProdukt(old[rowId].id)
-                .then(r => {
-                    if (r.ok) {
-                        //const [produkt] = kategorie.produkte.splice(produktId, 1);
-                        setSkipPageReset(true);
-                        setData(deepClone(old));
-                    } else {
-                        r.text().then(text => console.log(`unable to delete: ${text}`));
-                    }
-                }, console.log);
-            if(response.ok) {
+            try {
+                const response = await api.deleteProdukt(old[rowId].id);
+                if (response.ok) {
+                    setSkipPageReset(true);
+                    setData(deepClone(old));
+                    toast.success("Das Löschen des Produktes \"" + produkt.name + "\" war erfolgreich.");
+                } else {
+                    toast.error("Das Löschen des Produktes \"" + produkt.name + "\" war nicht erfolgreich. Bitte versuchen Sie es erneut.");
+                }
                 forceUpdate();
+            } catch (error) {
+                toast.error("Ein Fehler ist aufgetreten beim Löschen des Produktes \"" + produkt.name + "\"");
             }
-            else{
-                alert("Das Löschen des Frischbestandes war nicht erfolgreich. Möglicherweise gibt es Bestellungen.");
-            }
-            forceUpdate();
-        })();
+        } )();   
     }
 
     const newProdukt = (data1) => {
-        console.log("Data1: " + JSON.stringify(data1));
         (async function () {
+            data1.type = "lager";
             const response = await api.createProdukt(data1);
             if(response.ok) {
+                toast.success("Das Erstellen des Produktes \"" + data1.name + "\" war erfolgreich.");
                 const newProdukt = await response.json();
-                    setSkipPageReset(true);
-                    setData(old => deepClone([...old, newProdukt]));
-                    forceUpdate();
+                setSkipPageReset(true);
+                setData(old => deepClone([...old, newProdukt]));
+                forceUpdate();
             }
-            else{alert("Das Erstellen eines Produktes war nicht erfolgreich. Bitte versuchen Sie es erneut!")}
+            else{
+                toast.error("Das Erstellen des Produktes \"" + data1.name + "\" war nicht erfolgreich. Bitte versuchen Sie es erneut!");
+            }
         })();
     };
 
     const newEinheit = ({name}) => {
         (async function () {
             const response = await api.createEinheit(name);
-            //alert(response);
             if(response.ok) {
+                toast.success("Das Erstellen der Einheit \"" + name + "\" war erfolgreich.");
                 const newEinheit = await response.json();
                 setEinheiten(old => [newEinheit, ...old]);
             }
-            else{alert("Das Erstellen einer Einheit war nicht erfolgreich. Bitte versuchen Sie es erneut!");}
+            else{
+                toast.error("Das Erstellen der Einheit \"" + name + "\" war nicht erfolgreich. Bitte versuchen Sie es erneut.");
+            }
         })();
     };
 
@@ -173,9 +196,12 @@ export function Lager() {
         (async function () {
             const response = await api.deleteEinheit(id);
             if(response.ok) {
+                toast.success("Das Löschen der Einheit war erfolgreich.");
                 setEinheiten(old => old.filter(e => e.id !== id));
             }
-            else{alert("Das Löschen der Einheit war nicht erfolgreich. Möglicherweise wird sie noch von einem FrischBestand oder einem Produkt verwendet.");}
+            else{
+                toast.error("Das Löschen der Einheit war nicht erfolgreich. Möglicherweise wird sie noch von einem FrischBestand oder einem Produkt verwendet.");
+            }
         })();
     };
 
@@ -219,6 +245,31 @@ export function Lager() {
         })
     }
 
+    const createPDF = () => {
+        const doc = new jsPDF();
+
+        const currentDate = new Date();
+        const formattedDate1 = `${currentDate.getDate()}.${currentDate.getMonth()+1}.${currentDate.getFullYear()}`;
+        const formattedDate2 = `${currentDate.getDate()}-${currentDate.getMonth()+1}-${currentDate.getFullYear()}`;
+        
+        doc.text("Einkaufsliste Lager " +formattedDate1, 14, 10);
+        const pdfData = data.map(row => {
+            const productName = row.name;
+            const sollLagerbestand = row.lagerbestand.sollLagerbestand;
+            const istLagerbestand = row.lagerbestand.istLagerbestand;
+            const differenz = sollLagerbestand - istLagerbestand;
+            return {productName, differenz};
+        })
+        .filter(({ differenz }) => differenz !== 0)
+        .map(({ productName, differenz }) => [productName, differenz]);;
+
+        doc.autoTable({
+            head: [['Produktname', 'Fehlende Menge']],
+            body: pdfData,
+        });
+        doc.save(`Einkaufsliste-Lager-${formattedDate2}.pdf`);
+    }
+    
     const content = () => {
         if (isLoading) {
             return (
@@ -242,7 +293,8 @@ export function Lager() {
                 <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("KategorienModal")}>Kategorie erstellen</Button>
                 <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("NewProduktModal")}>Produkt erstellen</Button>
                 <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("EinheitenModal")}>Einheiten erstellen</Button>
-                <Button style={{margin:"0.25rem"}} variant="success" onClick={() => window.open("http://localhost:8080/externeliste")}>Externe Einkaufsliste</Button>
+                <Button style={{margin:"0.25rem"}} onClick={createPDF}>Download Einkaufsliste</Button>
+                
             </Row>
             <div style={{overflowX: "auto", width: "100%"}}>
                 {content()}
@@ -282,6 +334,7 @@ export function Lager() {
                 remove={deleteKategorie}
                 kategorien={kategorien}
                 {...modal.state} />
+            <ToastContainer />
         </div>
     )
 }

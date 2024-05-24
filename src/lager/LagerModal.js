@@ -1,5 +1,6 @@
 import React from "react";
 import Modal from "react-bootstrap/Modal";
+import "./Dialog.css";
 
 export function LagerModal(props) {
     const {show, hide, title, body, footer, parentProps} = props;
@@ -18,12 +19,12 @@ export function LagerModal(props) {
                     {title}
                 </Modal.Title>
             </Modal.Header>
-            <Modal.Body>
+            <Modal.Body className="modal-body" >
                 <form>
                     <table>
-                        <tbody>
+                    <tbody>
                         {body}
-                        </tbody>
+                    </tbody>
                     </table>
                 </form>
             </Modal.Body>

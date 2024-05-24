@@ -2,6 +2,8 @@ import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import {deepAssign, deepClone} from '../util';
 import {useApi} from '../ApiService';
 import {FrischBestandTable} from "./FrischBestandTable";
@@ -9,7 +11,7 @@ import {EditFrischBestandModal} from "./EditFrischBestandModal";
 import { NewFrischBestandModal } from './NewFrischBestandModal';
 import {EditKategorieModal} from "../lager/EditKategorieModal";
 import {EditEinheitenModal} from "../lager/EditEinheitenModal";
-
+import NumberFormatComponent from '../logic/NumberFormatComponent';
 
 export function FrischBestandManagement() {
     const columns = React.useMemo(
@@ -27,20 +29,30 @@ export function FrischBestandManagement() {
                 accessor: 'herkunftsland',
             },
             {
-                Header: 'Gebindegröße',
-                accessor: 'gebindegroesse',
+                Header: 'Verband',
+                accessor: 'verband',
             },
             {
-                Header: 'Einheit',
-                accessor: 'einheit.name',
+                Header: 'Gebindegröße',
+                accessor: 'gebindegroesse',
+                Cell: ({ value }) => <NumberFormatComponent value={value} includeFractionDigits={false}/>,
             },
             {
                 Header: 'Kategorie',
                 accessor: 'kategorie.name',
             },
             {
-                Header: 'Preis',
+                Header: 'Einheit',
+                accessor: 'einheit.name',
+            },
+            {
+                Header: 'Spezialfall Bestelleinheit',
+                accessor: 'spezialfallBestelleinheit',
+            },
+            {
+                Header: 'Preis in €',
                 accessor: 'preis',
+                Cell: ({ value }) => <NumberFormatComponent value={value} />,
             }
         ],[]
     );
@@ -92,64 +104,71 @@ export function FrischBestandManagement() {
         for (const [accessor, {value}] of Object.entries(patch)) {
             deepAssign(accessor, changedData, value);
         }
+        changedData.type = "frisch";
         (async function () {
             const response = await api.updateFrischBestand(frischBestand.id, changedData)
             if(response.ok) {
+                toast.success("Das Updaten des Produktes \"" + frischBestand.name + "\" war erfolgreich.");
                 forceUpdate();
             }
             else{
-                alert("Das Updaten des Frischbestandes war aufgrund einer fehlerhaften Eingabe nicht erfolgreich.");
+                toast.error("Das Updaten des Produktes \"" + frischBestand.name + "\" war aufgrund einer fehlerhaften Eingabe nicht erfolgreich.");
             }
         })();
     }
 
     const deleteFrischBestand = (rowId) => {
+        const frischBestand = data[rowId];
         const old = data;
         (async function () {
-            const response = await api.deleteFrischBestand(old[rowId].id)
-                .then(r => {
-                    if (r.ok) {
-                    // const [produkt] = kategorie.produkte.splice(produktId, 1);
-                        setSkipPageReset(true);
-                        setData(deepClone(old));
-                    } else {
-                        r.text().then(text => console.log(`unable to delete: ${text}`));
-                    }
-                }, console.log);
-            if(response.ok) {
+            try {
+                const response = await api.deleteFrischBestand(old[rowId].id);
+                if (response.ok) {
+                    setSkipPageReset(true);
+                    setData(deepClone(old));
+                    toast.success("Das Löschen des Produktes \"" + frischBestand.name + "\" war erfolgreich.");
+                } else {
+                    const text = await response.text();
+                    toast.error("Das Löschen des Produktes \"" + frischBestand.name + "\" war nicht erfolgreich. Möglicherweise gibt es Bestellungen.");
+                }
                 forceUpdate();
+            } catch (error) {
+                console.error("Error deleting:", error);
+                toast.error("Ein Fehler ist aufgetreten beim Löschen des Produktes \"" + frischBestand.name + "\"");
             }
-            else{
-                alert("Das Löschen des Frischbestandes war nicht erfolgreich. Möglicherweise gibt es Bestellungen.");
-            }
-            forceUpdate();
         })();
-    }
+    }    
 
     const newFrischBestand = (data1) => {
         (async function () {
+            data1.type = "frisch";
             const response = await api.createFrischBestand(data1);
             if(response.ok) {
                 const newFrischBestand = await response.json();
+                    toast.success("Das Erstellen des Produktes \"" + data1.name + "\" war erfolgreich.");
                     setSkipPageReset(true);
                     setData(old => deepClone([...old, newFrischBestand]));
                     forceUpdate();
             }
-            else{alert("Das Erstellen eines FrischBestandes war nicht erfolgreich. Bitte versuchen Sie es erneut!")}
+            else{
+                toast.error("Das Erstellen des Produktes \"" + data1.name + "\" war nicht erfolgreich. Bitte versuchen Sie es erneut!");
+            }
         })();
     };
 
-    const newKategorie = ({icon, name}) => {
+    const newKategorie = ({icon, name, mixable}) => {
         (async function () {
-            const response = await api.createKategorie(name, icon);
-            //alert(JSON.stringify(response));
+            const response = await api.createKategorie(name, icon, mixable);
             if(response.ok) {
+                toast.success("Das Erstellen der Kategorie \"" + name + "\" war erfolgreich.");
                 setSkipPageReset(true);
                 const newKategorie = await response.json();
                 setKategorien(old => [newKategorie, ...old]);
                 forceUpdate();
             }
-            else{alert("Das Erstellen einer Kategorie war nicht erfolgreich. Bitte versuchen Sie es erneut!");}
+            else{
+                toast.error("Das Erstellen der Kategorie \"" + name + "\" war nicht erfolgreich. Bitte versuchen Sie es erneut!");
+            }
         })();
     };
 
@@ -157,23 +176,28 @@ export function FrischBestandManagement() {
         (async function () {
             const response = await api.deleteKategorie(id);
             if(response.ok) {
+                toast.success("Das Löschen der Kategorie war erfolgreich.");
                 setKategorien(old => old.filter(e => e.id !== id));
                 forceUpdate();
             }
-            else{alert("Das Löschen der Kategorie war nicht erfolgreich. Möglicherweise wird sie noch von einem FrischBestand oder einem Produkt verwendet.");}
+            else{
+                toast.error("Das Löschen der Kategorie war nicht erfolgreich. Möglicherweise wird sie noch von einem FrischBestand oder einem Produkt verwendet.");
+            }
         })();
     };
 
     const newEinheit = ({name}) => {
         (async function () {
             const response = await api.createEinheit(name);
-            //alert(response);
             if(response.ok) {
+                toast.success("Das Erstellen der Einheit \"" + name + "\" war erfolgreich.");
                 const newEinheit = await response.json();
                 setEinheiten(old => [newEinheit, ...old]);
                 forceUpdate();
             }
-            else{alert("Das Erstellen einer Einheit war nicht erfolgreich. Bitte versuchen Sie es erneut!");}
+            else{
+                toast.error("Das Erstellen der Einheit \"" + name + "\" war nicht erfolgreich. Bitte versuchen Sie es erneut.");
+            }
         })();
     };
 
@@ -181,10 +205,13 @@ export function FrischBestandManagement() {
         (async function () {
             const response = await api.deleteEinheit(id);
             if(response.ok) {
+                toast.success("Das Löschen der Einheit war erfolgreich.");
                 setEinheiten(old => old.filter(e => e.id !== id));
                 forceUpdate();
             }
-            else{alert("Das Löschen der Einheit war nicht erfolgreich. Möglicherweise wird sie noch von einem FrischBestand oder einem Produkt verwendet.");}
+            else{
+                toast.error("Das Löschen der Einheit war nicht erfolgreich. Möglicherweise wird sie noch von einem FrischBestand oder einem Produkt verwendet.");
+            }
         })();
     };
 
@@ -249,7 +276,7 @@ export function FrischBestandManagement() {
         <div>
             <Row style={{margin: "1rem"}}>
                 <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("KategorienModal")}>Kategorie erstellen</Button>
-                <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("NewFrischBestandModal")}>Frischbestand erstellen</Button>
+                <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("NewFrischBestandModal")}>Frischprodukt erstellen</Button>
                 <Button style={{margin:"0.25rem"}} variant="success" onClick={() => dispatchModal("EinheitenModal")}>Einheiten erstellen</Button>
             </Row>
 
@@ -291,6 +318,7 @@ export function FrischBestandManagement() {
                 remove={deleteEinheit}
                 einheiten={einheiten}
                 {...modal.state} />
+            <ToastContainer />
         </div>
     )
 }

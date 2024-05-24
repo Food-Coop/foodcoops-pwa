@@ -11,7 +11,7 @@ function defaultData(columns) {
     const initial = Object.fromEntries(columns.map(convert));
     
     initial["weekday"].value = "Montag";
-    initial["time"].value = "23:59:59";
+    initial["time"].value = "23:59";
 
     return initial;
 }

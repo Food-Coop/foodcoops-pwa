@@ -1,0 +1,101 @@
+.container {
+    margin: 0;
+    padding: 1vw;
+    width: 99vw;
+}
+
+.tableAdminConf {
+    padding: 1em;
+    width: 98vw;
+}
+
+.label {
+    font-weight: bold;
+    text-align: left;
+    vertical-align: top;
+    
+}
+.label * {
+    margin-right: 20px;
+}
+
+@media (max-width: 1700px) {
+    #deliveryCostId, #thresholdId {
+        width: 15%;
+    }
+
+    #emailFromEinkaufAdminId, #emailFromBestellAdminId {
+        width: 50%;
+    }
+    .label {
+        width: 17%;
+    }
+}
+
+@media (max-width: 1600px) {
+    #deliveryCostId, #thresholdId {
+        width: 15%;
+    }
+    #emailFromEinkaufAdminId, #emailFromBestellAdminId {
+        width: 70%;
+    }
+    .label {
+        width: 19%;
+    }
+}
+
+@media (max-width: 1500px) {
+    .label {
+        width: 21%;
+    }
+}
+
+@media (max-width: 1400px) {
+    .label {
+        width: 23%;
+    }
+}
+
+@media (max-width: 1200px) {
+    .label {
+        width: 25%;
+    }
+}
+
+@media (max-width: 1000px) {
+    #deliveryCostId, #thresholdId {
+        width: 30%;
+    }
+    #emailFromEinkaufAdminId, #emailFromBestellAdminId {
+        width: 100%;
+    }
+    .label {
+        width: 30%;
+    }
+}
+
+@media (min-width: 1700px) {
+    #deliveryCostId, #thresholdId {
+        width: 15%;
+    }
+
+    #emailFromEinkaufAdminId, #emailFromBestellAdminId {
+        width: 50%;
+    }
+    .label {
+        width: 15%;
+    }
+}
+
+.input {
+    width: 100%;
+    padding: 8px;
+    margin: 4px 0;
+    box-sizing: border-box;
+    float: left;
+}
+
+.button {
+    margin: 20px 0.25rem;
+    margin-top: 0;
+}

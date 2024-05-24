@@ -82,6 +82,60 @@ export function EditProduktModal(props) {
                     </div>
                 </td>
             </tr>
+        } else if (accessor === "preis") {
+            return <tr key={accessor}>
+                <td>
+                    <label style={{margin: 0}}>{name}:</label>
+                </td>
+                <td>
+                    <input
+                        name={name}
+                        min="0"
+                        type="number"
+                        value={value}
+                        onChange={function ({target: {value}}) {
+                            const changed = {};
+                            changed[accessor] = {name, value};
+                            return setNewData(prev => ({...prev, ...changed}));
+                        }}/>
+                </td>
+            </tr>;
+        } else if (accessor === "lagerbestand.sollLagerbestand") {
+            return <tr key={accessor}>
+                <td>
+                    <label style={{margin: 0}}>{name}:</label>
+                </td>
+                <td>
+                    <input
+                        name={name}
+                        type="number"
+                        min="0"
+                        value={value}
+                        onChange={function ({target: {value}}) {
+                            const changed = {};
+                            changed[accessor] = {name, value};
+                            return setNewData(prev => ({...prev, ...changed}));
+                        }}/>
+                </td>
+            </tr>;
+        } else if (accessor === "lagerbestand.istLagerbestand") {
+            return <tr key={accessor}>
+                <td>
+                    <label style={{margin: 0}}>{name}:</label>
+                </td>
+                <td>
+                    <input
+                        name={name}
+                        type="number"
+                        min="0"
+                        value={value}
+                        onChange={function ({target: {value}}) {
+                            const changed = {};
+                            changed[accessor] = {name, value};
+                            return setNewData(prev => ({...prev, ...changed}));
+                        }}/>
+                </td>
+            </tr>;
         }
         return <tr key={accessor}>
             <td>

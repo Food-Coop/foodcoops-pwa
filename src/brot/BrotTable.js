@@ -1,15 +1,22 @@
-import {useExpanded, useTable} from "react-table";
+import { useExpanded, useTable, useSortBy } from "react-table";
 import BTable from "react-bootstrap/Table";
-import React from "react";
+import Button from 'react-bootstrap/Button';
+import React from 'react';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
+import ClickAwayListener from '@mui/material/ClickAwayListener';
+import CustomTooltip from "../components/CustomToolTip";
+import '../Table.css';
 
-export function BrotTable({columns, data, skipPageReset, dispatchModal}) {
+export function BrotTable({ columns, data, skipPageReset }) {
+    const NotAvailableColor = '#D3D3D3';
     const {
         getTableProps,
         getTableBodyProps,
         headerGroups,
         rows,
         prepareRow,
-        state: {expanded},
     } = useTable(
         {
             columns,
@@ -18,8 +25,9 @@ export function BrotTable({columns, data, skipPageReset, dispatchModal}) {
             autoResetPage: !skipPageReset,
             autoResetExpanded: !skipPageReset,
         },
+        useSortBy, 
         useExpanded
-    )
+    );
 
     const calculatePrice = () => {
         let preis = 0;
@@ -27,22 +35,77 @@ export function BrotTable({columns, data, skipPageReset, dispatchModal}) {
             let bestellId = "Inputfield" + i;
             let bestellmenge = document.getElementById(bestellId).value;
             let preisId = "PreisId" + i;
-            preis += document.getElementById(preisId).innerText * bestellmenge;
+            preis += document.getElementById(preisId).innerText.replace(',', '.') * bestellmenge;
         }
-        document.getElementById("preis").innerHTML = "Preis: " + preis + "€";
+        document.getElementById("preis").innerHTML = "Preis: " + preis.toFixed(2).replace('.', ',') + " €";
     }
 
+    const setValuesToBestellungVorwoche = () => {
+        for(let i = 0; i < data.length; i++){
+            let inputfieldId = "Inputfield" + i;
+            let bestellmenge = data[i].bestellmengeAlt;
+            if(bestellmenge === null || bestellmenge === undefined){
+                bestellmenge = '';
+            }
+            document.getElementById(inputfieldId).value = bestellmenge;
+        }
+        calculatePrice();
+    }
+
+    const [open, setOpen] = React.useState(false);
+
+    const handleTooltipClose = () => {
+      setOpen(false);
+    };
+  
+    const handleTooltipOpen = () => {
+      setOpen(true);
+    };
+
     return (
+        <div>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+            <ClickAwayListener onClickAway={handleTooltipClose}>
+                <div >
+                    <CustomTooltip onClose={handleTooltipClose}
+                        open={open}
+                        disableFocusListener
+                        disableHoverListener
+                        disableTouchListener
+                        title={
+                        <React.Fragment>
+                            <Typography color="inherit"><b>Hinweis</b></Typography>
+                            Über "Bestellmenge Vorwoche laden" können Sie die Bestellmengen ihrer Bestellung aus der Vorwoche in die Eingabefelder "Bestellmenge" laden.
+                        </React.Fragment>
+                        }
+                        placement="right" arrow>
+                        <IconButton style={{margin: "0.5em 0 0.5em 0"}} onClick={handleTooltipOpen}>
+                            <HelpOutlineIcon />
+                        </IconButton>
+                    </CustomTooltip>
+                </div>
+            </ClickAwayListener>
+                <Button style={{margin: "0.5em 1em 0.5em 0"}} variant="primary" onClick={() => setValuesToBestellungVorwoche()}>Bestellmenge Vorwoche laden</Button>
+            </div>
+            <div className="tableFixHead">
         <BTable striped bordered hover size="sm" {...getTableProps()}>
             <thead>
             {headerGroups.map(headerGroup => (
-                <tr {...headerGroup.getHeaderGroupProps()}>
-                    {headerGroup.headers.map(column => (
-                        <th {...column.getHeaderProps()}>
-                            {column.render('Header')}
-                        </th>
-                    ))}
-                </tr>
+               <tr {...headerGroup.getHeaderGroupProps()}>
+               {headerGroup.headers.map((column) => {
+                 if (column.Header === "BrotID") {
+                   // Hide the 'BrotID' header
+                   return null;
+                 } else {
+                   return <th className="word-wrap" key={headerGroup.id + "Header"} {...column.getHeaderProps(column.getSortByToggleProps())}>
+                        {column.render("Header")}
+                        <span>
+                            {column.isSorted ? (column.isSortedDesc ? ' ↓' : ' ↑') : ''}
+                        </span>
+                    </th>;
+                 }
+               })}
+             </tr>
             ))}
             </thead>
             <tbody  {...getTableBodyProps()}>
@@ -56,104 +119,30 @@ export function BrotTable({columns, data, skipPageReset, dispatchModal}) {
                             (row.original.hasOwnProperty("produkte") ? row.cells.slice(0, 2) : row.cells)
                                 .map((cell, i) => {
                                     const props = cell.getCellProps();
-                                    if(cell.column.Header == "BrotID"){
-                                        let id = "ProduktId" + row.index;
-                                        if(data[row.index].verfuegbarkeit == true){
-                                            return(
-                                                <td{...props} id = {id}>
-                                                    {cell.render('Cell')}
-                                                </td>
-                                            );
-                                        }
-                                        else{
-                                            return(
-                                                <td{...props} id = {id} style={{color:'grey'}}>
-                                                    {cell.render('Cell')}
-                                                </td>
-                                            );
-                                        }
-                                    }
-                                    else if(cell.column.Header == "Brotname"){
-                                        let id = "ProduktName" + row.index;
-                                        if(data[row.index].verfuegbarkeit == true){
-                                            return(
-                                                <td{...props} id = {id}>
-                                                    {cell.render('Cell')}
-                                                </td>
-                                            );
-                                        }
-                                        else{
-                                            return(
-                                                <td{...props} id = {id} style={{color:'grey'}}>
-                                                    {cell.render('Cell')}
-                                                </td>
-                                            );
-                                        }
-                                    }
-                                    else if(cell.column.Header == "Bestellmenge"){
-                                        let id = "Inputfield" + row.index;
+                                    if(cell.column.Header === "BrotID"){
+                                        return null;
+                                    } else if(cell.column.Header === "Bestellmenge"){
                                         let vorwoche = data[row.index].bestellmengeAlt;
-                                        let woche = data[row.index].bestellmengeNeu;
-                                        if(woche == undefined){
-                                            if(vorwoche === undefined){
-                                                vorwoche = 0;
-                                            }
-                                            if(data[row.index].verfuegbarkeit == true){
-                                                return(
-                                                    <input type="text" placeholder={"Bestellung Vorwoche: " + vorwoche} id={id} onChange={() => calculatePrice()}></input>
-                                                )
-                                            }
-                                            else{
-                                                return(
-                                                    <input type="text" placeholder={"Bestellung Vorwoche: " + vorwoche} id={id} onChange={() => calculatePrice()} disabled></input>
-                                                )
-                                            }
+                                        if(vorwoche === null || vorwoche === undefined){
+                                            vorwoche = 0;
                                         }
-                                        else{
-                                            if(data[row.index].verfuegbarkeit == true){
-                                                return(
-                                                    <input type="text" placeholder={"Bestellung Aktuell: " + woche} id={id} onChange={() => calculatePrice()}></input>
-                                                )
-                                            }
-                                            else{
-                                                return(
-                                                    <input type="text" placeholder={"Bestellung Aktuell: " + woche} id={id} onChange={() => calculatePrice()} disabled></input>
-                                                )
-                                            }
-                                        }
-                                    }
-                                    else if(cell.column.Header == "Preis"){
+                                        let id = "Inputfield" + row.index;
+                                        return(
+                                            <td className="word-wrap" key={row.index}><input placeholder={"Vorwoche: " + vorwoche} className="brotbestellung-inputfield-size" type="number" min="0" id={id} onChange={() => calculatePrice()} disabled={data[row.index].verfuegbarkeit === false}></input></td>
+                                        );
+                                    } else if(cell.column.Header === "Preis in €"){
                                         let id = "PreisId" + row.index;
-                                        if(data[row.index].verfuegbarkeit == true){
-                                            return(
-                                                <td{...props} id = {id}>
-                                                    {cell.render('Cell')}
-                                                </td>
-                                            )
-                                        }
-                                        else{
-                                            return(
-                                                <td{...props} id = {id} style={{color:'grey'}}>
-                                                    {cell.render('Cell')}
-                                                </td>
-                                            )
-                                        }
-                                    }
-                                    else{
-                                        if(data[row.index].verfuegbarkeit == true){
-                                            return (
-                                                <td {...props}>
-                                                    {cell.render('Cell')}
-                                                </td>
-                                            )
-                                        }
-                                        else{
-                                            return (
-                                                <td {...props} style={{color:'grey'}}>
-                                                    {cell.render('Cell')}
-                                                </td>
-                                            )
-                                        }
+                                        return(
+                                            <td className="word-wrap" style={{color: data[row.index].verfuegbarkeit === false ? NotAvailableColor : ''}} key={row.index}{...props} id = {id}>{cell.render('Cell')}</td>
+                                        );
+                                    } else if(cell.column.Header === "aktuelle Bestellmenge" || cell.column.Header === "Gewicht in g"){
+                                        return(
+                                            <td className="word-wrap" id="aktuelleBrotBestellmenge" style={{color: data[row.index].verfuegbarkeit === false ? NotAvailableColor : ''}} key={row.index}{...props} >{cell.render('Cell')}</td>
+                                        );
+                                    } else{
+                                        return (
+                                            <td className="word-wrap" style={{color: data[row.index].verfuegbarkeit === false ? NotAvailableColor : ''}} key={row.index} {...props}>{cell.render('Cell')}</td>
+                                        );
                                     }
                                 })}
                     </tr>
@@ -161,7 +150,7 @@ export function BrotTable({columns, data, skipPageReset, dispatchModal}) {
             })}
             </tbody>
         </BTable>
+        </div>
+        </div>
     )
-
-
 }

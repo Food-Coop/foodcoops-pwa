@@ -6,6 +6,8 @@ import { useApi } from '../ApiService';
 import {deepAssign, deepClone} from '../util';
 import { DeadlineTable } from './DeadlineTable';
 import { NewDeadlineModal } from './NewDeadlineModal';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export function Deadline(){
 
@@ -30,43 +32,44 @@ export function Deadline(){
 
     const api = useApi();
     
-    React.useEffect(
-        () => {
-            // api.readDeadline()
-            //     .then((r) => r.json())
-            //     .then((r) => {
-            //         setData(old => {
-            //             const n = r?._embedded?.deadlineRepresentationList;
-            //             return n === undefined ? old : n;
-                        
-            //         });
-                    
-            //         setIsLoading(false);
-            //     }
-            // );
-            api.readLastDeadline()
-                .then((r) => r.json())
-                .then((r) => {
-                    setData(old => {
-                        const n = r?._embedded?.deadlineRepresentationList;
-                        return n === undefined ? old : n;
-                    });
-                    setIsLoading(false);
+    React.useEffect(() => {
+        api.readLastDeadline()
+            .then((response) => {
+                if (response.ok) {
+                    return response.json();
                 }
-            );
-        }, [reducerValue]
-    );
+                throw new Error('Failed to fetch last deadline.');
+            })
+            .then((data) => {
+                const deadline = {
+                    id: data.id,
+                    weekday: data.weekday,
+                    time: data.time
+                };
+                setData([deadline]);
+                setIsLoading(false);
+            })
+            .catch((error) => {
+                console.error('Error fetching last deadline:', error);
+                setIsLoading(false);
+            });
+    }, [reducerValue]);
+    
 
     const newDeadline = (data1) => {
         let datum = new Date();
+        data1.time = `${data1.time}:00`;
         deepAssign("datum", data1, datum);
         (async function () {
             const response = await api.createDeadline(data1);
             if(response.ok) {
+                toast.success("Die Deadline wurde erfolgreich erstellt!");
                 const newDeadline = await response.json();
                     setSkipPageReset(true);
                     setData(old => deepClone([...old, newDeadline]));
                 forceUpdate();
+            } else {
+                toast.error("Fehler beim Erstellen der Deadline. Bitte versuchen Sie es erneut.");
             }
         })();
     };
@@ -120,6 +123,7 @@ export function Deadline(){
                 create={newDeadline}
                 columns={columns}
                 {...modal.state} />
+            <ToastContainer />
         </div>
     );
 }
